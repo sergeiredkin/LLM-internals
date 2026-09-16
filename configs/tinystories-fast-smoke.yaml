@@ -1,4 +1,4 @@
-name: tinystories-bpe
+name: tinystories-fast-gpu-smoke
 
 model:
   vocab_size: 8000
@@ -18,7 +18,6 @@ data:
   input_path: data/tinystories/documents
   processed_dir: data/tinystories/processed
   tokenizer: bpe
-  # TinyStories provides a separate official validation split.
   train_fraction: 0.9
   num_workers: 0
 
@@ -26,21 +25,19 @@ training:
   seed: 1337
   device: cuda
   precision: bf16
-  # Fast RTX 3060 mode: ~5.5 GiB peak. Pause large Ollama models while training.
   micro_batch_size: 32
   gradient_accumulation_steps: 1
-  max_steps: 5000
+  max_steps: 20
   learning_rate: 3.0e-4
   min_learning_rate: 3.0e-5
-  warmup_steps: 200
+  warmup_steps: 2
   weight_decay: 0.1
   beta1: 0.9
   beta2: 0.95
   grad_clip: 1.0
-  eval_interval: 250
-  eval_batches: 25
-  log_interval: 10
-  checkpoint_interval: 500
-  # Briefly yield between updates to keep desktop monitoring responsive.
-  step_idle_seconds: 0.02
-  output_dir: runs/tinystories
+  eval_interval: 10
+  eval_batches: 2
+  log_interval: 1
+  checkpoint_interval: 10
+  step_idle_seconds: 0.0
+  output_dir: runs/tinystories-fast-smoke

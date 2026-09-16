@@ -51,8 +51,17 @@ A 20-step BF16 smoke run of the full 29.5M-parameter model completed in 10.94 se
 - Smoke checkpoint: `runs/tinystories-smoke/latest.pt`
 
 Generation already learned spaces, punctuation, and frequent words, but remains incoherent after
-only 20 updates, as expected. At measured throughput, the planned 5,000-step run should take
-approximately 50–65 minutes including evaluation, checkpointing, and configured idle time.
+only 20 updates, as expected.
+
+A second benchmark increased the micro-batch from 4 to 32 and removed gradient accumulation:
+
+- Throughput: approximately 60k tokens/second (about 2x faster)
+- Peak PyTorch VRAM: 5.08 GiB allocated / 5.50 GiB reserved
+- Full-run estimate: approximately 25–35 minutes
+
+The fast configuration leaves enough memory for the desktop but cannot coexist safely with a
+6.5 GiB Ollama model. Pause the classifier/Ollama workload during full training. A 20 ms idle
+interval between optimizer updates is retained for desktop responsiveness.
 
 ## Checklist
 
