@@ -113,6 +113,7 @@ class GPT(nn.Module):
         max_new_tokens: int,
         temperature: float = 1.0,
         top_k: int | None = None,
+        eos_token_id: int | None = None,
     ) -> torch.Tensor:
         """Generate tokens without a KV cache; caching is a later milestone."""
 
@@ -137,6 +138,8 @@ class GPT(nn.Module):
             probabilities = F.softmax(next_logits, dim=-1)
             next_token = torch.multinomial(probabilities, num_samples=1)
             generated = torch.cat((generated, next_token), dim=1)
+            if eos_token_id is not None and torch.all(next_token == eos_token_id):
+                break
         return generated
 
     def num_parameters(self, trainable_only: bool = True) -> int:

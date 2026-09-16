@@ -144,9 +144,13 @@ python -m scripts.overfit_batch --config configs/tinystories.yaml
 The current subset contains 50,000 training documents (10.97M BPE tokens) and 5,000
 official validation documents (0.99M tokens). Raw and generated data are excluded from Git.
 
+The 29.5M-parameter token model trained for 5,000 steps in 33 minutes while sharing the GPU
+with Ollama. It reached **1.8759 validation loss** and generates coherent multi-paragraph
+children's stories. Detailed metrics are in `Project/stage-2-tinystories.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
-2. **In progress:** token-level TinyStories model with an 8K BPE vocabulary
-3. RoPE, SwiGLU, GQA, KV cache, and top-p sampling
+2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
+3. **Next:** RoPE, SwiGLU, GQA, KV cache, and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

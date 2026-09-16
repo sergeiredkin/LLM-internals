@@ -1,6 +1,6 @@
 ---
 type: project
-status: doing
+status: done
 ---
 # Stage 2 — TinyStories
 
@@ -60,8 +60,22 @@ A second benchmark increased the micro-batch from 4 to 32 and removed gradient a
 - Full-run estimate: approximately 25–35 minutes
 
 The fast configuration leaves enough memory for the desktop but cannot coexist safely with a
-6.5 GiB Ollama model. Pause the classifier/Ollama workload during full training. A 20 ms idle
-interval between optimizer updates is retained for desktop responsiveness.
+6.5 GiB Ollama model. Pause the classifier/Ollama workload during fast training.
+
+## Full shared-GPU result — 2026-09-16
+
+The low-memory profile trained all 5,000 steps while the Ollama classifier remained loaded.
+
+- Runtime: **33 minutes 7 seconds**
+- Typical throughput: 40k–43k tokens/second
+- Peak PyTorch VRAM: **1.12 GiB reserved**
+- Initial validation loss: 9.0673
+- Best validation loss: **1.8759 at step 4,250**
+- Best checkpoint: `runs/tinystories/best.pt`
+- Final checkpoint: `runs/tinystories/latest.pt`
+
+The model now generates coherent multi-paragraph children’s stories with characters, dialogue,
+simple causality, and conclusions. Generation stops at the learned EOS document boundary.
 
 ## Checklist
 
@@ -76,5 +90,5 @@ interval between optimizer updates is retained for desktop responsiveness.
 - [x] Run model/data integration forward pass
 - [x] Run one-batch overfit test with BPE data (`9.0222 -> 0.0000`)
 - [x] Run full-model GPU smoke test
-- [ ] Train and select best validation checkpoint
-- [ ] Generate coherent short stories
+- [x] Train and select best validation checkpoint (`val_loss=1.8759`, step 4,250)
+- [x] Generate coherent short stories

@@ -61,6 +61,7 @@ def main() -> None:
             max_new_tokens=args.max_new_tokens,
             temperature=args.temperature,
             top_k=args.top_k,
+            eos_token_id=getattr(corpus.tokenizer, "eos_id", None),
         )
     text = corpus.tokenizer.decode(generated[0])
 

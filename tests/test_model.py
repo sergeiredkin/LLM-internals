@@ -68,6 +68,17 @@ class GPTTests(unittest.TestCase):
         self.assertEqual(output.shape, (1, 8))
         torch.testing.assert_close(output[:, :3], prompt)
 
+    def test_generation_stops_at_eos(self) -> None:
+        model = GPT(tiny_config()).eval()
+        prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
+        logits, _ = model(prompt)
+        greedy_next_token = int(logits[0, -1].argmax())
+        output = model.generate(
+            prompt, max_new_tokens=5, top_k=1, eos_token_id=greedy_next_token
+        )
+        self.assertEqual(output.shape, (1, 4))
+        self.assertEqual(output[0, -1].item(), greedy_next_token)
+
     def test_context_limit_is_enforced(self) -> None:
         model = GPT(tiny_config(context_length=4))
         with self.assertRaisesRegex(ValueError, "exceeds context length"):
