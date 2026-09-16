@@ -1,0 +1,43 @@
+name: tinystories-gpu-smoke
+
+model:
+  vocab_size: 8000
+  context_length: 512
+  n_layers: 8
+  d_model: 512
+  n_heads: 8
+  n_kv_heads: 8
+  mlp_ratio: 4.0
+  dropout: 0.1
+  norm_eps: 1.0e-5
+  bias: false
+  tie_embeddings: true
+  position_encoding: learned
+
+data:
+  input_path: data/tinystories/documents
+  processed_dir: data/tinystories/processed
+  tokenizer: bpe
+  train_fraction: 0.9
+  num_workers: 0
+
+training:
+  seed: 1337
+  device: cuda
+  precision: bf16
+  micro_batch_size: 4
+  gradient_accumulation_steps: 2
+  max_steps: 20
+  learning_rate: 3.0e-4
+  min_learning_rate: 3.0e-5
+  warmup_steps: 2
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  eval_interval: 10
+  eval_batches: 3
+  log_interval: 1
+  checkpoint_interval: 10
+  step_idle_seconds: 0.05
+  output_dir: runs/tinystories-smoke
