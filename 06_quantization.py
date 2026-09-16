@@ -5,8 +5,8 @@
 #       broadcast temp (~0.8 GB -> ~0). Same answer, tiny memory. This was the CPU hog.
 #   v2: default size 2048->1024 (stats unchanged to ~3 decimals)
 #   v2: per-phase timing ticks
-#   v3: matplotlib REMOVED entirely — ASCII histograms via torch.histc.
-#       Nothing to hang, block, or hide. Dependencies: torch only.
+#   v3: charts use Matplotlib's non-interactive Agg backend and are saved beside this script.
+#       Dependencies: torch, matplotlib, numpy.
 #
 # WHAT YOU'LL LEARN:
 #   - error drops as scale granularity gets finer (tensor -> channel -> group)
@@ -23,7 +23,7 @@ import os
 torch.manual_seed(0)
 plt.switch_backend('Agg')
 
-OUTPUT_DIR = '/home/sergei/Documents/LLM gpt trial'
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 print(f"Output directory: {OUTPUT_DIR}")
 
@@ -70,8 +70,10 @@ def qdq(W, bits, symmetric, mode, group, nf4):
     else:
         qmax = 2 ** bits - 1
         mn, mx = G.amin(-1, keepdim=True), G.amax(-1, keepdim=True)
-        s = ((mx - mn) / qmax).clamp_min(1e-12); zp = (-mn / s).round()
-        D = ((G / s).round().clamp(0, qmax) - zp) * s
+        s = ((mx - mn) / qmax).clamp_min(1e-12)
+        zp = (-mn / s).round().clamp(0, qmax)
+        Q = (G / s + zp).round().clamp(0, qmax)
+        D = (Q - zp) * s
     return D.reshape(W.shape)
 
 def plot_weight_distribution(original, dequantized, cfg, save_path):
@@ -188,6 +190,11 @@ def plot_outlier_sweep(W, save_path):
 
 # ---------- data ----------
 W = torch.randn(CFG["d_out"], CFG["d_in"])
+if CFG["outlier_frac"] > 0:
+    multiplier = torch.where(
+        torch.rand_like(W) < CFG["outlier_frac"], CFG["outlier_scale"], 1.0
+    )
+    W = W * multiplier
 tick("setup done")
 
 # ---------- main quantization ----------

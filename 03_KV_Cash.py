@@ -70,7 +70,9 @@ with torch.no_grad():
     cnt_c = {"proj_tok": 0, "score": 0}
     t0 = time.perf_counter()
     h, caches = model.prompt(x0, cnt_c); gen_c = [h]
-    for _ in range(CFG["T_gen"]):
+    # Prefill already produces the first generated representation, so only
+    # T_gen - 1 incremental steps are needed to match the no-cache path.
+    for _ in range(max(CFG["T_gen"] - 1, 0)):
         h = model.step(h, caches, cnt_c); gen_c.append(h)
     gen_c = torch.cat(gen_c, 1)
     t_cache = time.perf_counter() - t0

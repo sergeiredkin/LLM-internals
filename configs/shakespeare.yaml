@@ -1,0 +1,45 @@
+name: shakespeare-char
+
+model:
+  # Determined from the downloaded corpus by the data pipeline.
+  vocab_size: null
+  context_length: 256
+  n_layers: 6
+  d_model: 384
+  n_heads: 6
+  n_kv_heads: 6
+  mlp_ratio: 4.0
+  dropout: 0.1
+  norm_eps: 1.0e-5
+  bias: false
+  tie_embeddings: true
+  position_encoding: learned
+
+data:
+  input_path: data/shakespeare/input.txt
+  processed_dir: data/shakespeare/processed
+  tokenizer: char
+  train_fraction: 0.9
+  num_workers: 0
+
+training:
+  seed: 1337
+  device: auto
+  precision: bf16
+  # Small kernels and periodic idle time keep the desktop/classifier responsive.
+  micro_batch_size: 8
+  gradient_accumulation_steps: 8
+  max_steps: 5000
+  learning_rate: 3.0e-4
+  min_learning_rate: 3.0e-5
+  warmup_steps: 200
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  eval_interval: 250
+  eval_batches: 50
+  log_interval: 10
+  checkpoint_interval: 500
+  step_idle_seconds: 0.05
+  output_dir: runs/shakespeare

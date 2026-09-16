@@ -93,7 +93,8 @@ def train(residual, steps=600, lr=0.5):
         if s % 200 == 0:
             mse = ((y - tt) ** 2).mean()
             print(f"    residual={residual} step {s:4d} mse {mse:.5f}")
-    return ((y - tt) ** 2).mean().item()
+    y_final, _, _ = forward(xt, Ws, bs, Wout, "tanh", residual)
+    return ((y_final - tt) ** 2).mean().item()
 f0 = train(False); f1 = train(True)
 print(f"  final: no-residual {f0:.5f}  vs  residual {f1:.5f}  "
       f"(residual is why depth-100 nets train at all)")

@@ -1,0 +1,12 @@
+name: learngpt
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytorch=2.5
+  - pytorch-cuda=12.4
+  - matplotlib
+  - numpy
+  - pyyaml

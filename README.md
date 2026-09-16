@@ -1,0 +1,137 @@
+# learnGPT — LLM Internals From First Principles
+
+An educational project that starts with isolated PyTorch demonstrations of core LLM
+mechanisms and assembles them into a working decoder-only language model.
+
+The first milestone is complete: a 10.7M-parameter character GPT trained from scratch on
+Tiny Shakespeare using a local NVIDIA RTX 3060 12 GB.
+
+## Stage 1 result
+
+| Item | Result |
+|---|---:|
+| Architecture | 6 layers, width 384, 6 heads, context 256 |
+| Parameters | 10,745,088 |
+| Vocabulary | 65 characters |
+| Precision | BF16 |
+| Best checkpoint | Step 2,250 |
+| Best validation loss | **1.4910** |
+| Peak PyTorch VRAM | **0.47 GiB reserved** |
+| Typical throughput | 75k–83k tokens/second |
+
+The model learned speaker structure, punctuation, line breaks, and Shakespeare-like prose:
+
+```text
+ROMEO:
+What is the world, when the sea miserable,
+Or that rude the gates such at him with his bard,
+As was, away, when he dares him hence,
+Let forth him that now incannot weep.
+```
+
+The text is generated rather than copied, so it resembles Shakespeare without being
+factually or grammatically reliable.
+
+## Components
+
+- Causal self-attention through PyTorch SDPA
+- RMSNorm and pre-norm residual blocks
+- GELU MLP
+- Learned positional embeddings
+- Tied token/output embeddings
+- Character tokenizer and memory-mapped corpus
+- AdamW with warmup and cosine decay
+- BF16/FP16 mixed precision
+- Gradient accumulation and clipping
+- Atomic checkpoints and resume support
+- Validation, generation, and internal model inspection
+
+The numbered root scripts remain small experiments explaining attention, AdamW, KV
+caching, LoRA, Flash Attention, quantization, sampling, cross-entropy, backpropagation,
+and RMSNorm. Reusable model code lives under `llm/`.
+
+## Environment
+
+```bash
+conda env create -f environment.yml
+conda activate learngpt
+python check_environment.py
+```
+
+An existing local environment can also be used if it has a CUDA-enabled PyTorch build.
+
+## Prepare the corpus
+
+Tiny Shakespeare is included with source and checksum information in
+`data/shakespeare/README.md`.
+
+```bash
+python -m scripts.prepare_data --config configs/shakespeare.yaml
+```
+
+## Test
+
+```bash
+python -m unittest discover -s tests -v
+python -m scripts.overfit_batch
+```
+
+## Train
+
+```bash
+python -m scripts.train --config configs/shakespeare.yaml
+```
+
+Training outputs are written to `runs/` and intentionally excluded from Git. The trainer
+refuses to start with less than 8 GiB free unless `--allow-shared-gpu` is explicitly used.
+
+## Generate
+
+```bash
+python -m scripts.generate \
+  --checkpoint runs/shakespeare/best.pt \
+  --prompt $'ROMEO:\n' \
+  --max-new-tokens 600 \
+  --temperature 0.8 \
+  --top-k 30
+```
+
+For an interactive shortcut:
+
+```bash
+./run_shakespeare.sh
+```
+
+## Inspect model internals
+
+```bash
+python -m scripts.inspect_model \
+  --checkpoint runs/shakespeare/best.pt \
+  --text $'ROMEO:\nWhat is the world?'
+```
+
+The inspector displays token IDs, tensor shapes, per-block activation statistics,
+next-token probabilities, parameter allocation, teacher-forced loss, and gradient norms.
+
+## First findings
+
+1. A one-batch overfit test is the fastest end-to-end correctness check. Loss fell from
+   4.23 to effectively zero, proving that data shifting, masking, loss, gradients, and
+   optimizer updates agree.
+2. Initial loss was close to `ln(65)`, as expected for a random 65-character model.
+3. Validation loss improved from 4.26 to 1.49, while later training reduced training loss
+   but worsened validation loss. Keeping a best-validation checkpoint mattered.
+4. Gradient clipping handled early spikes without destabilizing training.
+5. The model consumed much less memory than the 12 GB budget: only 0.47 GiB reserved at
+   the selected micro-batch size.
+6. Character models can learn convincing local form with little data, but subword tokens
+   are the logical next step for broader language and domain learning.
+
+Detailed results are recorded in `Project/stage-1-shakespeare.md`.
+
+## Roadmap
+
+1. **Done:** character-level Tiny Shakespeare GPT
+2. Token-level TinyStories model with an 8K BPE vocabulary
+3. RoPE, SwiGLU, GQA, KV cache, and top-p sampling
+4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

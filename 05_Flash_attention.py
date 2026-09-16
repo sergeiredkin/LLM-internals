@@ -20,24 +20,28 @@ def naive(Q, K, V, causal):
 def flash(Q, K, V, Br, Bc, causal, verbose=False):
     B, H, T, d = Q.shape
     O = torch.empty_like(Q); scale = 1 / math.sqrt(d)
+    # Real kernels accumulate softmax statistics in fp32 for fp16/bf16 inputs.
+    acc_dtype = torch.float32 if Q.dtype in (torch.float16, torch.bfloat16) else Q.dtype
     for i0 in range(0, T, Br):
-        i = i0 + torch.arange(Br); i = i[i < T]              # query rows in this block
-        Qi = Q[:, :, i]
-        m = torch.full((B, H, len(i)), float("-inf"))        # running max per query
-        l = torch.zeros(B, H, len(i))                        # running softmax denominator
-        acc = torch.zeros(B, H, len(i), d)                   # running output accumulator
+        i = i0 + torch.arange(Br, device=Q.device); i = i[i < T]
+        Qi = Q[:, :, i].to(acc_dtype)
+        m = torch.full((B, H, len(i)), float("-inf"), dtype=acc_dtype, device=Q.device)
+        l = torch.zeros(B, H, len(i), dtype=acc_dtype, device=Q.device)
+        acc = torch.zeros(B, H, len(i), d, dtype=acc_dtype, device=Q.device)
         for j0 in range(0, T, Bc):
-            j = j0 + torch.arange(Bc)
+            j = j0 + torch.arange(Bc, device=Q.device)
             if causal and j[0] > i[-1]: break                # whole block in the future: skip
             j = j[j < T]
-            S = Qi @ K[:, :, j].transpose(-2, -1) * scale    # (B,H,br,bc) <- ONLY block-sized mem
+            Kj = K[:, :, j].to(acc_dtype)
+            Vj = V[:, :, j].to(acc_dtype)
+            S = Qi @ Kj.transpose(-2, -1) * scale            # (B,H,br,bc) <- ONLY block-sized mem
             if causal:
                 S = S.masked_fill(j[None, :] > i[:, None], float("-inf"))
             m_new = torch.maximum(m, S.amax(-1))             # new running max
             P = torch.exp(S - m_new[..., None])              # unnormalized probs vs NEW max
             corr = torch.exp(m - m_new)                      # rescale old stats (THE trick)
             l = l * corr + P.sum(-1)
-            acc = acc * corr[..., None] + P @ V[:, :, j]
+            acc = acc * corr[..., None] + P @ Vj
             if verbose:
                 print(f"  block q={i0} k={j0}: m(row0,h0) {m[0,0,0].item():.3f} -> "
                       f"{m_new[0,0,0].item():.3f}   l={l[0,0,0].item():.3f}")

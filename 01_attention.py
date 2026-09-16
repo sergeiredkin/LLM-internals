@@ -25,9 +25,11 @@ def attention(Q, K, V, cfg, label=""):
     scores = Q @ K.transpose(-2, -1) * scale
     print(f"[{label}] scores {tuple(scores.shape)}   <- always (B,H,Tq,Tkv); THIS is what OOMs")
     if cfg["causal"]:
-        allow = torch.tril(torch.ones(Tq, Tkv, dtype=torch.bool))     # broadcasts over B,H
+        allow = torch.tril(torch.ones(Tq, Tkv, dtype=torch.bool, device=scores.device))
         if cfg["mask_bug"]:
-            allow = torch.triu(torch.ones(Tq, Tkv, dtype=torch.bool), diagonal=1)
+            allow = torch.triu(
+                torch.ones(Tq, Tkv, dtype=torch.bool, device=scores.device), diagonal=1
+            )
         scores = scores.masked_fill(~allow, float("-inf"))
     attn = scores.softmax(-1)
     print(f"[{label}] attn  {tuple(attn.shape)}  row0 weights: "

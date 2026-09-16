@@ -11,8 +11,8 @@ ar = torch.arange(B)
 print("--- 1. numerical stability (fp64 doesn't save the naive version) ---")
 for s in (1, 100, 1000):
     lg = logits * s
-    naive = torch.log(torch.softmax(lg, -1))[ar, targets].mean()
-    stable = torch.log_softmax(lg, -1)[ar, targets].mean()
+    naive = -torch.log(torch.softmax(lg, -1))[ar, targets].mean()
+    stable = -torch.log_softmax(lg, -1)[ar, targets].mean()
     print(f"  scale={s:5d}  naive {naive.item():>8.3f}   log_softmax {stable.item():8.3f}   "
           f"F.cross_entropy {F.cross_entropy(lg.float(), targets).item():8.3f}")
 
@@ -44,8 +44,9 @@ sel = t_pad != -100
 manual = -logits.log_softmax(-1)[sel, t_pad[sel]].mean()
 print(f"  ignore_index: F {loss.item():.4f} = manual over non-ignored {manual.item():.4f} "
       f"(mean over {int(sel.sum())} rows, not {B})")
-w = torch.ones(V); w[0] = 50.0
-print(f"  class weight 50 on class 0 -> loss moves: "
+weighted_class = targets[0].item()                 # guarantee the weighted class is present
+w = torch.ones(V); w[weighted_class] = 50.0
+print(f"  class weight 50 on class {weighted_class} -> loss moves: "
       f"{F.cross_entropy(logits.float(), targets, weight=w).item():.4f} vs "
       f"{F.cross_entropy(logits.float(), targets).item():.4f}")
 
@@ -61,5 +62,6 @@ print("  loss ABOVE ln(V) at init = worse than random = bug or label noise.")
 # - label_smoothing=0.5: floor is huge; also note optimal p_true < 1 -> smoothing caps logit gaps
 #   (that's the regularization).
 # - B=1 vs B=8 in section 2: gradient scale is exactly 1/B — batch size is baked into the loss.
-# - Recompute section 2 with logits*100: gradient shrinks (softmax saturated) -> CE gradients die
-#   on overconfident wrong predictions. Connects to loss spikes after LR spikes.
+# - Recompute section 2 with logits*100: correct, confident rows have tiny gradients, while
+#   confidently wrong rows retain large target/predicted-class gradients. Saturation is not a
+#   way for an incorrect CE prediction to hide from the optimizer.
