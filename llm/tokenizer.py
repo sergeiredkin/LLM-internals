@@ -144,13 +144,21 @@ class BPETokenizer:
         return cls(Tokenizer.from_file(str(path)))
 
 
+def tokenizer_from_json(serialized: str) -> CharTokenizer | BPETokenizer:
+    """Load either tokenizer format from serialized JSON."""
+
+    payload = json.loads(serialized)
+    if payload.get("type") == "char":
+        tokens = payload.get("tokens")
+        if not isinstance(tokens, list):
+            raise ValueError("invalid character tokenizer JSON")
+        return CharTokenizer(tokens)
+    if "model" in payload:
+        return BPETokenizer(Tokenizer.from_str(serialized))
+    raise ValueError("unrecognized tokenizer format")
+
+
 def load_tokenizer(path: str | Path) -> CharTokenizer | BPETokenizer:
     """Load either project tokenizer format from its JSON file."""
 
-    tokenizer_path = Path(path)
-    payload = json.loads(tokenizer_path.read_text(encoding="utf-8"))
-    if payload.get("type") == "char":
-        return CharTokenizer.load(tokenizer_path)
-    if "model" in payload:
-        return BPETokenizer.load(tokenizer_path)
-    raise ValueError("unrecognized tokenizer format")
+    return tokenizer_from_json(Path(path).read_text(encoding="utf-8"))

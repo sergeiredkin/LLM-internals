@@ -19,6 +19,7 @@ from llm.training import (
     create_grad_scaler,
     create_optimizer,
     estimate_loss,
+    evaluation_generator,
     learning_rate_at,
     resolve_device,
     set_learning_rate,
@@ -99,6 +100,7 @@ def main() -> None:
                 config.model.context_length,
                 device,
                 config.training.precision,
+                evaluation_generator(config.training.seed, "train"),
             )
             val_loss = estimate_loss(
                 model,
@@ -109,6 +111,7 @@ def main() -> None:
                 config.model.context_length,
                 device,
                 config.training.precision,
+                evaluation_generator(config.training.seed, "val"),
             )
             print(
                 f"eval step {step:5d} | train {train_loss:.4f} | "

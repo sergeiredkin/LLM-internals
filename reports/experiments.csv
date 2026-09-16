@@ -1,0 +1,2 @@
+experiment,position_encoding,parameters,steps,fixed_eval_seed,fixed_val_tokens,fixed_val_loss,perplexity,train_runtime_seconds,train_peak_vram_gib,eval_tokens_per_second,generation_tokens_per_second,inference_peak_vram_gib,status
+TinyStories learned baseline,learned,29532672,5000,2025,409600,1.9026409352,6.7035747922,1987,1.12,158893.23,182.32,0.6035,complete

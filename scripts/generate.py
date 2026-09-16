@@ -11,6 +11,7 @@ import torch
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
 from llm.model import GPT
+from llm.tokenizer import tokenizer_from_json
 from llm.training import autocast_context, resolve_device
 
 
@@ -33,15 +34,21 @@ def main() -> None:
 
     device = resolve_device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
-    if checkpoint.get("format_version") != 1:
+    checkpoint_format = checkpoint.get("format_version")
+    if checkpoint_format not in {1, 2}:
         raise SystemExit("Unsupported checkpoint format")
     config = config_from_dict(checkpoint["config"])
-    corpus = TokenCorpus(config.data.processed_dir)
-    if config.model.vocab_size != corpus.tokenizer.vocab_size:
+    if checkpoint_format == 2:
+        tokenizer = tokenizer_from_json(checkpoint["tokenizer_json"])
+        checkpoint_step = checkpoint["source_step"]
+    else:
+        tokenizer = TokenCorpus(config.data.processed_dir).tokenizer
+        checkpoint_step = checkpoint["step"]
+    if config.model.vocab_size != tokenizer.vocab_size:
         raise SystemExit("Checkpoint and tokenizer vocabulary sizes do not match")
 
     try:
-        prompt_ids = corpus.tokenizer.encode(args.prompt)
+        prompt_ids = tokenizer.encode(args.prompt)
     except ValueError as error:
         raise SystemExit(f"Prompt cannot be encoded: {error}") from error
     if not prompt_ids:
@@ -61,12 +68,12 @@ def main() -> None:
             max_new_tokens=args.max_new_tokens,
             temperature=args.temperature,
             top_k=args.top_k,
-            eos_token_id=getattr(corpus.tokenizer, "eos_id", None),
+            eos_token_id=getattr(tokenizer, "eos_id", None),
         )
-    text = corpus.tokenizer.decode(generated[0])
+    text = tokenizer.decode(generated[0])
 
     print(
-        f"checkpoint={args.checkpoint} step={checkpoint['step']} "
+        f"checkpoint={args.checkpoint} step={checkpoint_step} "
         f"device={device} temperature={args.temperature} top_k={args.top_k}"
     )
     print("-" * 72)

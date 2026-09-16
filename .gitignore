@@ -5,6 +5,7 @@ venv/
 .env
 .DS_Store
 runs/
+exports/
 data/**/processed/
 data/tinystories/raw/
 data/tinystories/documents/

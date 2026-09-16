@@ -8,7 +8,7 @@ import pyarrow.parquet as pq
 
 from llm.data import TokenCorpus
 from llm.tinystories import extract_documents, iter_jsonl_texts, tokenize_documents
-from llm.tokenizer import BPETokenizer, load_tokenizer
+from llm.tokenizer import BPETokenizer, load_tokenizer, tokenizer_from_json
 
 
 class TinyStoriesTests(unittest.TestCase):
@@ -23,6 +23,8 @@ class TinyStoriesTests(unittest.TestCase):
         document = tokenizer.encode(texts[0], add_document_tokens=True)
         self.assertEqual(document[0], tokenizer.bos_id)
         self.assertEqual(document[-1], tokenizer.eos_id)
+        restored = tokenizer_from_json(tokenizer.tokenizer.to_str())
+        self.assertEqual(restored.decode(restored.encode(texts[0])), texts[0])
 
     def test_extract_tokenize_and_load_corpus(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

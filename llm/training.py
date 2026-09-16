@@ -58,6 +58,15 @@ def set_learning_rate(optimizer: torch.optim.Optimizer, learning_rate: float) ->
         group["lr"] = learning_rate
 
 
+def evaluation_generator(seed: int, split: str) -> torch.Generator:
+    """Return a fresh generator so every evaluation uses identical token windows."""
+
+    if split not in {"train", "val"}:
+        raise ValueError("split must be 'train' or 'val'")
+    offset = 10_000 if split == "train" else 20_000
+    return torch.Generator().manual_seed(seed + offset)
+
+
 def create_optimizer(model: nn.Module, config: TrainingConfig) -> torch.optim.AdamW:
     """Apply weight decay to matrix weights, not norms or biases."""
 

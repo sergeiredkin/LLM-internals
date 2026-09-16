@@ -1,0 +1,41 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-16T12:23:20.684910+00:00",
+  "git_commit": "deb065157e368499f23b12be3cb32e45bfc8c0d2",
+  "checkpoint": "runs/tinystories/best.pt",
+  "checkpoint_sha256": "c1a8c5579f795ed1b5aea1f2d21a71ec761270163af441800b8f16886edb96ae",
+  "checkpoint_step": 4250,
+  "training_best_val_loss": 1.8759001636505126,
+  "model": {
+    "parameters": 29532672,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 8,
+    "position_encoding": "learned"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.9026409351825715,
+    "perplexity": 6.703574792191883,
+    "seconds": 2.577831603000959,
+    "tokens_per_second": 158893.23395801647
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 169,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 0.9269319100021676,
+    "tokens_per_second": 182.3219140223631,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip loved to play hide and seek with his friends. One day, Pip saw a big tree with lots of leaves. He wanted to find a friend to play with, but he didn't have any friends to play together.\n\nPinky decided to jump over the tree and ask his friends for help. The friends were happy and said, \"No, you can't play here. You're too small.\" But Kitty did not listen and grabbed a big leaf.\n\nPip's friends came over and said, \"You are being mean to each other. If you don't share the leaves, you will get everyone you want.\" So, Kitty agreed to share the leaves with his friends. They all played together and had a great time. From that day on, Tim knew that sharing was better than being mean to everyone."
+  },
+  "peak_inference_vram_gib": 0.603515625
+}

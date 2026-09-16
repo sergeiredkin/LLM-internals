@@ -11,6 +11,7 @@ from llm.model import GPT
 from llm.training import (
     create_grad_scaler,
     create_optimizer,
+    evaluation_generator,
     learning_rate_at,
     train_micro_batches,
 )
@@ -53,6 +54,14 @@ class TrainingTests(unittest.TestCase):
         self.assertAlmostEqual(learning_rate_at(1, config), 1e-3)
         self.assertAlmostEqual(learning_rate_at(2, config), 1e-3)
         self.assertAlmostEqual(learning_rate_at(10, config), 1e-4)
+
+    def test_evaluation_windows_are_repeatable(self) -> None:
+        first = evaluation_generator(2025, "val")
+        second = evaluation_generator(2025, "val")
+        torch.testing.assert_close(
+            torch.randint(0, 1000, (20,), generator=first),
+            torch.randint(0, 1000, (20,), generator=second),
+        )
 
     def test_optimizer_groups_cover_parameters_once(self) -> None:
         model = GPT(small_model_config())

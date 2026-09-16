@@ -76,6 +76,8 @@ The low-memory profile trained all 5,000 steps while the Ollama classifier remai
 
 The model now generates coherent multi-paragraph children’s stories with characters, dialogue,
 simple causality, and conclusions. Generation stops at the learned EOS document boundary.
+A deterministic 409,600-token evaluation measured loss **1.9026** and perplexity **6.70**;
+the controlled baseline report is `reports/tinystories-baseline.md`.
 
 ## Checklist
 

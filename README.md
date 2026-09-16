@@ -113,6 +113,24 @@ python -m scripts.inspect_model \
 The inspector displays token IDs, tensor shapes, per-block activation statistics,
 next-token probabilities, parameter allocation, teacher-forced loss, and gradient norms.
 
+## Reproducible evaluation and export
+
+Architecture experiments use fixed validation windows and a fixed generation prompt/seed:
+
+```bash
+python -m scripts.evaluate \
+  --checkpoint runs/tinystories/best.pt \
+  --output reports/results/tinystories-learned-baseline.json
+
+python -m scripts.export_inference \
+  --checkpoint runs/tinystories/best.pt \
+  --output exports/tinystories-29m-bf16.pt
+```
+
+The publishable baseline is in `reports/tinystories-baseline.md`; structured comparison rows
+are stored in `reports/experiments.csv`. Inference exports are excluded from Git and can be
+attached to GitHub Releases.
+
 ## First findings
 
 1. A one-batch overfit test is the fastest end-to-end correctness check. Loss fell from
