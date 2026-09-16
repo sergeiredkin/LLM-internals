@@ -6,3 +6,5 @@ venv/
 .DS_Store
 runs/
 data/**/processed/
+data/tinystories/raw/
+data/tinystories/documents/

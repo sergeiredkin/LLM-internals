@@ -10,11 +10,13 @@ from .config import (
 )
 from .data import TokenCorpus, prepare_char_corpus
 from .model import GPT
-from .tokenizer import CharTokenizer
+from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer
 
 __all__ = [
     "GPT",
     "CharTokenizer",
+    "BPETokenizer",
+    "load_tokenizer",
     "TokenCorpus",
     "prepare_char_corpus",
     "DataConfig",

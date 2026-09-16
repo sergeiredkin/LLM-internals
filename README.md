@@ -129,9 +129,24 @@ next-token probabilities, parameter allocation, teacher-forced loss, and gradien
 
 Detailed results are recorded in `Project/stage-1-shakespeare.md`.
 
+## Stage 2 data preparation
+
+The TinyStories pipeline downloads checksum-verified official Parquet shards, preserves
+documents as JSONL, trains an 8K byte-level BPE tokenizer, and writes compact token
+streams:
+
+```bash
+python -m scripts.prepare_tinystories
+python -m scripts.inspect_tokenizer
+python -m scripts.overfit_batch --config configs/tinystories.yaml
+```
+
+The current subset contains 50,000 training documents (10.97M BPE tokens) and 5,000
+official validation documents (0.99M tokens). Raw and generated data are excluded from Git.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
-2. Token-level TinyStories model with an 8K BPE vocabulary
+2. **In progress:** token-level TinyStories model with an 8K BPE vocabulary
 3. RoPE, SwiGLU, GQA, KV cache, and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

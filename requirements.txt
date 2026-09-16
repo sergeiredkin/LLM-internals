@@ -1,3 +1,6 @@
 torch
 matplotlib
 numpy
+pyarrow>=17,<24
+PyYAML
+tokenizers>=0.20,<1

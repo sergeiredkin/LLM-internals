@@ -9,4 +9,8 @@ dependencies:
   - pytorch-cuda=12.4
   - matplotlib
   - numpy
+  - pyarrow>=17
   - pyyaml
+  - pip
+  - pip:
+      - tokenizers>=0.20,<1

@@ -10,7 +10,7 @@ from typing import Literal
 import numpy as np
 import torch
 
-from .tokenizer import CharTokenizer
+from .tokenizer import CharTokenizer, load_tokenizer
 
 
 Split = Literal["train", "val"]
@@ -74,7 +74,7 @@ class TokenCorpus:
         if self.metadata.get("format") != "uint16":
             raise ValueError("unsupported token storage format")
 
-        self.tokenizer = CharTokenizer.load(self.directory / "tokenizer.json")
+        self.tokenizer = load_tokenizer(self.directory / "tokenizer.json")
         if self.tokenizer.vocab_size != self.metadata.get("vocab_size"):
             raise ValueError("tokenizer and corpus metadata vocabularies disagree")
 

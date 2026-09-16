@@ -83,7 +83,7 @@ def main() -> None:
     print(f"Text: {text!r}")
     print(f"Token IDs: {encoded}")
     print("Token mapping:")
-    print("  " + " ".join(f"{token_id}:{tokenizer.tokens[token_id]!r}" for token_id in encoded))
+    print("  " + " ".join(f"{token_id}:{tokenizer.token_for_id(token_id)!r}" for token_id in encoded))
     print("\nShapes:")
     print(f"  input                 {tuple(input_ids.shape)}")
     print(f"  token embeddings      {(1, len(encoded), config.model.d_model)}")
@@ -121,7 +121,7 @@ def main() -> None:
     values, indices = probabilities.topk(k)
     print(f"\nTop {k} predictions after {text!r}:")
     for probability, token_id in zip(values.tolist(), indices.tolist()):
-        print(f"  {tokenizer.tokens[token_id]!r:8s} {probability * 100:6.2f}%")
+        print(f"  {tokenizer.token_for_id(token_id)!r:18s} {probability * 100:6.2f}%")
 
     print("\nParameter allocation:")
     print(f"  token embedding/head  {parameter_count(model.token_embedding):>10,} (tied)")
