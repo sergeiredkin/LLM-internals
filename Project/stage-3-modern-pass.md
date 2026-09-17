@@ -23,7 +23,7 @@ position model in `reports/tinystories-baseline.md` is the control.
       `(x0, x1) -> (x0 cos θ - x1 sin θ, x0 sin θ + x1 cos θ)`.
 - [ ] Explain why RoPE rotates queries and keys, but not values.
 - [ ] Explain why `q_m · k_n` depends on relative displacement `n - m`.
-- [ ] Record the explanation and a numeric example in `Project/rope-learning-notes.md`.
+- [x] Record the explanation and a numeric example in `Project/rope-learning-notes.md`.
 
 **Learning gate:** be able to describe RoPE without referring to code.
 
@@ -120,3 +120,5 @@ happens rather than selecting only favorable evidence.
 ## Log
 
 - 2026-09-16: deterministic learned-position baseline and public inference release completed.
+- 2026-09-16: added the RoPE derivation, numeric examples, and learning questions; model code is
+  intentionally unchanged until the learning gate is complete.
