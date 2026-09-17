@@ -37,13 +37,25 @@ class GPTTests(unittest.TestCase):
         self.assertAlmostEqual(loss.item(), math.log(32), delta=0.4)
 
     def test_future_tokens_do_not_change_past_logits(self) -> None:
-        model = GPT(tiny_config()).eval()
         first = torch.randint(0, 32, (1, 12))
         second = first.clone()
         second[:, 7:] = torch.randint(0, 32, second[:, 7:].shape)
-        logits_a, _ = model(first)
-        logits_b, _ = model(second)
-        torch.testing.assert_close(logits_a[:, :7], logits_b[:, :7])
+        for position_encoding in ("learned", "rope"):
+            with self.subTest(position_encoding=position_encoding):
+                model = GPT(tiny_config(position_encoding=position_encoding)).eval()
+                logits_a, _ = model(first)
+                logits_b, _ = model(second)
+                torch.testing.assert_close(logits_a[:, :7], logits_b[:, :7])
+
+    def test_rope_removes_only_the_position_table(self) -> None:
+        learned = GPT(tiny_config(position_encoding="learned"))
+        rope = GPT(tiny_config(position_encoding="rope"))
+        expected_reduction = learned.config.context_length * learned.config.d_model
+        self.assertEqual(
+            learned.num_parameters() - rope.num_parameters(), expected_reduction
+        )
+        self.assertIsNone(rope.position_embedding)
+        self.assertTrue(all(block.attn.rope is not None for block in rope.blocks))
 
     def test_embeddings_are_tied(self) -> None:
         model = GPT(tiny_config(tie_embeddings=True))
@@ -52,21 +64,25 @@ class GPTTests(unittest.TestCase):
         )
 
     def test_backward_produces_finite_gradients(self) -> None:
-        model = GPT(tiny_config())
         tokens = torch.randint(0, 32, (2, 8))
-        _, loss = model(tokens, tokens)
-        assert loss is not None
-        loss.backward()
-        gradients = [p.grad for p in model.parameters() if p.grad is not None]
-        self.assertTrue(gradients)
-        self.assertTrue(all(torch.isfinite(g).all() for g in gradients))
+        for position_encoding in ("learned", "rope"):
+            with self.subTest(position_encoding=position_encoding):
+                model = GPT(tiny_config(position_encoding=position_encoding))
+                _, loss = model(tokens, tokens)
+                assert loss is not None
+                loss.backward()
+                gradients = [p.grad for p in model.parameters() if p.grad is not None]
+                self.assertTrue(gradients)
+                self.assertTrue(all(torch.isfinite(g).all() for g in gradients))
 
     def test_generate_has_requested_length(self) -> None:
-        model = GPT(tiny_config()).eval()
         prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
-        output = model.generate(prompt, max_new_tokens=5, top_k=5)
-        self.assertEqual(output.shape, (1, 8))
-        torch.testing.assert_close(output[:, :3], prompt)
+        for position_encoding in ("learned", "rope"):
+            with self.subTest(position_encoding=position_encoding):
+                model = GPT(tiny_config(position_encoding=position_encoding)).eval()
+                output = model.generate(prompt, max_new_tokens=5, top_k=5)
+                self.assertEqual(output.shape, (1, 8))
+                torch.testing.assert_close(output[:, :3], prompt)
 
     def test_generation_stops_at_eos(self) -> None:
         model = GPT(tiny_config()).eval()

@@ -31,20 +31,22 @@ class TransformerBlock(nn.Module):
 
 
 class GPT(nn.Module):
-    """Decoder-only language model with learned positional embeddings."""
+    """Decoder-only language model with learned positions or RoPE."""
 
     def __init__(self, config: ModelConfig) -> None:
         super().__init__()
         config.validate()
         if config.vocab_size is None:
             raise ValueError("model.vocab_size must be set before constructing GPT")
-        if config.position_encoding != "learned":
-            raise NotImplementedError("RoPE will be added after the baseline GPT is verified")
 
         # Keep an independent immutable-style copy for checkpoints and inspection.
         self.config = replace(config)
         self.token_embedding = nn.Embedding(config.vocab_size, config.d_model)
-        self.position_embedding = nn.Embedding(config.context_length, config.d_model)
+        self.position_embedding = (
+            nn.Embedding(config.context_length, config.d_model)
+            if config.position_encoding == "learned"
+            else None
+        )
         self.embedding_dropout = nn.Dropout(config.dropout)
         self.blocks = nn.ModuleList(
             TransformerBlock(config) for _ in range(config.n_layers)
@@ -90,8 +92,10 @@ class GPT(nn.Module):
         if targets is not None and targets.shape != input_ids.shape:
             raise ValueError("targets must have the same shape as input_ids")
 
-        positions = torch.arange(sequence, device=input_ids.device)
-        x = self.token_embedding(input_ids) + self.position_embedding(positions)
+        x = self.token_embedding(input_ids)
+        if self.position_embedding is not None:
+            positions = torch.arange(sequence, device=input_ids.device)
+            x = x + self.position_embedding(positions)
         x = self.embedding_dropout(x)
         for block in self.blocks:
             x = block(x)

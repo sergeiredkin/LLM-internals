@@ -125,7 +125,12 @@ def main() -> None:
 
     print("\nParameter allocation:")
     print(f"  token embedding/head  {parameter_count(model.token_embedding):>10,} (tied)")
-    print(f"  position embedding    {parameter_count(model.position_embedding):>10,}")
+    position_parameters = (
+        parameter_count(model.position_embedding)
+        if model.position_embedding is not None
+        else 0
+    )
+    print(f"  position embedding    {position_parameters:>10,}")
     print(f"  transformer blocks    {parameter_count(model.blocks):>10,}")
     print(f"  final norm            {parameter_count(model.final_norm):>10,}")
 

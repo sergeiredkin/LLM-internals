@@ -49,12 +49,12 @@ position model in `reports/tinystories-baseline.md` is the control.
 
 ### 4. Integrate RoPE into GPT (30–45 minutes)
 
-- [ ] Apply RoPE to Q and K after splitting heads and before attention.
-- [ ] Do not rotate V.
-- [ ] Omit the learned position embedding table when RoPE is selected.
-- [ ] Keep causal SDPA behavior unchanged.
-- [ ] Verify parameter count decreases by exactly `512 × 512 = 262,144` for TinyStories.
-- [ ] Confirm future tokens still cannot affect earlier logits.
+- [x] Apply RoPE to Q and K after splitting heads and before attention.
+- [x] Do not rotate V.
+- [x] Omit the learned position embedding table when RoPE is selected.
+- [x] Keep causal SDPA behavior unchanged.
+- [x] Verify parameter count decreases by exactly `512 × 512 = 262,144` for TinyStories.
+- [x] Confirm future tokens still cannot affect earlier logits.
 
 **Integration gate:** learned and RoPE models both pass forward, backward, causality, and generation
 tests.
@@ -123,3 +123,6 @@ happens rather than selecting only favorable evidence.
 - 2026-09-16: added the RoPE derivation, numeric examples, and learning questions.
 - 2026-09-16: implemented and tested isolated RoPE primitives. All 30 tests pass; the GPT and its
   checkpoints remain unchanged.
+- 2026-09-16: integrated RoPE into Q/K while preserving learned positions as the default. The
+  full RoPE model has 29,270,528 parameters, passes BF16 forward/backward, and all 32 tests pass.
+  The published learned-position checkpoint still loads strictly.

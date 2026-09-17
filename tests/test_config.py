@@ -26,6 +26,15 @@ class ConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "divisible"):
             config.validate()
 
+    def test_rope_requires_even_head_dimension(self) -> None:
+        config = ExperimentConfig(
+            model=ModelConfig(
+                d_model=30, n_heads=10, n_kv_heads=10, position_encoding="rope"
+            )
+        )
+        with self.assertRaisesRegex(ValueError, "even"):
+            config.validate()
+
     def test_unknown_top_level_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "bad.yaml"

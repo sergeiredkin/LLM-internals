@@ -44,6 +44,8 @@ class ModelConfig:
             raise ValueError("model.norm_eps must be positive")
         if self.position_encoding not in {"learned", "rope"}:
             raise ValueError("model.position_encoding must be 'learned' or 'rope'")
+        if self.position_encoding == "rope" and self.head_dim % 2 != 0:
+            raise ValueError("RoPE requires an even model head dimension")
 
     @property
     def head_dim(self) -> int:

@@ -7,6 +7,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from .config import ModelConfig
+from .rope import RotaryEmbedding
 
 
 class CausalSelfAttention(nn.Module):
@@ -18,6 +19,11 @@ class CausalSelfAttention(nn.Module):
         self.n_kv_heads = config.n_kv_heads
         self.head_dim = config.head_dim
         self.dropout_p = config.dropout
+        self.rope = (
+            RotaryEmbedding(self.head_dim)
+            if config.position_encoding == "rope"
+            else None
+        )
 
         kv_width = self.n_kv_heads * self.head_dim
         self.q_proj = nn.Linear(config.d_model, config.d_model, bias=config.bias)
@@ -35,6 +41,9 @@ class CausalSelfAttention(nn.Module):
         q = self._split_heads(self.q_proj(x), self.n_heads)
         k = self._split_heads(self.k_proj(x), self.n_kv_heads)
         v = self._split_heads(self.v_proj(x), self.n_kv_heads)
+
+        if self.rope is not None:
+            q, k = self.rope(q, k)
 
         if self.n_kv_heads != self.n_heads:
             repeats = self.n_heads // self.n_kv_heads
