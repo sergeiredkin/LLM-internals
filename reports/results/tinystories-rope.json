@@ -1,0 +1,41 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-17T06:59:30.516014+00:00",
+  "git_commit": "ecd2f230e8099f7dcba4c633326ab5878a01d067",
+  "checkpoint": "runs/tinystories-rope/best.pt",
+  "checkpoint_sha256": "a711b6dc1c109f570030dd9211d72c5f7b610834f5f1a819501a6d4072678da2",
+  "checkpoint_step": 4750,
+  "training_best_val_loss": 1.8945531129837037,
+  "model": {
+    "parameters": 29270528,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 8,
+    "position_encoding": "rope"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.8400833225250244,
+    "perplexity": 6.297062926351394,
+    "seconds": 2.6145289629994295,
+    "tokens_per_second": 156663.01876805385
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 168,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 1.199449740000091,
+    "tokens_per_second": 140.0642264510285,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip loved to play hide and seek with his friends. One day, Pip saw a group of animals playing together. They were wearing colorful dresses and shiny shoes. Pip wanted to join them, but he was too afraid to ask.\n\nHe asked his friends to help him. They all started to walk, but Pip was not happy. He wanted to be friends. So, he decided to go to the group and play. In the pile of clothes, he found a group of kids playing together. The group of kids were laughing and having fun.\n\nA little bird saw Pip and the kids playing together. The little bird was happy too. It flew high in the sky, singing with all its new friends. Pip and the group played some more. They had so much fun that they wanted to stay with them forever."
+  },
+  "peak_inference_vram_gib": 0.603515625
+}

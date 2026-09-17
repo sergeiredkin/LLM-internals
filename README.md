@@ -166,9 +166,16 @@ The 29.5M-parameter token model trained for 5,000 steps in 33 minutes while shar
 with Ollama. It reached **1.8759 validation loss** and generates coherent multi-paragraph
 children's stories. Detailed metrics are in `Project/stage-2-tinystories.md`.
 
+## Stage 3 controlled architecture experiments
+
+Replacing learned positions with RoPE reduced the model by 262,144 parameters and improved the
+fixed validation loss from **1.9026 to 1.8401** (perplexity 6.70 to 6.30). Dataset, seed,
+architecture dimensions, optimizer, and 5,000-step budget were held constant. See
+`reports/tinystories-rope-ablation.md` for the protocol, limitations, and generated sample.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **Next:** RoPE, SwiGLU, GQA, KV cache, and top-p sampling
+3. **In progress:** RoPE done; next are SwiGLU, GQA, KV cache, and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

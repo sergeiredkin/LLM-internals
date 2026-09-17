@@ -71,25 +71,25 @@ smoke run without instability.
 
 ### 6. Controlled full ablation (approximately 35–65 minutes)
 
-- [ ] Create `configs/tinystories-rope-shared.yaml` by changing only position encoding and output
+- [x] Create `configs/tinystories-rope-shared.yaml` by changing only position encoding and output
       directory from the shared baseline.
-- [ ] Keep dataset, tokenizer, seed, optimizer, schedule, effective batch, context, and 5,000 steps
+- [x] Keep dataset, tokenizer, seed, optimizer, schedule, effective batch, context, and 5,000 steps
       identical.
-- [ ] Train while sharing the GPU with Ollama, unless a faster exclusive-GPU window is approved.
-- [ ] Select the best checkpoint using deterministic validation windows.
-- [ ] Evaluate with seed 2025 over the same 409,600 validation tokens.
-- [ ] Generate with the same prompt, seed 42, temperature 0.8, and top-k 40.
+- [x] Train with the shared-safe profile while the Ollama service remained available.
+- [x] Select the best checkpoint using deterministic validation windows (step 4,750).
+- [x] Evaluate with seed 2025 over the same 409,600 validation tokens.
+- [x] Generate with the same prompt, seed 42, temperature 0.8, and top-k 40.
 
 **Experiment gate:** no comparison claim until both models use the fixed evaluation protocol.
 
 ### 7. Report and publish (30 minutes)
 
-- [ ] Add the RoPE row to `reports/experiments.csv`.
-- [ ] Create `reports/tinystories-rope-ablation.md`.
-- [ ] Compare parameters, loss, perplexity, throughput, VRAM, generation speed, and sample quality.
-- [ ] Explain improvements, regressions, and experimental limitations honestly.
-- [ ] Export a compact BF16 inference checkpoint if the run is valid.
-- [ ] Commit and push source, tests, config, structured results, and report.
+- [x] Add the RoPE row to `reports/experiments.csv`.
+- [x] Create `reports/tinystories-rope-ablation.md`.
+- [x] Compare parameters, loss, perplexity, throughput, VRAM, generation speed, and sample quality.
+- [x] Explain improvements, regressions, and experimental limitations honestly.
+- [x] Export a compact BF16 inference checkpoint if the run is valid.
+- [x] Commit and push source, tests, config, structured results, and report.
 - [ ] Attach weights to a GitHub Release only after checksum verification.
 
 ## Baseline to beat or explain
@@ -130,3 +130,6 @@ happens rather than selecting only favorable evidence.
 - 2026-09-16: full-size 20-step BF16 smoke test passed while Ollama held 6.53 GiB VRAM.
   Training loss fell 9.0263 to 6.1024, validation loss fell 9.0389 to 6.6950, typical throughput
   was 25k–29k tokens/s, and peak PyTorch memory was 1.11 GiB reserved.
+- 2026-09-17: completed the controlled 5,000-step RoPE run. Fixed validation loss improved from
+  1.9026 to 1.8401 and perplexity from 6.70 to 6.30 while removing 262,144 parameters. Best
+  checkpoint was step 4,750; peak training memory was 1.11 GiB reserved.
