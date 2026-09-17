@@ -66,7 +66,7 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 
 ### Training gates
 
-- [ ] Pass one-batch overfitting.
+- [x] Pass one-batch overfitting (`8.9948 -> 0.0000` in 300 steps).
 - [ ] Pass a 20-step full-size BF16 GPU smoke test.
 - [ ] Create a controlled 5,000-step RoPE + SwiGLU configuration.
 - [ ] Train and select the best deterministic-validation checkpoint.
@@ -86,3 +86,5 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 - 2026-09-17: integrated the validated MLP switch. Both real GELU checkpoints load strictly; a
   full-size 29,204,992-parameter RoPE + SwiGLU model passes BF16 forward/backward. All 41 tests
   pass.
+- 2026-09-17: RoPE + SwiGLU one-batch overfit passed on CPU: loss 8.9948 to 0.0000 in
+  300 steps.
