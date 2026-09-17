@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Overfit one Shakespeare batch to verify the complete learning path."""
+"""Overfit one fixed batch to verify the complete learning path."""
 
 from __future__ import annotations
 
