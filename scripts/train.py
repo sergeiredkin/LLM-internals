@@ -88,7 +88,8 @@ def main() -> None:
     print(f"Parameters:    {model.num_parameters():,}")
     print(f"Tokens/update: {config.tokens_per_update:,}")
 
-    last_time = time.perf_counter()
+    training_started = time.perf_counter()
+    last_time = training_started
     for step in range(start_step, config.training.max_steps):
         if step % config.training.eval_interval == 0:
             train_loss = estimate_loss(
@@ -178,7 +179,14 @@ def main() -> None:
         config.training.max_steps,
         best_val_loss,
     )
+    training_seconds = time.perf_counter() - training_started
+    hours, remainder = divmod(int(training_seconds), 3600)
+    minutes, seconds = divmod(remainder, 60)
     print(f"Training complete. Checkpoints: {output_dir}")
+    print(
+        f"Training wall time: {hours:02d}:{minutes:02d}:{seconds:02d} "
+        f"({training_seconds:.1f} seconds)"
+    )
     if device.type == "cuda":
         peak_allocated = torch.cuda.max_memory_allocated(device) / 2**30
         peak_reserved = torch.cuda.max_memory_reserved(device) / 2**30

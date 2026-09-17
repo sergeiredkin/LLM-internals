@@ -1,0 +1,42 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-17T07:53:48.366023+00:00",
+  "git_commit": "82509be7cfb2402e59be97f6a86398671d5ecea4",
+  "checkpoint": "runs/tinystories-rope-swiglu/best.pt",
+  "checkpoint_sha256": "6d1c057bf785a8451da5dcd672a0b92bfa303c52b664c55a3615326fe6132096",
+  "checkpoint_step": 4750,
+  "training_best_val_loss": 1.8794513368606567,
+  "model": {
+    "parameters": 29204992,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 8,
+    "position_encoding": "rope",
+    "mlp_type": "swiglu"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.8315851294994354,
+    "perplexity": 6.2437760120455845,
+    "seconds": 2.954727651000212,
+    "tokens_per_second": 138625.297617987
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 200,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 1.5970826630000374,
+    "tokens_per_second": 125.22833328132829,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip loved to play hide and seek with his animal friends. One day, Poppy and his friends wanted to have a race.\n\nZoom and his friends tried to do something hard. But they were too clever together. They did not know what to do. They decided to ask Zackers for help.\n\nZip had an idea. He said, \"Let's play hide and seek. I will hide behind the trees and then you will find me.\" But Zack did not want to give up. He thought it was a good idea.\n\nPip and his friends started to fight. They hid behind the trees and hid behind the trees. They did not see Zippo. Sam and his friends were scared. They did not know what to do.\n\nThen, they heard a voice. It was a voice. It was a small, scary cat. It said, \"Tom, come here! I'm hiding! I need my help!\"\n\n"
+  },
+  "peak_inference_vram_gib": 0.623046875
+}

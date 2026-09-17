@@ -110,7 +110,7 @@ happens rather than selecting only favorable evidence.
 
 ## Later work — not tomorrow's first experiment
 
-- [ ] SwiGLU controlled ablation
+- [x] SwiGLU controlled ablation
 - [ ] Grouped-query attention controlled ablation
 - [ ] KV-cache generation and latency benchmark
 - [ ] Top-p sampling comparison
@@ -133,4 +133,5 @@ happens rather than selecting only favorable evidence.
 - 2026-09-17: completed the controlled 5,000-step RoPE run. Fixed validation loss improved from
   1.9026 to 1.8401 and perplexity from 6.70 to 6.30 while removing 262,144 parameters. Best
   checkpoint was step 4,750; peak training memory was 1.11 GiB reserved.
-- 2026-09-17: started [[stage-3-swiglu]] and validated the isolated, parameter-matched component.
+- 2026-09-17: completed [[stage-3-swiglu]]. Fixed loss improved slightly to 1.8316, with slower
+  inference and a worse fixed sample; the report treats the result as mixed rather than decisive.

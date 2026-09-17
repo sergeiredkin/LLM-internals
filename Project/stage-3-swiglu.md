@@ -1,6 +1,6 @@
 ---
 type: project
-status: doing
+status: done
 ---
 # Stage 3 — SwiGLU Controlled Ablation
 
@@ -68,16 +68,16 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 
 - [x] Pass one-batch overfitting (`8.9948 -> 0.0000` in 300 steps).
 - [x] Pass a 20-step full-size BF16 GPU smoke test.
-- [ ] Create a controlled 5,000-step RoPE + SwiGLU configuration.
-- [ ] Train and select the best deterministic-validation checkpoint.
+- [x] Create a controlled 5,000-step RoPE + SwiGLU configuration.
+- [x] Train and select the best deterministic-validation checkpoint (step 4,750).
 
 ### Evaluation and publication
 
-- [ ] Evaluate the same fixed 409,600 validation tokens with seed 2025.
-- [ ] Generate with the same prompt and seed 42.
-- [ ] Compare against RoPE loss 1.8401 and perplexity 6.30.
-- [ ] Report parameters, speed, VRAM, loss, perplexity, and sample quality.
-- [ ] Commit and push code, tests, config, results, and report.
+- [x] Evaluate the same fixed 409,600 validation tokens with seed 2025.
+- [x] Generate with the same prompt and seed 42.
+- [x] Compare against RoPE loss 1.8401 and perplexity 6.30.
+- [x] Report parameters, speed, VRAM, loss, perplexity, and sample quality.
+- [x] Commit and push code, tests, config, results, and report.
 
 ## Log
 
@@ -91,3 +91,6 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 - 2026-09-17: full-size 20-step BF16 smoke test passed. Training loss fell 9.0892 to 6.3621,
   validation loss fell 9.0497 to 6.8153, typical throughput reached 24k–28k tokens/s, gradients
   remained finite, and peak PyTorch memory was 1.19 GiB reserved.
+- 2026-09-17: controlled 5,000-step run completed in 34m 59s. Fixed validation loss improved
+  slightly from 1.8401 to 1.8316 and perplexity from 6.30 to 6.24, but evaluation/generation were
+  about 11% slower and the fixed sample was less coherent.

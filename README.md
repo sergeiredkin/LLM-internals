@@ -173,9 +173,13 @@ fixed validation loss from **1.9026 to 1.8401** (perplexity 6.70 to 6.30). Datas
 architecture dimensions, optimizer, and 5,000-step budget were held constant. See
 `reports/tinystories-rope-ablation.md` for the protocol, limitations, and generated sample.
 
+A parameter-matched SwiGLU experiment then reached **1.8316 loss** and **6.24 perplexity** with
+65,536 fewer parameters than RoPE + GELU. The gain was small, inference was about 11% slower, and
+the fixed generated sample was less coherent. See `reports/tinystories-swiglu-ablation.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** RoPE done; next are SwiGLU, GQA, KV cache, and top-p sampling
+3. **In progress:** RoPE and SwiGLU done; next are GQA, KV cache, and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation
