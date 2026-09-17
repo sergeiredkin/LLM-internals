@@ -62,8 +62,8 @@ tests.
 ### 5. Run inexpensive behavior checks (30–45 minutes)
 
 - [x] Run the one-batch overfit test with RoPE (`8.9944 -> 0.0000` in 300 steps).
-- [ ] Run a short GPU smoke train while Ollama remains available.
-- [ ] Check loss decreases, gradients remain finite, and VRAM stays within budget.
+- [x] Run a short GPU smoke train while Ollama remains available.
+- [x] Check loss decreases, gradients remain finite, and VRAM stays within budget.
 - [x] Save `configs/tinystories-rope-smoke.yaml` separately from the baseline config.
 
 **Training gate:** do not launch the full run unless RoPE can overfit one batch and complete the
@@ -127,3 +127,6 @@ happens rather than selecting only favorable evidence.
   full RoPE model has 29,270,528 parameters, passes BF16 forward/backward, and all 32 tests pass.
   The published learned-position checkpoint still loads strictly.
 - 2026-09-16: RoPE one-batch overfit passed on CPU: loss 8.9944 to 0.0000 in 300 steps.
+- 2026-09-16: full-size 20-step BF16 smoke test passed while Ollama held 6.53 GiB VRAM.
+  Training loss fell 9.0263 to 6.1024, validation loss fell 9.0389 to 6.6950, typical throughput
+  was 25k–29k tokens/s, and peak PyTorch memory was 1.11 GiB reserved.
