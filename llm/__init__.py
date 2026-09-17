@@ -9,12 +9,15 @@ from .config import (
     load_config,
 )
 from .data import TokenCorpus, prepare_char_corpus
+from .layers import SwiGLU, matched_swiglu_hidden_size
 from .model import GPT
 from .rope import RotaryEmbedding, rotate_half
 from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_from_json
 
 __all__ = [
     "GPT",
+    "SwiGLU",
+    "matched_swiglu_hidden_size",
     "RotaryEmbedding",
     "rotate_half",
     "CharTokenizer",
