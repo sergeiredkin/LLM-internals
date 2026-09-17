@@ -1,5 +1,6 @@
 """Reusable components for the learnGPT training project."""
 
+from .attention import repeat_kv
 from .config import (
     DataConfig,
     ExperimentConfig,
@@ -20,6 +21,7 @@ __all__ = [
     "matched_swiglu_hidden_size",
     "RotaryEmbedding",
     "rotate_half",
+    "repeat_kv",
     "CharTokenizer",
     "BPETokenizer",
     "load_tokenizer",

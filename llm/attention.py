@@ -10,6 +10,22 @@ from .config import ModelConfig
 from .rope import RotaryEmbedding
 
 
+def repeat_kv(x: torch.Tensor, repeats: int) -> torch.Tensor:
+    """Expand shared K/V heads to match query heads for standard SDPA.
+
+    For two KV heads and four repeats, head order becomes
+    ``[kv0, kv0, kv0, kv0, kv1, kv1, kv1, kv1]``.
+    """
+
+    if x.ndim != 4:
+        raise ValueError("K/V tensor must have shape (batch, heads, sequence, head_dim)")
+    if repeats <= 0:
+        raise ValueError("repeats must be positive")
+    if repeats == 1:
+        return x
+    return x.repeat_interleave(repeats, dim=1)
+
+
 class CausalSelfAttention(nn.Module):
     """Multi-head/GQA causal attention without an inference cache yet."""
 
@@ -47,8 +63,8 @@ class CausalSelfAttention(nn.Module):
 
         if self.n_kv_heads != self.n_heads:
             repeats = self.n_heads // self.n_kv_heads
-            k = k.repeat_interleave(repeats, dim=1)
-            v = v.repeat_interleave(repeats, dim=1)
+            k = repeat_kv(k, repeats)
+            v = repeat_kv(v, repeats)
 
         output = F.scaled_dot_product_attention(
             q,

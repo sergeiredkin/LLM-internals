@@ -135,3 +135,4 @@ happens rather than selecting only favorable evidence.
   checkpoint was step 4,750; peak training memory was 1.11 GiB reserved.
 - 2026-09-17: completed [[stage-3-swiglu]]. Fixed loss improved slightly to 1.8316, with slower
   inference and a worse fixed sample; the report treats the result as mixed rather than decisive.
+- 2026-09-17: started [[stage-3-gqa]] by isolating and validating 8-query/2-KV-head sharing.
