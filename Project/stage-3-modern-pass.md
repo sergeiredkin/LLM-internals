@@ -1,6 +1,6 @@
 ---
 type: project
-status: todo
+status: doing
 ---
 # Stage 3 — Modern Architecture Pass
 
@@ -29,21 +29,21 @@ position model in `reports/tinystories-baseline.md` is the control.
 
 ### 2. Implement the smallest reusable component (45–60 minutes)
 
-- [ ] Add `RotaryEmbedding` and `rotate_half` in a focused module.
-- [ ] Precompute/cache cosine and sine values without trainable parameters.
-- [ ] Preserve device, dtype, and head shape `(batch, heads, sequence, head_dim)`.
-- [ ] Require an even attention head dimension.
-- [ ] Keep `position_encoding: learned` fully backward-compatible.
+- [x] Add `RotaryEmbedding` and `rotate_half` in a focused module.
+- [x] Precompute/cache cosine and sine values without trainable parameters.
+- [x] Preserve device, dtype, and head shape `(batch, heads, sequence, head_dim)`.
+- [x] Require an even attention head dimension.
+- [x] Keep `position_encoding: learned` fully backward-compatible.
 
 **Implementation gate:** existing learned-position checkpoints must still load and generate.
 
 ### 3. Prove the mathematics (30–45 minutes)
 
-- [ ] Test that position zero leaves vectors unchanged.
-- [ ] Test that rotation preserves each vector's L2 norm.
-- [ ] Test a hand-calculated 2D rotation.
-- [ ] Test relative-position dot-product invariance under a shared position shift.
-- [ ] Test shapes, BF16/FP32 behavior, and finite gradients.
+- [x] Test that position zero leaves vectors unchanged.
+- [x] Test that rotation preserves each vector's L2 norm.
+- [x] Test a hand-calculated 2D rotation.
+- [x] Test relative-position dot-product invariance under a shared position shift.
+- [x] Test shapes, BF16/FP32 behavior, and finite gradients.
 
 **Correctness gate:** all old and new unit tests pass on CPU.
 
@@ -120,5 +120,6 @@ happens rather than selecting only favorable evidence.
 ## Log
 
 - 2026-09-16: deterministic learned-position baseline and public inference release completed.
-- 2026-09-16: added the RoPE derivation, numeric examples, and learning questions; model code is
-  intentionally unchanged until the learning gate is complete.
+- 2026-09-16: added the RoPE derivation, numeric examples, and learning questions.
+- 2026-09-16: implemented and tested isolated RoPE primitives. All 30 tests pass; the GPT and its
+  checkpoints remain unchanged.

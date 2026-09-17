@@ -10,10 +10,13 @@ from .config import (
 )
 from .data import TokenCorpus, prepare_char_corpus
 from .model import GPT
+from .rope import RotaryEmbedding, rotate_half
 from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_from_json
 
 __all__ = [
     "GPT",
+    "RotaryEmbedding",
+    "rotate_half",
     "CharTokenizer",
     "BPETokenizer",
     "load_tokenizer",
