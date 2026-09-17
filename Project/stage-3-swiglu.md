@@ -67,7 +67,7 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 ### Training gates
 
 - [x] Pass one-batch overfitting (`8.9948 -> 0.0000` in 300 steps).
-- [ ] Pass a 20-step full-size BF16 GPU smoke test.
+- [x] Pass a 20-step full-size BF16 GPU smoke test.
 - [ ] Create a controlled 5,000-step RoPE + SwiGLU configuration.
 - [ ] Train and select the best deterministic-validation checkpoint.
 
@@ -88,3 +88,6 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
   pass.
 - 2026-09-17: RoPE + SwiGLU one-batch overfit passed on CPU: loss 8.9948 to 0.0000 in
   300 steps.
+- 2026-09-17: full-size 20-step BF16 smoke test passed. Training loss fell 9.0892 to 6.3621,
+  validation loss fell 9.0497 to 6.8153, typical throughput reached 24k–28k tokens/s, gradients
+  remained finite, and peak PyTorch memory was 1.19 GiB reserved.
