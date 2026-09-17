@@ -35,6 +35,19 @@ class ConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "even"):
             config.validate()
 
+    def test_invalid_mlp_type_is_rejected(self) -> None:
+        config = ExperimentConfig(model=ModelConfig(mlp_type="unknown"))
+        with self.assertRaisesRegex(ValueError, "mlp_type"):
+            config.validate()
+
+    def test_legacy_config_defaults_to_gelu(self) -> None:
+        raw = load_config(ROOT / "configs" / "shakespeare.yaml").to_dict()
+        raw["model"].pop("mlp_type", None)
+        raw["model"].pop("swiglu_multiple_of", None)
+        restored = config_from_dict(raw)
+        self.assertEqual(restored.model.mlp_type, "gelu")
+        self.assertEqual(restored.model.swiglu_multiple_of, 16)
+
     def test_unknown_top_level_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "bad.yaml"

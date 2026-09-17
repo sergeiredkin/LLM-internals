@@ -59,10 +59,10 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 
 ### Integration
 
-- [ ] Add validated `mlp_type: gelu | swiglu` configuration.
-- [ ] Select the MLP implementation inside each transformer block.
-- [ ] Keep GELU as the default for old configuration/checkpoint compatibility.
-- [ ] Test forward, backward, causality, generation, and parameter count in both modes.
+- [x] Add validated `mlp_type: gelu | swiglu` configuration.
+- [x] Select the MLP implementation inside each transformer block.
+- [x] Keep GELU as the default for old configuration/checkpoint compatibility.
+- [x] Test forward, backward, causality, generation, and parameter count in both modes.
 
 ### Training gates
 
@@ -83,3 +83,6 @@ blocks, the planned model will have 65,536 fewer parameters than the RoPE contro
 
 - 2026-09-17: isolated SwiGLU and matched-width helper implemented. All 37 tests pass. GPT remains
   unchanged.
+- 2026-09-17: integrated the validated MLP switch. Both real GELU checkpoints load strictly; a
+  full-size 29,204,992-parameter RoPE + SwiGLU model passes BF16 forward/backward. All 41 tests
+  pass.

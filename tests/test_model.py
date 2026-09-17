@@ -4,6 +4,7 @@ import unittest
 import torch
 
 from llm.config import ModelConfig
+from llm.layers import MLP, SwiGLU
 from llm.model import GPT
 
 
@@ -40,9 +41,12 @@ class GPTTests(unittest.TestCase):
         first = torch.randint(0, 32, (1, 12))
         second = first.clone()
         second[:, 7:] = torch.randint(0, 32, second[:, 7:].shape)
-        for position_encoding in ("learned", "rope"):
-            with self.subTest(position_encoding=position_encoding):
-                model = GPT(tiny_config(position_encoding=position_encoding)).eval()
+        variants = (("learned", "gelu"), ("rope", "gelu"), ("rope", "swiglu"))
+        for position_encoding, mlp_type in variants:
+            with self.subTest(position_encoding=position_encoding, mlp_type=mlp_type):
+                model = GPT(
+                    tiny_config(position_encoding=position_encoding, mlp_type=mlp_type)
+                ).eval()
                 logits_a, _ = model(first)
                 logits_b, _ = model(second)
                 torch.testing.assert_close(logits_a[:, :7], logits_b[:, :7])
@@ -56,6 +60,27 @@ class GPTTests(unittest.TestCase):
         )
         self.assertIsNone(rope.position_embedding)
         self.assertTrue(all(block.attn.rope is not None for block in rope.blocks))
+
+    def test_mlp_type_selects_expected_implementation(self) -> None:
+        gelu = GPT(tiny_config(mlp_type="gelu"))
+        swiglu = GPT(tiny_config(mlp_type="swiglu"))
+        self.assertTrue(all(isinstance(block.mlp, MLP) for block in gelu.blocks))
+        self.assertTrue(all(isinstance(block.mlp, SwiGLU) for block in swiglu.blocks))
+        self.assertEqual(swiglu.blocks[0].mlp.gate_proj.out_features, 48)
+
+    def test_rope_and_swiglu_work_together(self) -> None:
+        model = GPT(tiny_config(position_encoding="rope", mlp_type="swiglu"))
+        tokens = torch.randint(0, 32, (2, 8))
+        logits, loss = model(tokens, tokens)
+        self.assertEqual(logits.shape, (2, 8, 32))
+        assert loss is not None
+        loss.backward()
+        self.assertTrue(
+            all(
+                parameter.grad is None or torch.isfinite(parameter.grad).all()
+                for parameter in model.parameters()
+            )
+        )
 
     def test_embeddings_are_tied(self) -> None:
         model = GPT(tiny_config(tie_embeddings=True))
@@ -77,9 +102,12 @@ class GPTTests(unittest.TestCase):
 
     def test_generate_has_requested_length(self) -> None:
         prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
-        for position_encoding in ("learned", "rope"):
-            with self.subTest(position_encoding=position_encoding):
-                model = GPT(tiny_config(position_encoding=position_encoding)).eval()
+        variants = (("learned", "gelu"), ("rope", "gelu"), ("rope", "swiglu"))
+        for position_encoding, mlp_type in variants:
+            with self.subTest(position_encoding=position_encoding, mlp_type=mlp_type):
+                model = GPT(
+                    tiny_config(position_encoding=position_encoding, mlp_type=mlp_type)
+                ).eval()
                 output = model.generate(prompt, max_new_tokens=5, top_k=5)
                 self.assertEqual(output.shape, (1, 8))
                 torch.testing.assert_close(output[:, :3], prompt)

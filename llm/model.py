@@ -11,7 +11,7 @@ from torch.nn import functional as F
 
 from .attention import CausalSelfAttention
 from .config import ModelConfig
-from .layers import MLP, RMSNorm
+from .layers import MLP, RMSNorm, SwiGLU, matched_swiglu_hidden_size
 
 
 class TransformerBlock(nn.Module):
@@ -22,7 +22,18 @@ class TransformerBlock(nn.Module):
         self.attn_norm = RMSNorm(config.d_model, config.norm_eps)
         self.attn = CausalSelfAttention(config)
         self.mlp_norm = RMSNorm(config.d_model, config.norm_eps)
-        self.mlp = MLP(config)
+        if config.mlp_type == "swiglu":
+            hidden_size = matched_swiglu_hidden_size(
+                config.d_model, config.mlp_ratio, config.swiglu_multiple_of
+            )
+            self.mlp = SwiGLU(
+                config.d_model,
+                hidden_size,
+                dropout=config.dropout,
+                bias=config.bias,
+            )
+        else:
+            self.mlp = MLP(config)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x + self.attn(self.attn_norm(x))

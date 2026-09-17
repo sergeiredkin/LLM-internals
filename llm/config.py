@@ -20,6 +20,8 @@ class ModelConfig:
     n_heads: int = 6
     n_kv_heads: int = 6
     mlp_ratio: float = 4.0
+    mlp_type: str = "gelu"  # gelu | swiglu
+    swiglu_multiple_of: int = 16
     dropout: float = 0.1
     norm_eps: float = 1e-5
     bias: bool = False
@@ -38,6 +40,10 @@ class ModelConfig:
             raise ValueError("model.n_heads must be divisible by model.n_kv_heads")
         if self.mlp_ratio <= 0:
             raise ValueError("model.mlp_ratio must be positive")
+        if self.mlp_type not in {"gelu", "swiglu"}:
+            raise ValueError("model.mlp_type must be 'gelu' or 'swiglu'")
+        if self.swiglu_multiple_of <= 0:
+            raise ValueError("model.swiglu_multiple_of must be positive")
         if not 0 <= self.dropout < 1:
             raise ValueError("model.dropout must be in [0, 1)")
         if self.norm_eps <= 0:

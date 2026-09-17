@@ -137,6 +137,7 @@ def main() -> None:
             "n_heads": config.model.n_heads,
             "n_kv_heads": config.model.n_kv_heads,
             "position_encoding": config.model.position_encoding,
+            "mlp_type": config.model.mlp_type,
         },
         "validation": {
             "seed": args.evaluation_seed,
