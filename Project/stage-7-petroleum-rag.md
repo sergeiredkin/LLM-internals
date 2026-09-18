@@ -112,6 +112,13 @@ python -m scripts.query_eia \
   --yoy-period 2025-01
 ```
 
+## Week 3 BSEE pilot
+
+`reports/bsee-week3-pilot.md` documents the constrained BSEE layer. Official ranked operator exports
+were found, but their aggregate fixed-width columns are not yet safe to interpret automatically. The
+importer therefore requires an explicit mapped CSV with oil, gas, and water units plus source URL and
+checksum. No ambiguous BSEE values are loaded.
+
 ## Next steps
 
 - [x] Select and document a 12-report USGS pilot corpus and record checksums.
@@ -122,5 +129,6 @@ python -m scripts.query_eia \
 - [ ] Establish BM25 metrics on the fixed query set.
 - [x] Add context assembly with citations and an abstention rule.
 - [x] Add EIA normalized local storage, ingestion, read-only queries, and calculations.
+- [x] Add a strict BSEE production importer with provenance and fail-closed schema validation.
 - [ ] Create petroleum instruction examples only from retrieved, licensed evidence.
 - [ ] Train and evaluate a small QLoRA adapter.

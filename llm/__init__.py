@@ -10,6 +10,7 @@ from .config import (
     config_from_dict,
     load_config,
 )
+from .bsee import BSEEProduction
 from .data import TokenCorpus, prepare_char_corpus
 from .eia import (
     EIAObservation,
@@ -63,6 +64,7 @@ from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_fr
 
 __all__ = [
     "GPT",
+    "BSEEProduction",
     "EIAObservation",
     "connect",
     "observation_from_record",
