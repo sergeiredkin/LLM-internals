@@ -14,6 +14,21 @@ from urllib.request import Request, urlopen
 
 from llm.eia import connect, insert_observations, observation_from_record
 
+def load_local_env(path: Path = Path(".env")) -> None:
+    """Load simple KEY=VALUE entries without overriding shell environment variables."""
+
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        value = value.strip().strip('"').strip("'")
+        if value:
+            os.environ.setdefault(key.strip(), value)
+
+
 DATASETS = {
     "crude-production": ("petroleum/crd/crpdn", "monthly"),
     "inventories": ("petroleum/stoc/wstk", "weekly"),
@@ -59,6 +74,7 @@ def fetch(path: str, frequency: str, args: argparse.Namespace) -> tuple[str, lis
 
 
 def main() -> None:
+    load_local_env()
     args = parse_args()
     if args.length <= 0:
         raise SystemExit("--length must be positive")
