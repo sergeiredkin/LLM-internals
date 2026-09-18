@@ -194,9 +194,13 @@ Per-output-channel INT8 quantization reduces the modern model's BF16 inference e
 before `F.linear`, so it is a storage lesson rather than a native INT8 speed claim. See
 `reports/tinystories-int8-quantization.md`.
 
+Packed groupwise INT4 further reduces the export to 20.3 MiB (59.6% below BF16) with a 0.010405
+fixed-loss increase. Group sizes 32, 64, and 128 were measured; group 64 is the selected balance.
+See `reports/tinystories-int4-quantization.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** modern architecture and INT8 done; next are packed INT4 and LoRA/QLoRA
+3. **In progress:** modern architecture, INT8, and packed INT4 done; next is LoRA/QLoRA
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

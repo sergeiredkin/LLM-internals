@@ -73,5 +73,5 @@ required for that claim.
 
 ## Next
 
-Implement groupwise packed INT4, starting with packing/unpacking tests and exact storage accounting.
-Do not begin QLoRA until the frozen INT4 base is understood and validated.
+Packed groupwise INT4 is complete in [[stage-5-int4-quantization]]. Next, implement ordinary LoRA
+before combining adapters with the frozen INT4 base for QLoRA.

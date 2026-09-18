@@ -1,0 +1,29 @@
+{
+  "experiment": "TinyStories hidden-linear packed INT4 group-size sweep",
+  "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+  "evaluation_seed": 2025,
+  "validation_tokens": 409600,
+  "baseline_loss": 1.8376270139217377,
+  "groups": [
+    {
+      "group_size": 32,
+      "validation_loss": 1.8461033666133881,
+      "perplexity": 6.3350858578250175,
+      "persistent_storage_bytes_with_fp32_remainder": 30182400
+    },
+    {
+      "group_size": 64,
+      "validation_loss": 1.8480320537090302,
+      "perplexity": 6.34731604648112,
+      "persistent_storage_bytes_with_fp32_remainder": 28879872
+    },
+    {
+      "group_size": 128,
+      "validation_loss": 1.849963414669037,
+      "perplexity": 6.359586850755946,
+      "persistent_storage_bytes_with_fp32_remainder": 28187648
+    }
+  ],
+  "decision": "group size 64 balances scale overhead and validation degradation",
+  "timing_note": "group 32 and 128 quality runs shared the GPU concurrently; their timing is intentionally omitted"
+}

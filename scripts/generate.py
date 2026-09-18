@@ -11,7 +11,7 @@ import torch
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
 from llm.model import GPT
-from llm.quantization import replace_linear_with_int8
+from llm.quantization import replace_linear_with_int4, replace_linear_with_int8
 from llm.tokenizer import tokenizer_from_json
 from llm.training import autocast_context, resolve_device
 
@@ -50,10 +50,10 @@ def main() -> None:
     device = resolve_device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     checkpoint_format = checkpoint.get("format_version")
-    if checkpoint_format not in {1, 2, 3}:
+    if checkpoint_format not in {1, 2, 3, 4}:
         raise SystemExit("Unsupported checkpoint format")
     config = config_from_dict(checkpoint["config"])
-    if checkpoint_format in {2, 3}:
+    if checkpoint_format in {2, 3, 4}:
         tokenizer = tokenizer_from_json(checkpoint["tokenizer_json"])
         checkpoint_step = checkpoint["source_step"]
     else:
@@ -79,6 +79,13 @@ def main() -> None:
         if checkpoint.get("kind") != "int8-inference":
             raise SystemExit("Unsupported format-version-3 checkpoint kind")
         replace_linear_with_int8(model, exclude={"lm_head"})
+    elif checkpoint_format == 4:
+        if checkpoint.get("kind") != "int4-inference":
+            raise SystemExit("Unsupported format-version-4 checkpoint kind")
+        group_size = int(checkpoint["quantization"]["group_size"])
+        replace_linear_with_int4(
+            model, group_size=group_size, exclude={"lm_head"}
+        )
     model.load_state_dict(checkpoint["model"])
     model.to(device).eval()
     prompt = torch.tensor([prompt_ids], dtype=torch.long, device=device)

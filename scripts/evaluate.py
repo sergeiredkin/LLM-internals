@@ -17,7 +17,11 @@ import torch
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
 from llm.model import GPT
-from llm.quantization import module_storage_bytes, replace_linear_with_int8
+from llm.quantization import (
+    module_storage_bytes,
+    replace_linear_with_int4,
+    replace_linear_with_int8,
+)
 from llm.training import (
     autocast_context,
     estimate_loss,
@@ -39,11 +43,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--top-k", type=int, default=40)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
-    parser.add_argument(
+    quantization = parser.add_mutually_exclusive_group()
+    quantization.add_argument(
         "--int8-hidden",
         action="store_true",
         help="quantize transformer linear weights but preserve the tied embedding/LM head",
     )
+    quantization.add_argument(
+        "--int4-hidden",
+        action="store_true",
+        help="groupwise-quantize and pack transformer weights as INT4",
+    )
+    parser.add_argument("--int4-group-size", type=int, default=64)
     return parser.parse_args()
 
 
@@ -87,6 +98,10 @@ def main() -> None:
     quantized_modules: list[str] = []
     if args.int8_hidden:
         quantized_modules = replace_linear_with_int8(model, exclude={"lm_head"})
+    elif args.int4_hidden:
+        quantized_modules = replace_linear_with_int4(
+            model, group_size=args.int4_group_size, exclude={"lm_head"}
+        )
     model_storage_bytes = module_storage_bytes(model)
     model.to(device).eval()
 
@@ -144,7 +159,13 @@ def main() -> None:
             "parameters": parameter_count,
             "persistent_storage_bytes": model_storage_bytes,
             "float32_storage_bytes": float_storage_bytes,
-            "quantization": "int8-hidden-per-channel" if args.int8_hidden else None,
+            "quantization": (
+                "int8-hidden-per-channel"
+                if args.int8_hidden
+                else f"int4-hidden-group-{args.int4_group_size}"
+                if args.int4_hidden
+                else None
+            ),
             "quantized_linear_modules": len(quantized_modules),
             "vocab_size": config.model.vocab_size,
             "context_length": config.model.context_length,

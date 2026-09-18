@@ -1,0 +1,46 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-18T07:48:41.790660+00:00",
+  "git_commit": "ed79f9c65f916d0333d23e6b993575c316ad7c9a",
+  "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+  "checkpoint_sha256": "949eb54da8689369689310d19e0d877bc762166b9f5f8b721263f483af7ad189",
+  "checkpoint_step": 4750,
+  "training_best_val_loss": 1.888797059059143,
+  "model": {
+    "parameters": 26059264,
+    "persistent_storage_bytes": 28879872,
+    "float32_storage_bytes": 104238080,
+    "quantization": "int4-hidden-group-64",
+    "quantized_linear_modules": 56,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 2,
+    "position_encoding": "rope",
+    "mlp_type": "swiglu"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.8480320537090302,
+    "perplexity": 6.34731604648112,
+    "seconds": 3.167447841999092,
+    "tokens_per_second": 129315.46798304546
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 180,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 3.4813521500000206,
+    "tokens_per_second": 51.70404838246511,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip was very shy and didn't like to play with other animals. One day,Fin's friend, a little bird named Blue, asked him \"What's wrong, Bobo?\"\n\n\"My toy car is stuck in the mud,\" Buzz replied. \"I can't get it out.\"\n\nHo's mom tried to help him, but he couldn't. \"Don't worry, Blue. I'll help you get it out,\" she said.\n\nBut when Blue looked around, he saw a bird with a broken wing. Blue felt sad for the bird and wanted to help. \"I will help you, Mr. Owl,\" said Blue. \"That's a good idea,\" replied the bird.\n\nPo learned that sometimes, it's okay to ask for help when you need it. And he felt happy knowing that he could help others. The end."
+  },
+  "peak_inference_vram_gib": 0.48828125
+}
