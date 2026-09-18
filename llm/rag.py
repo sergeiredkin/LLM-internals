@@ -227,6 +227,12 @@ def assemble_context(
         header = f"{citation} {result.chunk.title or result.chunk.document_id}"
         if result.chunk.source:
             header += f" — {result.chunk.source}"
+        page = (result.chunk.metadata or {}).get("page")
+        source_id = (result.chunk.metadata or {}).get("source_id")
+        if source_id:
+            header += f" [source_id: {source_id}]"
+        if page:
+            header += f" [page: {page}]"
         section = f"{header}\n{result.chunk.text}"
         separator = "\n\n" if sections else ""
         if used + len(separator) + len(section) > max_characters:

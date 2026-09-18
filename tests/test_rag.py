@@ -86,6 +86,15 @@ class RAGTests(unittest.TestCase):
         self.assertIn("cuttings", result.context)
         self.assertEqual(result.results[0].chunk.document_id, "drilling")
 
+    def test_petroleum_context_includes_source_id_and_page(self) -> None:
+        chunk = Chunk(
+            "petroleum#page-7#chunk-0", "petroleum#page-7", "reservoir pressure", "report.pdf",
+            "Petroleum report", {"source_id": "usgs-001", "page": "7"},
+        )
+        result = assemble_context(BM25Retriever([chunk]), "reservoir pressure")
+        self.assertIn("[source_id: usgs-001]", result.context)
+        self.assertIn("[page: 7]", result.context)
+
     def test_context_abstains_without_lexical_evidence(self) -> None:
         chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]
         result = assemble_context(BM25Retriever(chunks), "quantum chromodynamics")

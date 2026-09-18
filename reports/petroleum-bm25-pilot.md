@@ -25,8 +25,8 @@ geology, traps, reservoirs, source rocks, petroleum systems, and resource-assess
 
 ```text
 Hit rate@5: 0.800
-Recall@5:   0.800
-MRR@5:      0.603
+Recall@5:   0.818
+MRR@5:      0.683
 ```
 
 Result JSON:
@@ -43,7 +43,8 @@ must inspect the retrieved passage, citation page, unit handling, and abstention
 ## Interpretation
 
 The lexical baseline is useful enough to establish a comparison point, but 20 percent of the fixed
-questions were not retrieved at the labelled page within the top five. The misses are lexical rather
+questions were not retrieved at a labelled page within the top five. One relevance label was expanded
+after inspection because an equally valid answer passage appeared on another page. The misses are lexical rather
 than missing-corpus failures: one asks about salt as a seal while the passage uses reservoir/seal
 language, and one asks about likely hydrocarbons while the target discusses dry gas. Do not add QLoRA
 yet; first add query variants and compare dense retrieval against this baseline.

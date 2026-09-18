@@ -130,8 +130,8 @@ checksum. No ambiguous BSEE values are loaded.
 - [ ] Resolve remaining table and extraction defects.
 - [x] Normalize the selected corpus to JSONL and create a deterministic fixed query set.
 - [ ] Create deterministic train/validation splits for future adaptation.
-- [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.800, MRR@5 0.603.
-- [x] Add context assembly with citations and an abstention rule.
+- [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.818, MRR@5 0.683.
+- [x] Add context assembly with citations, page/source IDs, and an abstention rule.
 - [x] Add EIA normalized local storage, ingestion, read-only queries, and calculations.
 - [x] Add a strict BSEE production importer with provenance and fail-closed schema validation.
 - [ ] Create petroleum instruction examples only from retrieved, licensed evidence.
