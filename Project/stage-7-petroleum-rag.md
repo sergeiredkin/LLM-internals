@@ -92,13 +92,15 @@ that are not supported by the corpus.
 ## Current pilot result
 
 `reports/petroleum-pilot-week1.md` records 12 reports, 1,460 pages, 3,303 chunks, and one malformed
-page. About 12 of 50 review samples need filtering or manual attention, so the extraction pipeline
-is working but the corpus is not yet production-ready.
+page. The first filter retains 2,859 chunks and rejects 444 obvious extraction failures. About 12 of
+50 review samples need filtering or manual attention, so the extraction pipeline is working but the
+corpus is not yet production-ready.
 
 ## Next steps
 
 - [x] Select and document a 12-report USGS pilot corpus and record checksums.
 - [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
+- [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
 - [ ] Manually label the 50 pilot review records and resolve extraction defects.
 - [ ] Normalize the selected corpus to JSONL and create deterministic train/validation/query splits.
 - [ ] Establish BM25 metrics on the fixed query set.

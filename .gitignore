@@ -12,4 +12,6 @@ data/tinystories/documents/
 data/petroleum/raw/
 data/petroleum/pages.jsonl
 data/petroleum/chunks.jsonl
+data/petroleum/chunks-clean.jsonl
+data/petroleum/chunks-rejected.jsonl
 data/petroleum/review-*.jsonl

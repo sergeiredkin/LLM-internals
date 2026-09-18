@@ -55,6 +55,21 @@ usgs-of-1994-0559-south-america page 189
 
 That page must be OCR-processed or manually recovered before production use.
 
+## Automatic quality filter
+
+The first conservative filter processed all 3,303 chunks:
+
+- Clean chunks: **2,859**
+- Rejected chunks: **444**
+- Figure/map-only flags: 366
+- Too-short flags: 207
+- Corruption flags: 6
+- Bibliography flags: 2
+
+Flags can overlap. Rejected chunks are preserved in `data/petroleum/chunks-rejected.jsonl`; clean
+chunks are in `data/petroleum/chunks-clean.jsonl`. The filter does not reject tables merely because
+they contain symbols. It is a first-pass filter, not a scientific quality guarantee.
+
 ## Policy changes before scaling
 
 1. Keep page provenance for every chunk.
@@ -76,6 +91,11 @@ python -m scripts.prepare_petroleum_chunks \
   --pages data/petroleum/pages.jsonl \
   --chunks data/petroleum/chunks.jsonl \
   --review data/petroleum/review-50.jsonl
+
+python -m scripts.filter_petroleum_chunks \
+  --input data/petroleum/chunks.jsonl \
+  --clean data/petroleum/chunks-clean.jsonl \
+  --rejected data/petroleum/chunks-rejected.jsonl
 ```
 
 ## Decision

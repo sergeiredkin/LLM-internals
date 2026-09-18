@@ -21,6 +21,7 @@ from .lora import (
     trainable_parameter_count,
 )
 from .model import GPT
+from .petroleum_quality import quality_flags
 from .rag import (
     BM25Retriever,
     Chunk,
@@ -51,6 +52,7 @@ from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_fr
 
 __all__ = [
     "GPT",
+    "quality_flags",
     "Document",
     "Chunk",
     "ContextResult",
