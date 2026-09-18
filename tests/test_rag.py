@@ -2,6 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.prepare_petroleum_chunks import sample_chunks
 from llm.rag import (
     BM25Retriever,
     Chunk,
@@ -117,6 +118,14 @@ class RAGTests(unittest.TestCase):
         self.assertEqual(metrics["hit_rate_at_k"], 1.0)
         self.assertEqual(metrics["recall_at_k"], 1.0)
         self.assertEqual(metrics["mrr_at_k"], 1.0)
+
+    def test_review_sampling_spans_the_whole_corpus(self) -> None:
+        chunks = [
+            Chunk(str(index), str(index), f"text {index}", "", "", {})
+            for index in range(10)
+        ]
+        selected = sample_chunks(chunks, 4)
+        self.assertEqual([chunk.chunk_id for chunk in selected], ["0", "3", "6", "9"])
 
     def test_invalid_arguments_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "overlap"):

@@ -4,3 +4,4 @@ numpy
 pyarrow>=17,<24
 PyYAML
 tokenizers>=0.20,<1
+pypdf>=5,<7

@@ -9,3 +9,7 @@ exports/
 data/**/processed/
 data/tinystories/raw/
 data/tinystories/documents/
+data/petroleum/raw/
+data/petroleum/pages.jsonl
+data/petroleum/chunks.jsonl
+data/petroleum/review-*.jsonl

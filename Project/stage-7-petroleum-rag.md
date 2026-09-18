@@ -46,7 +46,21 @@ python -m scripts.evaluate_retrieval \
 ```
 
 No petroleum documents are included yet. `data/petroleum/README.md` defines the license and source
-manifest requirements.
+manifest requirements. The accelerated Week-1 pipeline now includes:
+
+```bash
+python -m scripts.ingest_petroleum_pdfs \
+  --manifest data/petroleum/manifest.jsonl \
+  --output data/petroleum/pages.jsonl
+
+python -m scripts.prepare_petroleum_chunks \
+  --pages data/petroleum/pages.jsonl \
+  --chunks data/petroleum/chunks.jsonl \
+  --review data/petroleum/review-50.jsonl
+```
+
+PDF pages retain page numbers and source checksums. The review file deliberately samples across the
+whole corpus so extraction defects are found before bulk ingestion.
 
 ## Evaluation protocol
 
@@ -78,7 +92,8 @@ that are not supported by the corpus.
 ## Next steps
 
 - [ ] Select and document a redistributable petroleum corpus.
-- [ ] Normalize it to JSONL and create deterministic train/validation/query splits.
+- [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
+- [ ] Normalize the selected corpus to JSONL and create deterministic train/validation/query splits.
 - [ ] Establish BM25 metrics on the fixed query set.
 - [x] Add context assembly with citations and an abstention rule.
 - [ ] Create petroleum instruction examples only from retrieved, licensed evidence.
