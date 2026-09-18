@@ -79,7 +79,7 @@ The GQA experiment will change only `n_kv_heads: 8 -> 2`, plus experiment name a
 - [x] Verify RoPE is applied before K/V head expansion.
 - [x] Verify causality and generation with 8 Q / 2 KV heads.
 - [x] Pass one-batch overfitting with preserved 4 Q / 1 KV sharing (`8.9890 -> 0.0000`).
-- [ ] Pass a 20-step full-size BF16 GPU smoke test.
+- [x] Pass a 20-step full-size BF16 GPU smoke test.
 
 ### Controlled experiment
 
@@ -99,3 +99,7 @@ The GQA experiment will change only `n_kv_heads: 8 -> 2`, plus experiment name a
 - 2026-09-17: the first overfit invocation exposed that the educational harness forced MHA. The
   harness was corrected and regression-tested to preserve the Q/KV sharing ratio. The valid GQA
   run used 4 Q / 1 KV heads and memorized the batch from loss 8.9890 to 0.0000.
+- 2026-09-17: full-size 8 Q / 2 KV BF16 smoke test passed while Ollama held 6.53 GiB VRAM.
+  Training loss fell 9.0394 to 6.4544, validation loss fell 9.0512 to 6.9138, typical throughput
+  reached 28k–30k tokens/s, gradients remained finite, and peak PyTorch memory was 1.14 GiB
+  reserved.
