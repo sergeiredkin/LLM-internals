@@ -17,6 +17,7 @@ import torch
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
 from llm.model import GPT
+from llm.quantization import module_storage_bytes, replace_linear_with_int8
 from llm.training import (
     autocast_context,
     estimate_loss,
@@ -38,6 +39,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.8)
     parser.add_argument("--top-k", type=int, default=40)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
+    parser.add_argument(
+        "--int8-hidden",
+        action="store_true",
+        help="quantize transformer linear weights but preserve the tied embedding/LM head",
+    )
     return parser.parse_args()
 
 
@@ -76,6 +82,12 @@ def main() -> None:
     corpus = TokenCorpus(config.data.processed_dir)
     model = GPT(config.model)
     model.load_state_dict(checkpoint["model"])
+    parameter_count = model.num_parameters()
+    float_storage_bytes = module_storage_bytes(model)
+    quantized_modules: list[str] = []
+    if args.int8_hidden:
+        quantized_modules = replace_linear_with_int8(model, exclude={"lm_head"})
+    model_storage_bytes = module_storage_bytes(model)
     model.to(device).eval()
 
     if device.type == "cuda":
@@ -129,7 +141,11 @@ def main() -> None:
         "checkpoint_step": int(checkpoint["step"]),
         "training_best_val_loss": float(checkpoint["best_val_loss"]),
         "model": {
-            "parameters": model.num_parameters(),
+            "parameters": parameter_count,
+            "persistent_storage_bytes": model_storage_bytes,
+            "float32_storage_bytes": float_storage_bytes,
+            "quantization": "int8-hidden-per-channel" if args.int8_hidden else None,
+            "quantized_linear_modules": len(quantized_modules),
             "vocab_size": config.model.vocab_size,
             "context_length": config.model.context_length,
             "n_layers": config.model.n_layers,

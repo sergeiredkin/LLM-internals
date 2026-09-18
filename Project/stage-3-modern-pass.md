@@ -115,7 +115,8 @@ happens rather than selecting only favorable evidence.
 - [x] KV-cache generation and latency benchmark
 - [x] Top-p sampling comparison
 - [ ] LoRA/QLoRA
-- [ ] INT4 quantization
+- [x] Per-channel INT8 quantization
+- [ ] Packed groupwise INT4 quantization
 
 ## Log
 
@@ -142,3 +143,5 @@ happens rather than selecting only favorable evidence.
   cached decoding was 1.09x faster with 7.2% lower peak allocation at 400 generated tokens.
 - 2026-09-18: completed [[stage-3-top-p]] with isolated filtering tests and a fixed-seed top-k,
   top-p, and combined comparison. The interactive default is now top-k 40 plus top-p 0.9.
+- 2026-09-18: completed [[stage-5-int8-quantization]]. Quantizing 56 hidden linear layers changed
+  fixed validation loss by only +0.000071 and reduced the BF16 export from 50.3 to 29.5 MiB.

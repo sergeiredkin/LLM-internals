@@ -11,6 +11,7 @@ import torch
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
 from llm.model import GPT
+from llm.quantization import replace_linear_with_int8
 from llm.tokenizer import tokenizer_from_json
 from llm.training import autocast_context, resolve_device
 
@@ -49,10 +50,10 @@ def main() -> None:
     device = resolve_device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     checkpoint_format = checkpoint.get("format_version")
-    if checkpoint_format not in {1, 2}:
+    if checkpoint_format not in {1, 2, 3}:
         raise SystemExit("Unsupported checkpoint format")
     config = config_from_dict(checkpoint["config"])
-    if checkpoint_format == 2:
+    if checkpoint_format in {2, 3}:
         tokenizer = tokenizer_from_json(checkpoint["tokenizer_json"])
         checkpoint_step = checkpoint["source_step"]
     else:
@@ -72,6 +73,12 @@ def main() -> None:
     if device.type == "cuda":
         torch.cuda.manual_seed_all(args.seed)
     model = GPT(config.model)
+    if checkpoint.get("dtype") == "bf16":
+        model.to(dtype=torch.bfloat16)
+    if checkpoint_format == 3:
+        if checkpoint.get("kind") != "int8-inference":
+            raise SystemExit("Unsupported format-version-3 checkpoint kind")
+        replace_linear_with_int8(model, exclude={"lm_head"})
     model.load_state_dict(checkpoint["model"])
     model.to(device).eval()
     prompt = torch.tensor([prompt_ids], dtype=torch.long, device=device)

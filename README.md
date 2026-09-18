@@ -189,9 +189,14 @@ allocated memory. See `reports/tinystories-kv-cache.md`.
 Generation supports fixed top-k filtering, adaptive top-p/nucleus filtering, or both. The reusable
 implementation is in `llm/sampling.py`; see `reports/tinystories-top-p-comparison.md`.
 
+Per-output-channel INT8 quantization reduces the modern model's BF16 inference export from 50.3 to
+29.5 MiB with only a 0.000071 fixed-loss increase. The implementation deliberately dequantizes
+before `F.linear`, so it is a storage lesson rather than a native INT8 speed claim. See
+`reports/tinystories-int8-quantization.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **Complete:** RoPE, SwiGLU, GQA, KV cache, and top-p sampling
+3. **In progress:** modern architecture and INT8 done; next are packed INT4 and LoRA/QLoRA
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

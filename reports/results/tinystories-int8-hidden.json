@@ -1,0 +1,46 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-18T07:34:13.091925+00:00",
+  "git_commit": "3ed57b9ceba99acd03d57940d21d788602d08332",
+  "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+  "checkpoint_sha256": "949eb54da8689369689310d19e0d877bc762166b9f5f8b721263f483af7ad189",
+  "checkpoint_step": 4750,
+  "training_best_val_loss": 1.888797059059143,
+  "model": {
+    "parameters": 26059264,
+    "persistent_storage_bytes": 38518784,
+    "float32_storage_bytes": 104238080,
+    "quantization": "int8-hidden-per-channel",
+    "quantized_linear_modules": 56,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 2,
+    "position_encoding": "rope",
+    "mlp_type": "swiglu"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.8376983428001403,
+    "perplexity": 6.28206245396736,
+    "seconds": 3.024995687000228,
+    "tokens_per_second": 135405.1517363268
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 200,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 2.4724285239999517,
+    "tokens_per_second": 80.89212612562623,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip was very shy and didn't like to play with other animals. One day, Pip saw a big, scary bear coming towards him. The bear was very afraid and wanted to escape. But Pip was brave and said no.\n\nBut the bear was too fast and started chasing Zack. Pip was very scared and tried to run away, but he tripped and fell. He fell and hurt his leg. The bear took True to a safe place, but True was sad and scared.\n\nThe next day, Pip met a friendly bear named Hoppy. Pip was very gentle and kind. He knew how to be careful and stay safe. Pip told Spike that when he needed help, he should go back to his house and find a new home.\n\nSatri were so happy and grateful for True's help. He thanked Zack and they continued to play hide and seek every day. Pip learned that even the smallest creature can be a big hero, and it is important to"
+  },
+  "peak_inference_vram_gib": 0.498046875
+}
