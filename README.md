@@ -177,9 +177,14 @@ A parameter-matched SwiGLU experiment then reached **1.8316 loss** and **6.24 pe
 65,536 fewer parameters than RoPE + GELU. The gain was small, inference was about 11% slower, and
 the fixed generated sample was less coherent. See `reports/tinystories-swiglu-ablation.md`.
 
+Using two K/V heads for eight query heads then reduced the cumulative model from 29.20M to
+**26.06M parameters**. Fixed loss increased slightly from 1.8316 to 1.8376, while a back-to-back
+shared-GPU benchmark improved full-sequence evaluation speed by 7%. See
+`reports/tinystories-gqa-ablation.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** RoPE and SwiGLU done; next are GQA, KV cache, and top-p sampling
+3. **In progress:** RoPE, SwiGLU, and GQA done; next are KV cache and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

@@ -2,3 +2,4 @@ experiment,position_encoding,parameters,steps,fixed_eval_seed,fixed_val_tokens,f
 TinyStories learned baseline,learned,29532672,5000,2025,409600,1.9026409352,6.7035747922,1987,1.12,158893.23,182.32,0.6035,complete
 TinyStories RoPE ablation,rope,29270528,5000,2025,409600,1.8400833225,6.2970629264,,1.11,156663.02,140.06,0.6035,complete
 TinyStories RoPE plus SwiGLU,rope+swiglu,29204992,5000,2025,409600,1.8315851295,6.2437760120,2099.7,1.19,138625.30,125.23,0.6230,complete
+TinyStories RoPE plus SwiGLU plus GQA,rope+swiglu+gqa,26059264,5000,2025,409600,1.8376270139,6.2816143775,2065.4,1.14,113963.00,98.60,0.5996,complete

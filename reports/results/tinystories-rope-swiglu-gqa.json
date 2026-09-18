@@ -1,0 +1,42 @@
+{
+  "evaluation_version": 1,
+  "evaluated_at": "2026-09-18T06:20:29.245464+00:00",
+  "git_commit": "48b1401f86c0ce342221821c2b950a26257fe6aa",
+  "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+  "checkpoint_sha256": "949eb54da8689369689310d19e0d877bc762166b9f5f8b721263f483af7ad189",
+  "checkpoint_step": 4750,
+  "training_best_val_loss": 1.888797059059143,
+  "model": {
+    "parameters": 26059264,
+    "vocab_size": 8000,
+    "context_length": 512,
+    "n_layers": 8,
+    "d_model": 512,
+    "n_heads": 8,
+    "n_kv_heads": 2,
+    "position_encoding": "rope",
+    "mlp_type": "swiglu"
+  },
+  "validation": {
+    "seed": 2025,
+    "batches": 100,
+    "batch_size": 8,
+    "tokens": 409600,
+    "loss": 1.8376270139217377,
+    "perplexity": 6.28161437747905,
+    "seconds": 3.5941341419998025,
+    "tokens_per_second": 113963.47042631402
+  },
+  "generation": {
+    "seed": 42,
+    "prompt": "Once upon a time, there was a little fox named Pip.",
+    "max_new_tokens": 200,
+    "generated_tokens": 165,
+    "temperature": 0.8,
+    "top_k": 40,
+    "seconds": 1.6735172859998784,
+    "tokens_per_second": 98.59473898497394,
+    "sample": "Once upon a time, there was a little fox named Pip. Pip was very shy and didn't like to play with other animals. One day,Fin saw a big, scary bear coming towards him. The bear was very afraid and wanted to escape. But Bobo was brave and said no.\n\nThe bear got scared and started to run. The bear was very scared and didn't know what to do. But then, he remembered that he was brave and knew he had to find some help. So, he hopped through the jungle and found a big, scary bear. The bear was very angry and hid under a tree.\n\nBree was very safe and happy. He thanked the bear for saving him from the scary bear. From that day on, Bobo never went into the forest again. He knew that he could face anything if he just tried to be brave."
+  },
+  "peak_inference_vram_gib": 0.599609375
+}

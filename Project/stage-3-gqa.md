@@ -1,6 +1,6 @@
 ---
 type: project
-status: doing
+status: done
 ---
 # Stage 3 — Grouped-Query Attention Controlled Ablation
 
@@ -83,12 +83,12 @@ The GQA experiment will change only `n_kv_heads: 8 -> 2`, plus experiment name a
 
 ### Controlled experiment
 
-- [ ] Create a 5,000-step controlled GQA configuration.
-- [ ] Train and select the best deterministic-validation checkpoint.
-- [ ] Evaluate the same fixed 409,600 tokens with seed 2025.
-- [ ] Generate with the same prompt and seed 42.
-- [ ] Report quality, speed, memory, parameters, and limitations.
-- [ ] Commit and push code, tests, configuration, results, and report.
+- [x] Create a 5,000-step controlled GQA configuration.
+- [x] Train and select the best deterministic-validation checkpoint (step 4,750).
+- [x] Evaluate the same fixed 409,600 tokens with seed 2025.
+- [x] Generate with the same prompt and seed 42.
+- [x] Report quality, speed, memory, parameters, and limitations.
+- [x] Commit and push code, tests, configuration, results, and report.
 
 ## Log
 
@@ -103,3 +103,6 @@ The GQA experiment will change only `n_kv_heads: 8 -> 2`, plus experiment name a
   Training loss fell 9.0394 to 6.4544, validation loss fell 9.0512 to 6.9138, typical throughput
   reached 28k–30k tokens/s, gradients remained finite, and peak PyTorch memory was 1.14 GiB
   reserved.
+- 2026-09-18: controlled 5,000-step run completed in 34m 25s. GQA removed 3,145,728 parameters
+  and improved back-to-back evaluation speed by 7.05%, while fixed loss increased slightly from
+  1.8316 to 1.8376. The result is a favorable efficiency trade.

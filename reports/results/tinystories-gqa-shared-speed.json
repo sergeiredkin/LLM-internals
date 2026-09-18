@@ -1,0 +1,20 @@
+{
+  "benchmark_version": 1,
+  "description": "Back-to-back MHA and GQA evaluation under the same shared-GPU condition",
+  "validation_seed": 2025,
+  "validation_tokens": 409600,
+  "generation_seed": 42,
+  "prompt": "Once upon a time, there was a little fox named Pip.",
+  "mha_control": {
+    "checkpoint": "runs/tinystories-rope-swiglu/best.pt",
+    "evaluation_tokens_per_second": 140390.07158603522,
+    "generation_tokens_per_second": 123.94697439360355,
+    "peak_inference_vram_gib": 0.623046875
+  },
+  "gqa": {
+    "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+    "evaluation_tokens_per_second": 150293.00887976566,
+    "generation_tokens_per_second": 120.59941752148546,
+    "peak_inference_vram_gib": 0.599609375
+  }
+}
