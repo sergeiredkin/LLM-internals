@@ -43,8 +43,8 @@ shape per layer = (batch, 2 KV heads, sequence, 64 head dimensions)
 At batch 1, context 512, BF16, and eight layers:
 
 ```text
-GQA cache: 8 × 2(K/V) × 1 × 2 × 512 × 64 × 2 bytes = 4 MiB
-MHA cache: 8 × 2(K/V) × 1 × 8 × 512 × 64 × 2 bytes = 16 MiB
+GQA cache: 8 × 2(K/V) × 1 × 2 × 512 × 64 × 2 bytes = 2 MiB
+MHA cache: 8 × 2(K/V) × 1 × 8 × 512 × 64 × 2 bytes = 8 MiB
 ```
 
 GQA therefore reduces cache elements by 75%.
@@ -71,11 +71,11 @@ GQA therefore reduces cache elements by 75%.
 
 ### Model integration
 
-- [ ] Maintain one cache per transformer layer.
-- [ ] Implement prompt prefill followed by one-token decoding.
-- [ ] Verify cached and uncached logits agree at every position.
+- [x] Maintain one cache per transformer layer.
+- [x] Implement model-level prompt prefill followed by one-token decoding.
+- [x] Verify cached and uncached logits agree at every position.
 - [ ] Verify greedy generated token sequences match exactly.
-- [ ] Preserve the existing uncached path and checkpoint compatibility.
+- [x] Preserve the existing uncached path and checkpoint compatibility.
 
 ### Benchmark and report
 
@@ -92,3 +92,7 @@ GQA therefore reduces cache elements by 75%.
 - 2026-09-18: integrated optional per-layer caching into attention. Token-by-token and chunked
   cached outputs match full causal attention; maximum observed FP32 difference was 1.79e-7. The
   cache retains two unexpanded GQA heads. All 57 tests pass.
+- 2026-09-18: integrated one cache per GPT block and verified token-by-token and chunked model
+  logits. The real 26M checkpoint loads strictly; CUDA BF16 cached/full logits had 0.0066 mean
+  absolute difference from kernel/batching order and 100% argmax agreement. The complete
+  512-token GQA cache is 2 MiB. All 60 tests pass.

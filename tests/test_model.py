@@ -123,6 +123,60 @@ class GPTTests(unittest.TestCase):
         self.assertEqual(output.shape, (1, 4))
         self.assertEqual(output[0, -1].item(), greedy_next_token)
 
+    def test_token_by_token_cached_logits_match_full_logits(self) -> None:
+        tokens = torch.randint(0, 32, (2, 12))
+        for position_encoding in ("learned", "rope"):
+            with self.subTest(position_encoding=position_encoding):
+                model = GPT(
+                    tiny_config(
+                        position_encoding=position_encoding,
+                        mlp_type="swiglu",
+                    )
+                ).eval()
+                caches = model.create_kv_caches(batch_size=2)
+                with torch.no_grad():
+                    full_logits, _ = model(tokens)
+                    cached_logits = torch.cat(
+                        [
+                            model(tokens[:, position : position + 1], caches=caches)[0]
+                            for position in range(tokens.shape[1])
+                        ],
+                        dim=1,
+                    )
+                torch.testing.assert_close(
+                    cached_logits, full_logits, atol=1e-5, rtol=1e-5
+                )
+                self.assertTrue(all(cache.length == 12 for cache in caches))
+
+    def test_chunked_cached_logits_match_full_logits(self) -> None:
+        model = GPT(
+            tiny_config(position_encoding="rope", mlp_type="swiglu")
+        ).eval()
+        tokens = torch.randint(0, 32, (1, 13))
+        caches = model.create_kv_caches(batch_size=1)
+        with torch.no_grad():
+            full_logits, _ = model(tokens)
+            cached_logits = torch.cat(
+                (
+                    model(tokens[:, :6], caches=caches)[0],
+                    model(tokens[:, 6:10], caches=caches)[0],
+                    model(tokens[:, 10:], caches=caches)[0],
+                ),
+                dim=1,
+            )
+        torch.testing.assert_close(cached_logits, full_logits, atol=1e-5, rtol=1e-5)
+
+    def test_invalid_model_caches_are_rejected(self) -> None:
+        model = GPT(tiny_config()).eval()
+        tokens = torch.randint(0, 32, (1, 3))
+        caches = model.create_kv_caches(batch_size=1)
+        with self.assertRaisesRegex(ValueError, "one KV cache"):
+            model(tokens, caches=caches[:-1])
+        with self.assertRaisesRegex(ValueError, "inference"):
+            model(tokens, targets=tokens, caches=caches)
+        with self.assertRaisesRegex(ValueError, "positive"):
+            model.create_kv_caches(batch_size=1, max_length=0)
+
     def test_context_limit_is_enforced(self) -> None:
         model = GPT(tiny_config(context_length=4))
         with self.assertRaisesRegex(ValueError, "exceeds context length"):

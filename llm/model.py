@@ -10,6 +10,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from .attention import CausalSelfAttention
+from .cache import LayerKVCache
 from .config import ModelConfig
 from .layers import MLP, RMSNorm, SwiGLU, matched_swiglu_hidden_size
 
@@ -35,8 +36,12 @@ class TransformerBlock(nn.Module):
         else:
             self.mlp = MLP(config)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x + self.attn(self.attn_norm(x))
+    def forward(
+        self,
+        x: torch.Tensor,
+        cache: LayerKVCache | None = None,
+    ) -> torch.Tensor:
+        x = x + self.attn(self.attn_norm(x), cache=cache)
         x = x + self.mlp(self.mlp_norm(x))
         return x
 
@@ -83,10 +88,40 @@ class GPT(nn.Module):
             nn.init.normal_(block.attn.out_proj.weight, mean=0.0, std=std)
             nn.init.normal_(block.mlp.down_proj.weight, mean=0.0, std=std)
 
+    def create_kv_caches(
+        self,
+        batch_size: int,
+        max_length: int | None = None,
+        *,
+        device: torch.device | str | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> list[LayerKVCache]:
+        """Allocate one unexpanded K/V cache for each transformer block."""
+
+        if max_length is None:
+            max_length = self.config.context_length
+        if max_length > self.config.context_length:
+            raise ValueError("cache max_length cannot exceed model context_length")
+        parameter = self.token_embedding.weight
+        cache_device = parameter.device if device is None else device
+        cache_dtype = parameter.dtype if dtype is None else dtype
+        return [
+            LayerKVCache(
+                batch_size,
+                self.config.n_kv_heads,
+                max_length,
+                self.config.head_dim,
+                device=cache_device,
+                dtype=cache_dtype,
+            )
+            for _ in self.blocks
+        ]
+
     def forward(
         self,
         input_ids: torch.Tensor,
         targets: torch.Tensor | None = None,
+        caches: list[LayerKVCache] | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor | None]:
         if input_ids.ndim != 2:
             raise ValueError("input_ids must have shape (batch, sequence)")
@@ -95,21 +130,40 @@ class GPT(nn.Module):
         batch, sequence = input_ids.shape
         if sequence == 0:
             raise ValueError("input sequence cannot be empty")
-        if sequence > self.config.context_length:
-            raise ValueError(
-                f"sequence length {sequence} exceeds context length "
-                f"{self.config.context_length}"
-            )
         if targets is not None and targets.shape != input_ids.shape:
             raise ValueError("targets must have the same shape as input_ids")
+        if caches is not None and targets is not None:
+            raise ValueError("cached forward is for inference and does not accept targets")
+
+        position_offset = 0
+        if caches is not None:
+            if len(caches) != len(self.blocks):
+                raise ValueError("one KV cache is required per transformer block")
+            cache_lengths = {cache.length for cache in caches}
+            if len(cache_lengths) != 1:
+                raise ValueError("all layer caches must have the same active length")
+            position_offset = cache_lengths.pop()
+            if any(cache.batch_size != batch for cache in caches):
+                raise ValueError("cache batch size must match input batch size")
+        total_length = position_offset + sequence
+        if total_length > self.config.context_length:
+            raise ValueError(
+                f"sequence length {total_length} exceeds context length "
+                f"{self.config.context_length}"
+            )
 
         x = self.token_embedding(input_ids)
         if self.position_embedding is not None:
-            positions = torch.arange(sequence, device=input_ids.device)
+            positions = torch.arange(
+                position_offset,
+                total_length,
+                device=input_ids.device,
+            )
             x = x + self.position_embedding(positions)
         x = self.embedding_dropout(x)
-        for block in self.blocks:
-            x = block(x)
+        for index, block in enumerate(self.blocks):
+            cache = caches[index] if caches is not None else None
+            x = block(x, cache=cache)
         logits = self.lm_head(self.final_norm(x))
 
         loss = None
