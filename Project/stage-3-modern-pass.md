@@ -149,3 +149,5 @@ happens rather than selecting only favorable evidence.
   20.3 MiB with a +0.010405 fixed-loss change; group sizes 32/64/128 were compared.
 - 2026-09-18: completed [[stage-6-lora-qlora]]. Rank-8 Q/V adapters used 106,496 trainable
   parameters; both floating-point LoRA and packed-INT4 QLoRA memorized the fixed batch.
+- 2026-09-18: started [[stage-7-petroleum-rag]] with a dependency-free BM25 baseline. No domain
+  corpus is included until licensing, provenance, and redistribution terms are documented.

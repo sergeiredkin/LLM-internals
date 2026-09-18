@@ -202,9 +202,13 @@ LoRA and QLoRA are now implemented and tested. Rank-8 Q/V adapters use 106,496 t
 parameters; both floating-point LoRA and packed-INT4 QLoRA passed fixed-batch training proofs.
 See `Project/stage-6-lora-qlora.md`.
 
+The petroleum-domain RAG foundation is now in `llm/rag.py`, with JSONL ingestion, provenance-preserving
+chunking, deterministic BM25 retrieval, and retrieval metrics. No unlicensed petroleum data is included;
+see `Project/stage-7-petroleum-rag.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **Complete:** modern architecture, INT8, packed INT4, LoRA, and QLoRA
+3. **Complete:** modern architecture, INT8, packed INT4, LoRA, and QLoRA. Next: petroleum RAG.
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

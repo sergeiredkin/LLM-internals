@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Evaluate deterministic BM25 retrieval on a JSONL corpus and labelled queries."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from llm.rag import BM25Retriever, chunk_document, load_jsonl_documents, retrieval_metrics
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--documents", type=Path, required=True)
+    parser.add_argument("--queries", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--chunk-size", type=int, default=160)
+    parser.add_argument("--overlap", type=int, default=32)
+    parser.add_argument("--top-k", type=int, default=5)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    documents = load_jsonl_documents(args.documents)
+    chunks = [
+        chunk
+        for document in documents
+        for chunk in chunk_document(
+            document, chunk_size=args.chunk_size, overlap=args.overlap
+        )
+    ]
+    with args.queries.open(encoding="utf-8") as handle:
+        queries = []
+        for line_number, line in enumerate(handle, 1):
+            try:
+                record = json.loads(line)
+                queries.append((str(record["query"]), set(map(str, record["relevant_document_ids"]))))
+            except (KeyError, TypeError, ValueError) as error:
+                raise SystemExit(f"invalid query JSONL at line {line_number}") from error
+
+    retriever = BM25Retriever(chunks)
+    metrics = retrieval_metrics(retriever, queries, top_k=args.top_k)
+    result = {
+        "documents": len(documents),
+        "chunks": len(chunks),
+        "chunk_size": args.chunk_size,
+        "overlap": args.overlap,
+        "top_k": args.top_k,
+        "metrics": metrics,
+    }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    print(f"Documents:       {len(documents)}")
+    print(f"Chunks:           {len(chunks)}")
+    print(f"Hit rate@{args.top_k}:   {metrics['hit_rate_at_k']:.3f}")
+    print(f"Recall@{args.top_k}:     {metrics['recall_at_k']:.3f}")
+    print(f"MRR@{args.top_k}:        {metrics['mrr_at_k']:.3f}")
+    print(f"Result:           {args.output}")
+
+
+if __name__ == "__main__":
+    main()

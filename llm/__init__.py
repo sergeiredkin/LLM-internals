@@ -21,6 +21,17 @@ from .lora import (
     trainable_parameter_count,
 )
 from .model import GPT
+from .rag import (
+    BM25Retriever,
+    Chunk,
+    Document,
+    RetrievalResult,
+    chunk_document,
+    load_jsonl_documents,
+    retrieval_metrics,
+    tokenize,
+    write_jsonl_documents,
+)
 from .quantization import (
     Int4Linear,
     Int8Linear,
@@ -39,6 +50,15 @@ from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_fr
 
 __all__ = [
     "GPT",
+    "Document",
+    "Chunk",
+    "RetrievalResult",
+    "BM25Retriever",
+    "chunk_document",
+    "load_jsonl_documents",
+    "write_jsonl_documents",
+    "retrieval_metrics",
+    "tokenize",
     "SwiGLU",
     "matched_swiglu_hidden_size",
     "LoRALinear",
