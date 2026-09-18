@@ -198,9 +198,13 @@ Packed groupwise INT4 further reduces the export to 20.3 MiB (59.6% below BF16) 
 fixed-loss increase. Group sizes 32, 64, and 128 were measured; group 64 is the selected balance.
 See `reports/tinystories-int4-quantization.md`.
 
+LoRA and QLoRA are now implemented and tested. Rank-8 Q/V adapters use 106,496 trainable
+parameters; both floating-point LoRA and packed-INT4 QLoRA passed fixed-batch training proofs.
+See `Project/stage-6-lora-qlora.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** modern architecture, INT8, and packed INT4 done; next is LoRA/QLoRA
+3. **Complete:** modern architecture, INT8, packed INT4, LoRA, and QLoRA
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

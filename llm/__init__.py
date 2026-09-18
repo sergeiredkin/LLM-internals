@@ -12,6 +12,14 @@ from .config import (
 )
 from .data import TokenCorpus, prepare_char_corpus
 from .layers import SwiGLU, matched_swiglu_hidden_size
+from .lora import (
+    LoRALinear,
+    apply_lora,
+    load_lora_state_dict,
+    lora_state_dict,
+    merge_lora,
+    trainable_parameter_count,
+)
 from .model import GPT
 from .quantization import (
     Int4Linear,
@@ -33,6 +41,12 @@ __all__ = [
     "GPT",
     "SwiGLU",
     "matched_swiglu_hidden_size",
+    "LoRALinear",
+    "apply_lora",
+    "merge_lora",
+    "lora_state_dict",
+    "load_lora_state_dict",
+    "trainable_parameter_count",
     "RotaryEmbedding",
     "rotate_half",
     "repeat_kv",

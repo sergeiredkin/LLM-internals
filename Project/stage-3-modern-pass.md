@@ -114,7 +114,7 @@ happens rather than selecting only favorable evidence.
 - [x] Grouped-query attention controlled ablation
 - [x] KV-cache generation and latency benchmark
 - [x] Top-p sampling comparison
-- [ ] LoRA/QLoRA
+- [x] LoRA/QLoRA
 - [x] Per-channel INT8 quantization
 - [x] Packed groupwise INT4 quantization
 
@@ -147,3 +147,5 @@ happens rather than selecting only favorable evidence.
   fixed validation loss by only +0.000071 and reduced the BF16 export from 50.3 to 29.5 MiB.
 - 2026-09-18: completed [[stage-5-int4-quantization]]. Group-64 packed INT4 reduced the export to
   20.3 MiB with a +0.010405 fixed-loss change; group sizes 32/64/128 were compared.
+- 2026-09-18: completed [[stage-6-lora-qlora]]. Rank-8 Q/V adapters used 106,496 trainable
+  parameters; both floating-point LoRA and packed-INT4 QLoRA memorized the fixed batch.

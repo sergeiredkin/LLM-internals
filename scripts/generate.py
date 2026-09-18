@@ -4,21 +4,32 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from pathlib import Path
 
 import torch
 
 from llm.config import config_from_dict
 from llm.data import TokenCorpus
+from llm.lora import apply_lora, load_lora_state_dict
 from llm.model import GPT
 from llm.quantization import replace_linear_with_int4, replace_linear_with_int8
 from llm.tokenizer import tokenizer_from_json
 from llm.training import autocast_context, resolve_device
 
 
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--adapter", type=Path, default=None)
     parser.add_argument("--prompt", default="ROMEO:\n")
     parser.add_argument("--max-new-tokens", type=int, default=300)
     parser.add_argument("--temperature", type=float, default=0.8)
@@ -87,6 +98,33 @@ def main() -> None:
             model, group_size=group_size, exclude={"lm_head"}
         )
     model.load_state_dict(checkpoint["model"])
+    adapter_description = None
+    if args.adapter is not None:
+        if checkpoint_format not in {1, 2}:
+            raise SystemExit("LoRA adapter loading currently requires a floating-point base")
+        adapter = torch.load(args.adapter, map_location="cpu", weights_only=False)
+        adapter_kind = adapter.get("kind")
+        if adapter_kind not in {"lora-adapter", "qlora-adapter"}:
+            raise SystemExit("Unsupported adapter format")
+        expected_hash = adapter.get("base_checkpoint_sha256")
+        if expected_hash is not None and file_sha256(args.checkpoint) != expected_hash:
+            raise SystemExit("Adapter does not match the selected base checkpoint")
+        quantized_base = adapter_kind == "qlora-adapter"
+        if quantized_base:
+            group_size = int(adapter["quantization"]["group_size"])
+            replace_linear_with_int4(
+                model, group_size=group_size, exclude={"lm_head"}
+            )
+        apply_lora(
+            model,
+            rank=int(adapter["rank"]),
+            alpha=float(adapter["alpha"]),
+            dropout=float(adapter.get("dropout", 0.0)),
+            target_modules=adapter["target_modules"],
+            quantized_base=quantized_base,
+        )
+        load_lora_state_dict(model, adapter["adapter"])
+        adapter_description = str(args.adapter)
     model.to(device).eval()
     prompt = torch.tensor([prompt_ids], dtype=torch.long, device=device)
 
@@ -105,7 +143,8 @@ def main() -> None:
     print(
         f"checkpoint={args.checkpoint} step={checkpoint_step} "
         f"device={device} temperature={args.temperature} top_k={args.top_k or None} "
-        f"top_p={args.top_p} kv_cache={args.use_kv_cache}"
+        f"top_p={args.top_p} kv_cache={args.use_kv_cache} "
+        f"adapter={adapter_description}"
     )
     print("-" * 72)
     print(text)
