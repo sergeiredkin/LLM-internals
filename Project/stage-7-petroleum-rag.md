@@ -101,8 +101,8 @@ is not yet production-ready.
 
 `reports/petroleum-expansion-pilot.md` records expansion from 12 to 20 checksum-verified USGS
 reports: 1,838 recovered pages, 4,613 chunks, 4,069 clean chunks, and 544 rejected chunks. The
-fixed BM25 metrics remain hit rate@5 0.800, recall@5 0.818, and MRR@5 0.683. A 100-sample review
-must be completed before expanding toward 50 reports.
+fixed BM25 metrics remain hit rate@5 0.800, recall@5 0.818, and MRR@5 0.683. A 100-sample review has an automated first pass (84 prose candidates, 16 rejected); manual
+confirmation is required before expanding toward 50 reports.
 
 ## Week 2 EIA pilot
 

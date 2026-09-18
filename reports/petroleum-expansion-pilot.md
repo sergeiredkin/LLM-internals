@@ -17,6 +17,8 @@ Original chunks:  4,613
 Clean chunks:     4,069
 Rejected chunks:    544
 Review sample:      100
+First-pass accepted: 84
+First-pass rejected:  16
 ```
 
 Rejection flags include overlapping categories:
@@ -42,7 +44,9 @@ MRR@5:      0.683
 ```
 
 The metrics did not change, which is expected because the fixed questions target the original
-reports. The expanded corpus is now large enough to add questions targeting the eight new sources.
+reports. The expanded corpus is now large enough to add questions targeting the eight new sources. The
+100-sample automated first pass labels 84 samples as prose candidates and 16 as requiring rejection
+or confirmation; the generated labels remain local for manual correction.
 
 ## Decision
 
