@@ -128,8 +128,9 @@ checksum. No ambiguous BSEE values are loaded.
 - [x] Create and manually confirm an auditable label file for the 50 pilot review records.
 - [x] Recover the malformed PDF page as a provenance-preserving figure-only record.
 - [ ] Resolve remaining table and extraction defects.
-- [ ] Normalize the selected corpus to JSONL and create deterministic train/validation/query splits.
-- [ ] Establish BM25 metrics on the fixed query set.
+- [x] Normalize the selected corpus to JSONL and create a deterministic fixed query set.
+- [ ] Create deterministic train/validation splits for future adaptation.
+- [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.800, MRR@5 0.603.
 - [x] Add context assembly with citations and an abstention rule.
 - [x] Add EIA normalized local storage, ingestion, read-only queries, and calculations.
 - [x] Add a strict BSEE production importer with provenance and fail-closed schema validation.
