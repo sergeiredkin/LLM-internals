@@ -33,12 +33,17 @@ Result JSON:
 
 `reports/results/petroleum-bm25-pilot.json`
 
+Miss inspection:
+
+`reports/results/petroleum-bm25-misses.json`
+
 These are retrieval-only metrics. They do not demonstrate answer correctness. The next evaluation
 must inspect the retrieved passage, citation page, unit handling, and abstention behavior.
 
 ## Interpretation
 
 The lexical baseline is useful enough to establish a comparison point, but 20 percent of the fixed
-questions were not retrieved at the labelled page within the top five. Do not add dense retrieval or
-QLoRA yet; first inspect the misses and determine whether they are query wording, chunk boundaries,
-table extraction, or missing evidence.
+questions were not retrieved at the labelled page within the top five. The misses are lexical rather
+than missing-corpus failures: one asks about salt as a seal while the passage uses reservoir/seal
+language, and one asks about likely hydrocarbons while the target discusses dry gas. Do not add QLoRA
+yet; first add query variants and compare dense retrieval against this baseline.
