@@ -52,6 +52,7 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     output_count = 0
     source_count = 0
+    failed_pages = 0
     with args.manifest.open(encoding="utf-8") as manifest, args.output.open("w", encoding="utf-8") as output:
         for line_number, line in enumerate(manifest, 1):
             if not line.strip():
@@ -79,9 +80,17 @@ def main() -> None:
             if expected_hash and actual_hash.lower() != str(expected_hash).lower():
                 raise SystemExit(f"checksum mismatch for {source_id}: {actual_hash}")
 
-            reader = PdfReader(str(destination))
+            reader = PdfReader(str(destination), strict=False)
             for page_number, page in enumerate(reader.pages, 1):
-                text = page.extract_text() or ""
+                try:
+                    text = page.extract_text() or ""
+                except Exception as error:  # malformed legacy PDFs need a later OCR pass
+                    failed_pages += 1
+                    print(
+                        f"WARN {source_id} page {page_number}: extraction failed: "
+                        f"{type(error).__name__}: {error}"
+                    )
+                    continue
                 text = re.sub(r"[ \t]+", " ", text)
                 text = re.sub(r"\n{3,}", "\n\n", text).strip()
                 if not text:
@@ -107,7 +116,10 @@ def main() -> None:
             print(f"Extracted {source_id}: {len(reader.pages)} pages")
     print(f"Sources:  {source_count}")
     print(f"Pages:    {output_count}")
+    print(f"Failed pages: {failed_pages}")
     print(f"Output:   {args.output}")
+    if failed_pages:
+        print("WARNING: failed pages were skipped; review and OCR them before production use.")
 
 
 if __name__ == "__main__":
