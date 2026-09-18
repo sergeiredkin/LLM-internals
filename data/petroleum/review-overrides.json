@@ -1,0 +1,15 @@
+{
+  "usgs-sir-2012-5146-amerasia#page-0001#chunk-0000": {"decision": "reject", "quality_flags": ["title_only"], "reviewer": "coding-agent-manual-pass", "notes": "Cover/title page; no retrievable evidence."},
+  "usgs-sir-2012-5146-amerasia#page-0039#chunk-0001": {"decision": "reject", "quality_flags": ["bibliography"], "reviewer": "coding-agent-manual-pass", "notes": "Bibliography entries; retain provenance but exclude prose retrieval."},
+  "usgs-sir-2012-5147-arctic-alaska#page-0012#chunk-0000": {"decision": "reject", "quality_flags": ["title_only"], "reviewer": "coding-agent-manual-pass", "notes": "Page heading only."},
+  "usgs-sir-2012-5147-arctic-alaska#page-0027#chunk-0004": {"decision": "reject", "quality_flags": ["bibliography"], "reviewer": "coding-agent-manual-pass", "notes": "Bibliography entries."},
+  "usgs-of-1988-0379-indonesia#page-0044#chunk-0000": {"decision": "reject", "quality_flags": ["figure_or_table_only"], "reviewer": "coding-agent-manual-pass", "notes": "Extracted stratigraphic diagram; text order is not reliable."},
+  "usgs-of-1988-0379-indonesia#page-0189#chunk-0001": {"decision": "reject", "quality_flags": ["table_only"], "reviewer": "coding-agent-manual-pass", "notes": "Probability table with column order lost; requires table extraction."},
+  "usgs-of-1977-0475-npr4#page-0017#chunk-0002": {"decision": "reject", "quality_flags": ["table_only"], "reviewer": "coding-agent-manual-pass", "notes": "Well table extraction has interleaved columns and cannot be trusted as prose."},
+  "usgs-of-1994-0559-south-america#page-0023#chunk-0000": {"decision": "reject", "quality_flags": ["figure_or_map_only"], "reviewer": "coding-agent-manual-pass", "notes": "Map caption and labels only."},
+  "usgs-of-1994-0559-south-america#page-0222#chunk-0000": {"decision": "reject", "quality_flags": ["figure_or_map_only"], "reviewer": "coding-agent-manual-pass", "notes": "Geologic map legend/caption; not reliable prose."},
+  "usgs-of-1994-0559-south-america#page-0319#chunk-0001": {"decision": "reject", "quality_flags": ["table_only"], "reviewer": "coding-agent-manual-pass", "notes": "Large stratigraphic table with column order lost."},
+  "usgs-of-1986-0080-south-asia#page-0164#chunk-0000": {"decision": "reject", "quality_flags": ["chart_only"], "reviewer": "coding-agent-manual-pass", "notes": "Chart labels and OCR artifacts; no reliable narrative."},
+  "usgs-of-1993-0582-resource-assessment#page-0099#chunk-0000": {"decision": "reject", "quality_flags": ["chart_only"], "reviewer": "coding-agent-manual-pass", "notes": "Chart extraction; preserve only for future structured chart work."},
+  "usgs-of-1993-0582-resource-assessment#page-0147#chunk-0000": {"decision": "reject", "quality_flags": ["index"], "reviewer": "coding-agent-manual-pass", "notes": "Back-of-book index, not evidence prose."}
+}

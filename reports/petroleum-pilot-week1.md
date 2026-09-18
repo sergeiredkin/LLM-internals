@@ -39,9 +39,10 @@ BSEE remain separate structured layers.
 
 ## Extraction findings
 
-The 50-sample review found 10 suspect samples in the first-pass label pass and 40 samples suitable
-for manual confirmation. The label file is `data/petroleum/review-50-labeled.jsonl`; it is ignored
-by Git because it is generated corpus data.
+The 50-sample review was manually confirmed by the coding agent: 30 samples are accepted for
+prose retrieval and 20 are rejected or reserved for future table/figure processing. The label file
+is `data/petroleum/review-50-labeled.jsonl`; it is ignored by Git because it is generated corpus
+data. Decisions are reproducible through the tracked `data/petroleum/review-overrides.json` file.
 
 - figure/map-only pages with little useful text
 - legacy table text with corrupted symbols or column order
@@ -49,8 +50,9 @@ by Git because it is generated corpus data.
 - title-only or page-header-only chunks
 - one malformed PDF page that pypdf could not parse
 
-The first-pass labels are not a substitute for domain-expert review. They make the decision and
-reason explicit so a human can correct them without losing the original sample.
+The accepted records are suitable for the BM25 pilot, but numerical claims still require citation
+and unit checks. Rejected records retain provenance and can later be handled by table extraction or
+OCR.
 
 The ingestion script continued safely, preserved the PDF checksum, and reported the failed page:
 

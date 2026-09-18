@@ -14,7 +14,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--overrides", type=Path)
     args = parser.parse_args()
+    overrides = {}
+    if args.overrides:
+        overrides = json.loads(args.overrides.read_text(encoding="utf-8"))
     accepted = rejected = 0
     with args.input.open(encoding="utf-8") as source, args.output.open("w", encoding="utf-8") as target:
         for line_number, line in enumerate(source, 1):
@@ -22,15 +26,17 @@ def main() -> None:
                 continue
             record = json.loads(line)
             flags = quality_flags(record.get("text", ""))
+            override = overrides.get(record.get("chunk_id"), {})
+            decision = override.get("decision", "reject" if flags else "accept")
             record["review"] = {
-                "decision": "reject" if flags else "accept",
-                "quality_flags": flags,
-                "reviewer": "automated-first-pass",
-                "notes": "Manual confirmation required before production retrieval.",
+                "decision": decision,
+                "quality_flags": flags + override.get("quality_flags", []),
+                "reviewer": override.get("reviewer", "automated-first-pass"),
+                "notes": override.get("notes", "Manual confirmation required before production retrieval."),
             }
             record["review_line"] = line_number
             target.write(json.dumps(record, ensure_ascii=False) + "\n")
-            if flags:
+            if decision == "reject":
                 rejected += 1
             else:
                 accepted += 1
