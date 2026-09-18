@@ -183,8 +183,9 @@ class GPT(nn.Module):
         temperature: float = 1.0,
         top_k: int | None = None,
         eos_token_id: int | None = None,
+        use_kv_cache: bool = False,
     ) -> torch.Tensor:
-        """Generate tokens without a KV cache; caching is a later milestone."""
+        """Generate tokens with optional prefill and incremental K/V caching."""
 
         if max_new_tokens < 0:
             raise ValueError("max_new_tokens cannot be negative")
@@ -193,19 +194,52 @@ class GPT(nn.Module):
         if top_k is not None and top_k <= 0:
             raise ValueError("top_k must be positive or None")
 
+        if input_ids.ndim != 2 or input_ids.shape[1] == 0:
+            raise ValueError("input_ids must contain at least one token")
+        if use_kv_cache and input_ids.shape[1] + max_new_tokens > self.config.context_length:
+            raise ValueError(
+                "cached generation prompt plus max_new_tokens cannot exceed context_length"
+            )
+        if max_new_tokens == 0:
+            return input_ids
+
         generated = input_ids
-        for _ in range(max_new_tokens):
-            context = generated[:, -self.config.context_length :]
-            logits, _ = self(context)
+        caches = None
+        logits = None
+        if use_kv_cache:
+            device_type = input_ids.device.type
+            cache_dtype = self.token_embedding.weight.dtype
+            if torch.is_autocast_enabled(device_type):
+                cache_dtype = torch.get_autocast_dtype(device_type)
+            caches = self.create_kv_caches(
+                batch_size=input_ids.shape[0],
+                max_length=input_ids.shape[1] + max_new_tokens,
+                device=input_ids.device,
+                dtype=cache_dtype,
+            )
+            logits, _ = self(input_ids, caches=caches)
+
+        for generation_step in range(max_new_tokens):
+            if not use_kv_cache:
+                context = generated[:, -self.config.context_length :]
+                logits, _ = self(context)
+            elif generation_step > 0:
+                assert caches is not None
+                logits, _ = self(generated[:, -1:], caches=caches)
+            assert logits is not None
             next_logits = logits[:, -1, :] / temperature
-            if top_k is not None:
-                k = min(top_k, next_logits.shape[-1])
-                threshold = torch.topk(next_logits, k).values[:, -1, None]
-                next_logits = next_logits.masked_fill(
-                    next_logits < threshold, float("-inf")
-                )
-            probabilities = F.softmax(next_logits, dim=-1)
-            next_token = torch.multinomial(probabilities, num_samples=1)
+            if top_k == 1:
+                # True greedy decoding, including deterministic tie-breaking.
+                next_token = next_logits.argmax(dim=-1, keepdim=True)
+            else:
+                if top_k is not None:
+                    k = min(top_k, next_logits.shape[-1])
+                    threshold = torch.topk(next_logits, k).values[:, -1, None]
+                    next_logits = next_logits.masked_fill(
+                        next_logits < threshold, float("-inf")
+                    )
+                probabilities = F.softmax(next_logits, dim=-1)
+                next_token = torch.multinomial(probabilities, num_samples=1)
             generated = torch.cat((generated, next_token), dim=1)
             if eos_token_id is not None and torch.all(next_token == eos_token_id):
                 break

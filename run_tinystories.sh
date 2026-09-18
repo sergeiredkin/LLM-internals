@@ -25,4 +25,5 @@ conda run -n "$ENV_NAME" python -m scripts.generate \
   --max-new-tokens "$length" \
   --temperature "$temperature" \
   --top-k 40 \
-  --device cuda
+  --device cuda \
+  --use-kv-cache

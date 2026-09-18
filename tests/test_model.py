@@ -117,11 +117,48 @@ class GPTTests(unittest.TestCase):
         prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
         logits, _ = model(prompt)
         greedy_next_token = int(logits[0, -1].argmax())
-        output = model.generate(
-            prompt, max_new_tokens=5, top_k=1, eos_token_id=greedy_next_token
-        )
-        self.assertEqual(output.shape, (1, 4))
-        self.assertEqual(output[0, -1].item(), greedy_next_token)
+        for use_kv_cache in (False, True):
+            with self.subTest(use_kv_cache=use_kv_cache):
+                output = model.generate(
+                    prompt,
+                    max_new_tokens=5,
+                    top_k=1,
+                    eos_token_id=greedy_next_token,
+                    use_kv_cache=use_kv_cache,
+                )
+                self.assertEqual(output.shape, (1, 4))
+                self.assertEqual(output[0, -1].item(), greedy_next_token)
+
+    def test_cached_and_uncached_greedy_generation_match(self) -> None:
+        prompt = torch.tensor([[1, 2, 3, 4]], dtype=torch.long)
+        variants = (("learned", "gelu"), ("rope", "swiglu"))
+        for position_encoding, mlp_type in variants:
+            with self.subTest(position_encoding=position_encoding, mlp_type=mlp_type):
+                model = GPT(
+                    tiny_config(position_encoding=position_encoding, mlp_type=mlp_type)
+                ).eval()
+                torch.manual_seed(123)
+                uncached = model.generate(prompt, max_new_tokens=8, top_k=1)
+                torch.manual_seed(123)
+                cached = model.generate(
+                    prompt, max_new_tokens=8, top_k=1, use_kv_cache=True
+                )
+                torch.testing.assert_close(cached, uncached)
+
+    def test_top_k_one_is_deterministic_greedy_decoding(self) -> None:
+        model = GPT(tiny_config()).eval()
+        prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
+        torch.manual_seed(1)
+        first = model.generate(prompt, max_new_tokens=6, top_k=1)
+        torch.manual_seed(999)
+        second = model.generate(prompt, max_new_tokens=6, top_k=1)
+        torch.testing.assert_close(first, second)
+
+    def test_cached_generation_enforces_capacity(self) -> None:
+        model = GPT(tiny_config(context_length=6)).eval()
+        prompt = torch.tensor([[1, 2, 3, 4]], dtype=torch.long)
+        with self.assertRaisesRegex(ValueError, "cannot exceed"):
+            model.generate(prompt, max_new_tokens=3, top_k=1, use_kv_cache=True)
 
     def test_token_by_token_cached_logits_match_full_logits(self) -> None:
         tokens = torch.randint(0, 32, (2, 12))

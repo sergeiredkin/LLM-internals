@@ -24,6 +24,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top-k", type=int, default=20)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--seed", type=int, default=1337)
+    parser.add_argument(
+        "--use-kv-cache",
+        action="store_true",
+        help="prefill once and reuse per-layer keys and values during decoding",
+    )
     return parser.parse_args()
 
 
@@ -69,12 +74,14 @@ def main() -> None:
             temperature=args.temperature,
             top_k=args.top_k,
             eos_token_id=getattr(tokenizer, "eos_id", None),
+            use_kv_cache=args.use_kv_cache,
         )
     text = tokenizer.decode(generated[0])
 
     print(
         f"checkpoint={args.checkpoint} step={checkpoint_step} "
-        f"device={device} temperature={args.temperature} top_k={args.top_k}"
+        f"device={device} temperature={args.temperature} top_k={args.top_k} "
+        f"kv_cache={args.use_kv_cache}"
     )
     print("-" * 72)
     print(text)

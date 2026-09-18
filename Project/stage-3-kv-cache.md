@@ -74,7 +74,7 @@ GQA therefore reduces cache elements by 75%.
 - [x] Maintain one cache per transformer layer.
 - [x] Implement model-level prompt prefill followed by one-token decoding.
 - [x] Verify cached and uncached logits agree at every position.
-- [ ] Verify greedy generated token sequences match exactly.
+- [x] Verify greedy generated token sequences match exactly in FP32 and BF16.
 - [x] Preserve the existing uncached path and checkpoint compatibility.
 
 ### Benchmark and report
@@ -96,3 +96,8 @@ GQA therefore reduces cache elements by 75%.
   logits. The real 26M checkpoint loads strictly; CUDA BF16 cached/full logits had 0.0066 mean
   absolute difference from kernel/batching order and 100% argmax agreement. The complete
   512-token GQA cache is 2 MiB. All 60 tests pass.
+- 2026-09-18: added opt-in cached generation. With identical RNG seeds, cached and uncached
+  100-token greedy sequences match exactly in both FP32 and CUDA BF16; the initial apparent BF16
+  divergence came from comparing different RNG states at an exact logit tie (`sunshine` versus
+  `park`). `top_k=1` now uses deterministic argmax rather than sampling tied logits. The first
+  timing check showed a 2.0x cache speedup.
