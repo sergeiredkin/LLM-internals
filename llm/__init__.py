@@ -1,6 +1,7 @@
 """Reusable components for the learnGPT training project."""
 
 from .attention import repeat_kv
+from .cache import LayerKVCache
 from .config import (
     DataConfig,
     ExperimentConfig,
@@ -22,6 +23,7 @@ __all__ = [
     "RotaryEmbedding",
     "rotate_half",
     "repeat_kv",
+    "LayerKVCache",
     "CharTokenizer",
     "BPETokenizer",
     "load_tokenizer",

@@ -138,3 +138,4 @@ happens rather than selecting only favorable evidence.
 - 2026-09-17: started [[stage-3-gqa]] by isolating and validating 8-query/2-KV-head sharing.
 - 2026-09-18: completed [[stage-3-gqa]]. It removed 10.77% of cumulative model parameters for a
   0.33% fixed-loss increase and a 7.05% back-to-back full-sequence speed improvement.
+- 2026-09-18: started [[stage-3-kv-cache]] with isolated, preallocated GQA-aware cache storage.
