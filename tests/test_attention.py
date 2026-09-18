@@ -6,6 +6,7 @@ import torch
 
 from llm.attention import CausalSelfAttention, repeat_kv
 from llm.config import ModelConfig
+from scripts.overfit_batch import small_attention_heads
 
 
 def attention_config(n_kv_heads: int) -> ModelConfig:
@@ -64,6 +65,12 @@ class GroupedQueryAttentionTests(unittest.TestCase):
                 for parameter in attention.parameters()
             )
         )
+
+    def test_small_overfit_model_preserves_head_sharing_ratio(self) -> None:
+        self.assertEqual(small_attention_heads(8, 8), (4, 4))
+        self.assertEqual(small_attention_heads(8, 2), (4, 1))
+        with self.assertRaisesRegex(ValueError, "sharing ratio"):
+            small_attention_heads(12, 2)
 
     def test_invalid_repeat_inputs_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "shape"):

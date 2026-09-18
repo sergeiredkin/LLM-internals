@@ -23,6 +23,20 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def small_attention_heads(
+    n_heads: int, n_kv_heads: int, target_n_heads: int = 4
+) -> tuple[int, int]:
+    """Scale attention while preserving query heads per K/V head."""
+
+    query_heads_per_kv = n_heads // n_kv_heads
+    if target_n_heads % query_heads_per_kv != 0:
+        raise ValueError(
+            "small model cannot preserve Q/KV sharing ratio: "
+            f"{query_heads_per_kv} query heads per KV head"
+        )
+    return target_n_heads, target_n_heads // query_heads_per_kv
+
+
 def main() -> None:
     args = parse_args()
     if args.steps <= 0 or args.target_loss <= 0:
@@ -31,16 +45,24 @@ def main() -> None:
     experiment = load_config(args.config)
     corpus = TokenCorpus(experiment.data.processed_dir)
     # Keep the architecture identical in kind but small enough for a quick CPU proof.
+    # In particular, preserve how many query heads share each K/V head.
+    small_n_heads, small_n_kv_heads = small_attention_heads(
+        experiment.model.n_heads, experiment.model.n_kv_heads
+    )
     model_config = replace(
         experiment.model,
         vocab_size=corpus.tokenizer.vocab_size,
         context_length=64,
         n_layers=2,
         d_model=128,
-        n_heads=4,
-        n_kv_heads=4,
+        n_heads=small_n_heads,
+        n_kv_heads=small_n_kv_heads,
         mlp_ratio=4.0,
         dropout=0.0,
+    )
+    print(
+        f"Small model attention: {small_n_heads} Q heads / "
+        f"{small_n_kv_heads} KV heads"
     )
     training_config = replace(
         experiment.training,
