@@ -9,10 +9,10 @@ manifest records the source URL, title, publisher, publication year, license sta
 file checksum.
 
 - Sources: **12 reports**
-- Extracted pages: **1,460**
-- Text chunks: **3,303**
+- Extracted/recovered pages: **1,461**
+- Text chunks: **3,304**
 - Review sample: **50 chunks**, evenly distributed across the corpus
-- Extraction failures: **1 page**
+- Extraction failures: **1 page**, recovered as a verified figure-only page record
 
 The PDFs remain in ignored local storage. The tracked manifest is:
 
@@ -48,7 +48,7 @@ data. Decisions are reproducible through the tracked `data/petroleum/review-over
 - legacy table text with corrupted symbols or column order
 - references/bibliography passages
 - title-only or page-header-only chunks
-- one malformed PDF page that pypdf could not parse
+- one malformed PDF page that pypdf could not parse; it was recovered as a figure-only record
 
 The accepted records are suitable for the BM25 pilot, but numerical claims still require citation
 and unit checks. Rejected records retain provenance and can later be handled by table extraction or
@@ -60,16 +60,18 @@ The ingestion script continued safely, preserved the PDF checksum, and reported 
 usgs-of-1994-0559-south-america page 189
 ```
 
-That page must be OCR-processed or manually recovered before production use.
+The page was rendered and visually identified as a rotated stratigraphic chart. It was recovered as
+a caption-only record with `extraction: manual-figure-caption` and `page_status: figure_only`; it is
+excluded from prose retrieval rather than represented as fabricated text.
 
 ## Automatic quality filter
 
-The first conservative filter processed all 3,303 chunks:
+The first conservative filter processed all 3,304 chunks:
 
 - Clean chunks: **2,859**
-- Rejected chunks: **444**
-- Figure/map-only flags: 366
-- Too-short flags: 207
+- Rejected chunks: **445**
+- Figure/map-only flags: 367
+- Too-short flags: 208
 - Corruption flags: 6
 - Bibliography flags: 2
 

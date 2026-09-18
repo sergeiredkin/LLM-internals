@@ -91,10 +91,11 @@ that are not supported by the corpus.
 
 ## Current pilot result
 
-`reports/petroleum-pilot-week1.md` records 12 reports, 1,460 pages, 3,303 chunks, and one malformed
-page. The first filter retains 2,859 chunks and rejects 444 obvious extraction failures. The 50-sample
-review labels 30 as acceptable for prose retrieval and 20 as rejected or reserved for table/figure
-processing. The extraction pipeline is working but the corpus is not yet production-ready.
+`reports/petroleum-pilot-week1.md` records 12 reports, 1,461 extracted/recovered pages, 3,304 chunks,
+and one recovered figure-only page. The first filter retains 2,859 chunks and rejects 445 obvious
+extraction failures. The 50-sample review labels 30 as acceptable for prose retrieval and 20 as
+rejected or reserved for table/figure processing. The extraction pipeline is working but the corpus
+is not yet production-ready.
 
 ## Week 2 EIA pilot
 
@@ -125,7 +126,8 @@ checksum. No ambiguous BSEE values are loaded.
 - [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
 - [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
 - [x] Create and manually confirm an auditable label file for the 50 pilot review records.
-- [ ] Recover the malformed PDF page and resolve remaining extraction defects.
+- [x] Recover the malformed PDF page as a provenance-preserving figure-only record.
+- [ ] Resolve remaining table and extraction defects.
 - [ ] Normalize the selected corpus to JSONL and create deterministic train/validation/query splits.
 - [ ] Establish BM25 metrics on the fixed query set.
 - [x] Add context assembly with citations and an abstention rule.
