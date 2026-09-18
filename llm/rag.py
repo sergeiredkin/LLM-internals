@@ -46,6 +46,18 @@ class RetrievalResult:
     score: float
 
 
+@dataclass(frozen=True)
+class ContextResult:
+    """Evidence assembled for a model prompt, or an explicit abstention."""
+
+    query: str
+    context: str
+    citations: tuple[str, ...]
+    results: tuple[RetrievalResult, ...]
+    abstained: bool
+    reason: str | None = None
+
+
 def chunk_document(
     document: Document,
     *,
@@ -174,6 +186,72 @@ class BM25Retriever:
         ]
         scored.sort(key=lambda result: (-result.score, result.chunk.chunk_id))
         return scored[:top_k]
+
+
+def assemble_context(
+    retriever: BM25Retriever,
+    query: str,
+    *,
+    top_k: int = 5,
+    max_characters: int = 4000,
+    minimum_score: float = 0.0,
+) -> ContextResult:
+    """Create citation-labelled evidence, abstaining when lexical evidence is absent.
+
+    Chunks are added in retrieval order until the character budget is reached. A query with no
+    positive-scoring result abstains instead of emitting unrelated context.
+    """
+
+    if max_characters <= 0:
+        raise ValueError("max_characters must be positive")
+    if minimum_score < 0:
+        raise ValueError("minimum_score cannot be negative")
+    candidates = retriever.retrieve(query, top_k=top_k)
+    candidates = [result for result in candidates if result.score >= minimum_score]
+    if not candidates or candidates[0].score <= 0.0:
+        return ContextResult(
+            query=query,
+            context="",
+            citations=(),
+            results=(),
+            abstained=True,
+            reason="no supporting retrieval result",
+        )
+
+    sections: list[str] = []
+    citations: list[str] = []
+    selected: list[RetrievalResult] = []
+    used = 0
+    for result in candidates:
+        citation = f"[{len(selected) + 1}]"
+        header = f"{citation} {result.chunk.title or result.chunk.document_id}"
+        if result.chunk.source:
+            header += f" — {result.chunk.source}"
+        section = f"{header}\n{result.chunk.text}"
+        separator = "\n\n" if sections else ""
+        if used + len(separator) + len(section) > max_characters:
+            break
+        sections.append(section)
+        citations.append(citation)
+        selected.append(result)
+        used += len(separator) + len(section)
+
+    if not selected:
+        return ContextResult(
+            query=query,
+            context="",
+            citations=(),
+            results=(),
+            abstained=True,
+            reason="supporting result exceeds context budget",
+        )
+    return ContextResult(
+        query=query,
+        context="\n\n".join(sections),
+        citations=tuple(citations),
+        results=tuple(selected),
+        abstained=False,
+    )
 
 
 def retrieval_metrics(

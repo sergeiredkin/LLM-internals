@@ -203,8 +203,9 @@ parameters; both floating-point LoRA and packed-INT4 QLoRA passed fixed-batch tr
 See `Project/stage-6-lora-qlora.md`.
 
 The petroleum-domain RAG foundation is now in `llm/rag.py`, with JSONL ingestion, provenance-preserving
-chunking, deterministic BM25 retrieval, and retrieval metrics. No unlicensed petroleum data is included;
-see `Project/stage-7-petroleum-rag.md`.
+chunking, deterministic BM25 retrieval, citation-labelled context assembly, and retrieval metrics.
+Queries with no positive lexical evidence explicitly abstain. No unlicensed petroleum data is
+included; see `Project/stage-7-petroleum-rag.md`.
 
 ## Roadmap
 

@@ -24,6 +24,7 @@ from .model import GPT
 from .rag import (
     BM25Retriever,
     Chunk,
+    ContextResult,
     Document,
     RetrievalResult,
     chunk_document,
@@ -52,6 +53,7 @@ __all__ = [
     "GPT",
     "Document",
     "Chunk",
+    "ContextResult",
     "RetrievalResult",
     "BM25Retriever",
     "chunk_document",

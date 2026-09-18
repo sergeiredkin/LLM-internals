@@ -5,6 +5,7 @@ from pathlib import Path
 from llm.rag import (
     BM25Retriever,
     Chunk,
+    assemble_context,
     Document,
     chunk_document,
     load_jsonl_documents,
@@ -72,6 +73,38 @@ class RAGTests(unittest.TestCase):
         ]
         result = BM25Retriever(chunks).retrieve("absent", top_k=2)
         self.assertEqual([item.chunk.chunk_id for item in result], ["a", "b"])
+
+    def test_context_assembly_has_citations_and_source_provenance(self) -> None:
+        chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]
+        result = assemble_context(
+            BM25Retriever(chunks), "drilling pressure cuttings", top_k=1
+        )
+        self.assertFalse(result.abstained)
+        self.assertEqual(result.citations, ("[1]",))
+        self.assertIn("[1] Drilling fluids — manual.pdf", result.context)
+        self.assertIn("cuttings", result.context)
+        self.assertEqual(result.results[0].chunk.document_id, "drilling")
+
+    def test_context_abstains_without_lexical_evidence(self) -> None:
+        chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]
+        result = assemble_context(BM25Retriever(chunks), "quantum chromodynamics")
+        self.assertTrue(result.abstained)
+        self.assertEqual(result.context, "")
+        self.assertIn("no supporting", result.reason or "")
+
+    def test_context_character_budget_and_threshold(self) -> None:
+        chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]
+        retriever = BM25Retriever(chunks)
+        result = assemble_context(
+            retriever,
+            "pressure production",
+            top_k=3,
+            max_characters=80,
+            minimum_score=0.1,
+        )
+        self.assertLessEqual(len(result.context), 80)
+        with self.assertRaisesRegex(ValueError, "max_characters"):
+            assemble_context(retriever, "pressure", max_characters=0)
 
     def test_retrieval_metrics(self) -> None:
         chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]

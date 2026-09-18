@@ -21,8 +21,22 @@ examples.
 - dependency-free Okapi BM25 retrieval
 - deterministic score tie-breaking
 - hit rate, recall, and MRR evaluation
+- citation-labelled context assembly
+- explicit abstention when no evidence scores positively
 
-The CLI is:
+The retrieval-only CLI is:
+
+```bash
+python -m scripts.retrieve_context \
+  --documents data/petroleum/documents.jsonl \
+  --query "What controls bottom-hole pressure?" \
+  --top-k 5
+```
+
+It returns numbered source citations and exits with status 2 when it abstains. The output should be
+passed to an answer model only after checking the citations.
+
+The evaluation CLI is:
 
 ```bash
 python -m scripts.evaluate_retrieval \
@@ -66,6 +80,6 @@ that are not supported by the corpus.
 - [ ] Select and document a redistributable petroleum corpus.
 - [ ] Normalize it to JSONL and create deterministic train/validation/query splits.
 - [ ] Establish BM25 metrics on the fixed query set.
-- [ ] Add context assembly with citations and an abstention rule.
+- [x] Add context assembly with citations and an abstention rule.
 - [ ] Create petroleum instruction examples only from retrieved, licensed evidence.
 - [ ] Train and evaluate a small QLoRA adapter.
