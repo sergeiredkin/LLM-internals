@@ -113,7 +113,7 @@ happens rather than selecting only favorable evidence.
 - [x] SwiGLU controlled ablation
 - [x] Grouped-query attention controlled ablation
 - [x] KV-cache generation and latency benchmark
-- [ ] Top-p sampling comparison
+- [x] Top-p sampling comparison
 - [ ] LoRA/QLoRA
 - [ ] INT4 quantization
 
@@ -140,3 +140,5 @@ happens rather than selecting only favorable evidence.
   0.33% fixed-loss increase and a 7.05% back-to-back full-sequence speed improvement.
 - 2026-09-18: completed [[stage-3-kv-cache]]. The 2 MiB GQA cache is 75% smaller than MHA;
   cached decoding was 1.09x faster with 7.2% lower peak allocation at 400 generated tokens.
+- 2026-09-18: completed [[stage-3-top-p]] with isolated filtering tests and a fixed-seed top-k,
+  top-p, and combined comparison. The interactive default is now top-k 40 plus top-p 0.9.

@@ -186,9 +186,12 @@ KV-cached generation now stores the two unexpanded GQA heads in a 2 MiB BF16 cac
 than the equivalent MHA cache. At 400 generated tokens it was 1.09× faster and used 7.2% less peak
 allocated memory. See `reports/tinystories-kv-cache.md`.
 
+Generation supports fixed top-k filtering, adaptive top-p/nucleus filtering, or both. The reusable
+implementation is in `llm/sampling.py`; see `reports/tinystories-top-p-comparison.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** RoPE, SwiGLU, GQA, and KV cache done; next is top-p sampling
+3. **Complete:** RoPE, SwiGLU, GQA, KV cache, and top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

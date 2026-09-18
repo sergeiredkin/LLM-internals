@@ -145,6 +145,17 @@ class GPTTests(unittest.TestCase):
                 )
                 torch.testing.assert_close(cached, uncached)
 
+    def test_top_p_generation_is_reproducible(self) -> None:
+        model = GPT(tiny_config()).eval()
+        prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)
+        torch.manual_seed(23)
+        first = model.generate(prompt, max_new_tokens=6, top_p=0.9)
+        torch.manual_seed(23)
+        second = model.generate(prompt, max_new_tokens=6, top_p=0.9)
+        torch.testing.assert_close(first, second)
+        with self.assertRaisesRegex(ValueError, "top_p"):
+            model.generate(prompt, max_new_tokens=1, top_p=0.0)
+
     def test_top_k_one_is_deterministic_greedy_decoding(self) -> None:
         model = GPT(tiny_config()).eval()
         prompt = torch.tensor([[1, 2, 3]], dtype=torch.long)

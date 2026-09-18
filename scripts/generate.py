@@ -21,7 +21,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prompt", default="ROMEO:\n")
     parser.add_argument("--max-new-tokens", type=int, default=300)
     parser.add_argument("--temperature", type=float, default=0.8)
-    parser.add_argument("--top-k", type=int, default=20)
+    parser.add_argument(
+        "--top-k", type=int, default=20, help="0 disables top-k filtering"
+    )
+    parser.add_argument(
+        "--top-p", type=float, default=None, help="nucleus threshold in (0, 1]"
+    )
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument(
@@ -36,6 +41,10 @@ def main() -> None:
     args = parse_args()
     if args.max_new_tokens < 0:
         raise SystemExit("--max-new-tokens cannot be negative")
+    if args.top_k < 0:
+        raise SystemExit("--top-k cannot be negative")
+    if args.top_p is not None and not 0.0 < args.top_p <= 1.0:
+        raise SystemExit("--top-p must be in (0, 1]")
 
     device = resolve_device(args.device)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
@@ -72,7 +81,8 @@ def main() -> None:
             prompt,
             max_new_tokens=args.max_new_tokens,
             temperature=args.temperature,
-            top_k=args.top_k,
+            top_k=args.top_k or None,
+            top_p=args.top_p,
             eos_token_id=getattr(tokenizer, "eos_id", None),
             use_kv_cache=args.use_kv_cache,
         )
@@ -80,8 +90,8 @@ def main() -> None:
 
     print(
         f"checkpoint={args.checkpoint} step={checkpoint_step} "
-        f"device={device} temperature={args.temperature} top_k={args.top_k} "
-        f"kv_cache={args.use_kv_cache}"
+        f"device={device} temperature={args.temperature} top_k={args.top_k or None} "
+        f"top_p={args.top_p} kv_cache={args.use_kv_cache}"
     )
     print("-" * 72)
     print(text)

@@ -13,6 +13,7 @@ from .attention import CausalSelfAttention
 from .cache import LayerKVCache
 from .config import ModelConfig
 from .layers import MLP, RMSNorm, SwiGLU, matched_swiglu_hidden_size
+from .sampling import sample_next_token
 
 
 class TransformerBlock(nn.Module):
@@ -182,6 +183,7 @@ class GPT(nn.Module):
         max_new_tokens: int,
         temperature: float = 1.0,
         top_k: int | None = None,
+        top_p: float | None = None,
         eos_token_id: int | None = None,
         use_kv_cache: bool = False,
     ) -> torch.Tensor:
@@ -193,6 +195,8 @@ class GPT(nn.Module):
             raise ValueError("temperature must be positive")
         if top_k is not None and top_k <= 0:
             raise ValueError("top_k must be positive or None")
+        if top_p is not None and not 0.0 < top_p <= 1.0:
+            raise ValueError("top_p must be in (0, 1] or None")
 
         if input_ids.ndim != 2 or input_ids.shape[1] == 0:
             raise ValueError("input_ids must contain at least one token")
@@ -227,19 +231,12 @@ class GPT(nn.Module):
                 assert caches is not None
                 logits, _ = self(generated[:, -1:], caches=caches)
             assert logits is not None
-            next_logits = logits[:, -1, :] / temperature
-            if top_k == 1:
-                # True greedy decoding, including deterministic tie-breaking.
-                next_token = next_logits.argmax(dim=-1, keepdim=True)
-            else:
-                if top_k is not None:
-                    k = min(top_k, next_logits.shape[-1])
-                    threshold = torch.topk(next_logits, k).values[:, -1, None]
-                    next_logits = next_logits.masked_fill(
-                        next_logits < threshold, float("-inf")
-                    )
-                probabilities = F.softmax(next_logits, dim=-1)
-                next_token = torch.multinomial(probabilities, num_samples=1)
+            next_token = sample_next_token(
+                logits[:, -1, :],
+                temperature=temperature,
+                top_k=top_k,
+                top_p=top_p,
+            )
             generated = torch.cat((generated, next_token), dim=1)
             if eos_token_id is not None and torch.all(next_token == eos_token_id):
                 break

@@ -18,6 +18,8 @@ read -r -p "Maximum new tokens [300]: " length
 length=${length:-300}
 read -r -p "Creativity 0.5-1.2 [0.8]: " temperature
 temperature=${temperature:-0.8}
+read -r -p "Nucleus top-p 0.5-1.0 [0.9]: " top_p
+top_p=${top_p:-0.9}
 
 if [[ -f runs/tinystories-rope-swiglu-gqa/best.pt ]]; then
   CHECKPOINT="runs/tinystories-rope-swiglu-gqa/best.pt"
@@ -31,5 +33,6 @@ conda run -n "$ENV_NAME" python -m scripts.generate \
   --max-new-tokens "$length" \
   --temperature "$temperature" \
   --top-k 40 \
+  --top-p "$top_p" \
   --device cuda \
   --use-kv-cache
