@@ -17,4 +17,9 @@ data/petroleum/chunks-rejected.jsonl
 data/petroleum/eia.sqlite
 data/petroleum/truth.sqlite
 data/petroleum/review-50-labeled.jsonl
+data/petroleum/pages-expanded.jsonl
+data/petroleum/chunks-expanded.jsonl
+data/petroleum/chunks-expanded-clean.jsonl
+data/petroleum/chunks-expanded-rejected.jsonl
+data/petroleum/review-expanded-100.jsonl
 data/petroleum/review-*.jsonl

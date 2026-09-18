@@ -97,6 +97,13 @@ extraction failures. The 50-sample review labels 30 as acceptable for prose retr
 rejected or reserved for table/figure processing. The extraction pipeline is working but the corpus
 is not yet production-ready.
 
+## Corpus expansion pilot
+
+`reports/petroleum-expansion-pilot.md` records expansion from 12 to 20 checksum-verified USGS
+reports: 1,838 recovered pages, 4,613 chunks, 4,069 clean chunks, and 544 rejected chunks. The
+fixed BM25 metrics remain hit rate@5 0.800, recall@5 0.818, and MRR@5 0.683. A 100-sample review
+must be completed before expanding toward 50 reports.
+
 ## Week 2 EIA pilot
 
 `reports/eia-week2-pilot.md` documents the live EIA pull. SQLite is used locally because PostgreSQL
@@ -122,7 +129,7 @@ checksum. No ambiguous BSEE values are loaded.
 
 ## Next steps
 
-- [x] Select and document a 12-report USGS pilot corpus and record checksums.
+- [x] Select and document a 20-report USGS pilot corpus and record checksums.
 - [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
 - [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
 - [x] Create and manually confirm an auditable label file for the 50 pilot review records.
@@ -130,7 +137,7 @@ checksum. No ambiguous BSEE values are loaded.
 - [ ] Resolve remaining table and extraction defects.
 - [x] Normalize the selected corpus to JSONL and create a deterministic fixed query set.
 - [ ] Create deterministic train/validation splits for future adaptation.
-- [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.818, MRR@5 0.683.
+- [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.818, MRR@5 0.683 on the expanded corpus.
 - [x] Add context assembly with citations, page/source IDs, and an abstention rule.
 - [x] Add EIA normalized local storage, ingestion, read-only queries, and calculations.
 - [x] Add a strict BSEE production importer with provenance and fail-closed schema validation.

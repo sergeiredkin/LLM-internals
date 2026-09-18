@@ -1,0 +1,13 @@
+{
+  "documents": 4069,
+  "chunks": 4069,
+  "chunk_size": 160,
+  "overlap": 32,
+  "top_k": 5,
+  "metrics": {
+    "queries": 10.0,
+    "hit_rate_at_k": 0.8,
+    "recall_at_k": 0.8181818181818182,
+    "mrr_at_k": 0.6833333333333333
+  }
+}
