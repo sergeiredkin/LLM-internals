@@ -1,0 +1,18 @@
+{
+  "usgs-sir-2012-5146-amerasia#page-0001#chunk-0000": {"decision":"reject","quality_flags":["title_only"],"reviewer":"coding-agent-manual-pass","notes":"Cover/title page; no evidence prose."},
+  "usgs-of-1985-0367-east-siberia#page-0050#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Paleogeographic map caption and labels."},
+  "usgs-of-1988-0379-indonesia#page-0012#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Petroleum-occurrence map only."},
+  "usgs-of-1988-0379-indonesia#page-0124#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Geologic-section figure only."},
+  "usgs-of-1988-0379-indonesia#page-0156#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Tectonic map caption and labels."},
+  "usgs-of-1985-0248-world-resources#page-0028#chunk-0000": {"decision":"reject","quality_flags":["bibliography"],"reviewer":"coding-agent-manual-pass","notes":"Reference-list extraction, not evidence prose."},
+  "usgs-of-1977-0475-npr4#page-0021#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Seismic-coverage figure only."},
+  "usgs-of-1994-0559-south-america#page-0233#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Isopach map and cross-section figure."},
+  "usgs-of-1994-0559-south-america#page-0323#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Geologic map legend and caption."},
+  "usgs-of-1994-0559-south-america#page-0423#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Seismic cross-section figure only."},
+  "usgs-of-1986-0080-south-asia#page-0112#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only"],"reviewer":"coding-agent-manual-pass","notes":"Depth map and legend only."},
+  "usgs-of-1993-0582-resource-assessment#page-0006#chunk-0000": {"decision":"reject","quality_flags":["chart_only"],"reviewer":"coding-agent-manual-pass","notes":"Probability diagram without reliable narrative."},
+  "usgs-of-1993-0582-resource-assessment#page-0084#chunk-0000": {"decision":"reject","quality_flags":["chart_only"],"reviewer":"coding-agent-manual-pass","notes":"Histogram/chart extraction."},
+  "usgs-of-1993-0582-resource-assessment#page-0118#chunk-0000": {"decision":"reject","quality_flags":["chart_only"],"reviewer":"coding-agent-manual-pass","notes":"Function diagrams and labels."},
+  "usgs-sir-2012-5273#page-0013#chunk-0000": {"decision":"reject","quality_flags":["figure_or_map_only","sparse_symbols"],"reviewer":"coding-agent-manual-pass","notes":"Figure with unusable symbol extraction."},
+  "usgs-sir-2012-5273#page-0042#chunk-0000": {"decision":"reject","quality_flags":["title_only"],"reviewer":"coding-agent-manual-pass","notes":"References/title material, not evidence prose."}
+}

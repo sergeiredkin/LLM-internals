@@ -17,8 +17,8 @@ Original chunks:  4,613
 Clean chunks:     4,069
 Rejected chunks:    544
 Review sample:      100
-First-pass accepted: 84
-First-pass rejected:  16
+Reviewed accepted:   84
+Reviewed rejected:    16
 ```
 
 Rejection flags include overlapping categories:
@@ -35,21 +35,22 @@ The previously malformed South America page remains represented as a caption-onl
 
 ## Retrieval comparison
 
-The original fixed 10-question set was run against the expanded clean corpus:
+The expanded 18-question set adds one labelled question for each new report:
 
 ```text
-Hit rate@5: 0.800
-Recall@5:   0.818
-MRR@5:      0.683
+Hit rate@5: 0.722
+Recall@5:   0.737
+MRR@5:      0.479
 ```
 
-The metrics did not change, which is expected because the fixed questions target the original
-reports. The expanded corpus is now large enough to add questions targeting the eight new sources. The
-100-sample automated first pass labels 84 samples as prose candidates and 16 as requiring rejection
-or confirmation; the generated labels remain local for manual correction.
+The lower score is useful: the new topics expose retrieval weaknesses before further corpus growth.
+Misses are recorded in `reports/results/petroleum-bm25-expanded-misses.json`.
 
 ## Decision
 
-The expansion pipeline is working. Do not claim broad petroleum coverage yet: manually review the
-100-sample expansion, add labelled questions for the new topics, then expand toward 50 reports before
-introducing dense retrieval or reranking.
+The 100-sample review is confirmed: 84 samples are prose candidates and 16 are rejected as figures,
+charts, bibliography, title material, or unusable symbol extraction. Decisions are reproducible through
+`data/petroleum/review-expanded-overrides.json`.
+
+Do not expand toward 50 reports yet. First inspect the five expanded-query misses and improve query
+coverage/chunk retrieval against this 20-report corpus.
