@@ -1,0 +1,217 @@
+{
+  "benchmark_version": 1,
+  "checkpoint": "runs/tinystories-rope-swiglu-gqa/best.pt",
+  "checkpoint_step": 4750,
+  "device": "cuda",
+  "precision": "bf16",
+  "prompt": "Once upon a time",
+  "prompt_tokens": 4,
+  "repeats": 2,
+  "model": {
+    "parameters": 26059264,
+    "context_length": 512,
+    "n_layers": 8,
+    "n_heads": 8,
+    "n_kv_heads": 2,
+    "head_dim": 64
+  },
+  "full_capacity_cache_bytes": 2097152,
+  "results": [
+    {
+      "new_tokens": 64,
+      "exact_token_match": true,
+      "uncached": {
+        "prefill_seconds": 0.006010942500324745,
+        "decode_seconds": 0.4440695049997885,
+        "total_seconds": 0.4500804475001132,
+        "decode_tokens_per_second": 144.12158294911623,
+        "total_tokens_per_second": 142.19680138401014,
+        "peak_allocated_gib": 0.15688323974609375,
+        "runs": [
+          {
+            "prefill_seconds": 0.005942201000834757,
+            "decode_seconds": 0.4810962430001382,
+            "total_seconds": 0.48703844400097296,
+            "peak_allocated_gib": 0.15688133239746094
+          },
+          {
+            "prefill_seconds": 0.006079683999814733,
+            "decode_seconds": 0.40704276699943875,
+            "total_seconds": 0.4131224509992535,
+            "peak_allocated_gib": 0.15688323974609375
+          }
+        ]
+      },
+      "cached": {
+        "prefill_seconds": 0.0077196160000312375,
+        "decode_seconds": 0.42969043950051855,
+        "total_seconds": 0.4374100555005498,
+        "decode_tokens_per_second": 148.94443561368269,
+        "total_tokens_per_second": 146.31579497357842,
+        "peak_allocated_gib": 0.1547536849975586,
+        "runs": [
+          {
+            "prefill_seconds": 0.007785689999764145,
+            "decode_seconds": 0.43443044900050154,
+            "total_seconds": 0.4422161390002657,
+            "peak_allocated_gib": 0.1547527313232422
+          },
+          {
+            "prefill_seconds": 0.00765354200029833,
+            "decode_seconds": 0.42495043000053556,
+            "total_seconds": 0.4326039720008339,
+            "peak_allocated_gib": 0.1547536849975586
+          }
+        ]
+      },
+      "total_speedup": 1.0289668512194217
+    },
+    {
+      "new_tokens": 128,
+      "exact_token_match": true,
+      "uncached": {
+        "prefill_seconds": 0.007450687999607908,
+        "decode_seconds": 0.9352663245003896,
+        "total_seconds": 0.9427170124999975,
+        "decode_tokens_per_second": 136.85941281845723,
+        "total_tokens_per_second": 135.7777554693279,
+        "peak_allocated_gib": 0.15988397598266602,
+        "runs": [
+          {
+            "prefill_seconds": 0.008444131999567617,
+            "decode_seconds": 1.0183806110007936,
+            "total_seconds": 1.0268247430003612,
+            "peak_allocated_gib": 0.1598820686340332
+          },
+          {
+            "prefill_seconds": 0.006457243999648199,
+            "decode_seconds": 0.8521520379999856,
+            "total_seconds": 0.8586092819996338,
+            "peak_allocated_gib": 0.15988397598266602
+          }
+        ]
+      },
+      "cached": {
+        "prefill_seconds": 0.008080481999513722,
+        "decode_seconds": 0.978139344000283,
+        "total_seconds": 0.9862198259997967,
+        "decode_tokens_per_second": 130.8607007632677,
+        "total_tokens_per_second": 129.78850822658922,
+        "peak_allocated_gib": 0.1552433967590332,
+        "runs": [
+          {
+            "prefill_seconds": 0.008791792999545578,
+            "decode_seconds": 1.0564976450004906,
+            "total_seconds": 1.0652894380000362,
+            "peak_allocated_gib": 0.1552419662475586
+          },
+          {
+            "prefill_seconds": 0.007369170999481867,
+            "decode_seconds": 0.8997810430000754,
+            "total_seconds": 0.9071502139995573,
+            "peak_allocated_gib": 0.1552433967590332
+          }
+        ]
+      },
+      "total_speedup": 0.9558893338453245
+    },
+    {
+      "new_tokens": 256,
+      "exact_token_match": true,
+      "uncached": {
+        "prefill_seconds": 0.008498415499616385,
+        "decode_seconds": 2.035534249500415,
+        "total_seconds": 2.0440326650000316,
+        "decode_tokens_per_second": 125.76550852083699,
+        "total_tokens_per_second": 125.24261690308948,
+        "peak_allocated_gib": 0.16365432739257812,
+        "runs": [
+          {
+            "prefill_seconds": 0.006636844999775349,
+            "decode_seconds": 2.013951726000414,
+            "total_seconds": 2.0205885710001894,
+            "peak_allocated_gib": 0.1636509895324707
+          },
+          {
+            "prefill_seconds": 0.010359985999457422,
+            "decode_seconds": 2.0571167730004163,
+            "total_seconds": 2.0674767589998737,
+            "peak_allocated_gib": 0.16365432739257812
+          }
+        ]
+      },
+      "cached": {
+        "prefill_seconds": 0.007740689500224107,
+        "decode_seconds": 2.011840452499655,
+        "total_seconds": 2.019581141999879,
+        "decode_tokens_per_second": 127.2466709186244,
+        "total_tokens_per_second": 126.75895742742846,
+        "peak_allocated_gib": 0.15622663497924805,
+        "runs": [
+          {
+            "prefill_seconds": 0.006609203000152775,
+            "decode_seconds": 1.9601906019997841,
+            "total_seconds": 1.966799804999937,
+            "peak_allocated_gib": 0.15622425079345703
+          },
+          {
+            "prefill_seconds": 0.00887217600029544,
+            "decode_seconds": 2.0634903029995257,
+            "total_seconds": 2.072362478999821,
+            "peak_allocated_gib": 0.15622663497924805
+          }
+        ]
+      },
+      "total_speedup": 1.012107224855516
+    },
+    {
+      "new_tokens": 400,
+      "exact_token_match": false,
+      "uncached": {
+        "prefill_seconds": 0.007311705000120128,
+        "decode_seconds": 3.276552457999969,
+        "total_seconds": 3.2838641630000893,
+        "decode_tokens_per_second": 122.07953485480371,
+        "total_tokens_per_second": 121.80771802526873,
+        "peak_allocated_gib": 0.1696186065673828,
+        "runs": [
+          {
+            "prefill_seconds": 0.00687106599980325,
+            "decode_seconds": 3.373688106999907,
+            "total_seconds": 3.3805591729997104,
+            "peak_allocated_gib": 0.16961431503295898
+          },
+          {
+            "prefill_seconds": 0.007752344000437006,
+            "decode_seconds": 3.179416809000031,
+            "total_seconds": 3.187169153000468,
+            "peak_allocated_gib": 0.1696186065673828
+          }
+        ]
+      },
+      "cached": {
+        "prefill_seconds": 0.009064164999927016,
+        "decode_seconds": 2.9900472775002527,
+        "total_seconds": 2.9991114425001797,
+        "decode_tokens_per_second": 133.77714894675816,
+        "total_tokens_per_second": 133.37283647804162,
+        "peak_allocated_gib": 0.15732812881469727,
+        "runs": [
+          {
+            "prefill_seconds": 0.011260145000051125,
+            "decode_seconds": 3.066228194999894,
+            "total_seconds": 3.0774883399999453,
+            "peak_allocated_gib": 0.15732479095458984
+          },
+          {
+            "prefill_seconds": 0.0068681849998029065,
+            "decode_seconds": 2.913866360000611,
+            "total_seconds": 2.920734545000414,
+            "peak_allocated_gib": 0.15732812881469727
+          }
+        ]
+      },
+      "total_speedup": 1.0949456950697798
+    }
+  ]
+}

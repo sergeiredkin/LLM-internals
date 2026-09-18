@@ -182,9 +182,13 @@ Using two K/V heads for eight query heads then reduced the cumulative model from
 shared-GPU benchmark improved full-sequence evaluation speed by 7%. See
 `reports/tinystories-gqa-ablation.md`.
 
+KV-cached generation now stores the two unexpanded GQA heads in a 2 MiB BF16 cache, 75% smaller
+than the equivalent MHA cache. At 400 generated tokens it was 1.09× faster and used 7.2% less peak
+allocated memory. See `reports/tinystories-kv-cache.md`.
+
 ## Roadmap
 
 1. **Done:** character-level Tiny Shakespeare GPT
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
-3. **In progress:** RoPE, SwiGLU, and GQA done; next are KV cache and top-p sampling
+3. **In progress:** RoPE, SwiGLU, GQA, and KV cache done; next is top-p sampling
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation

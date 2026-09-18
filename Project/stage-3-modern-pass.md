@@ -112,7 +112,7 @@ happens rather than selecting only favorable evidence.
 
 - [x] SwiGLU controlled ablation
 - [x] Grouped-query attention controlled ablation
-- [ ] KV-cache generation and latency benchmark
+- [x] KV-cache generation and latency benchmark
 - [ ] Top-p sampling comparison
 - [ ] LoRA/QLoRA
 - [ ] INT4 quantization
@@ -138,4 +138,5 @@ happens rather than selecting only favorable evidence.
 - 2026-09-17: started [[stage-3-gqa]] by isolating and validating 8-query/2-KV-head sharing.
 - 2026-09-18: completed [[stage-3-gqa]]. It removed 10.77% of cumulative model parameters for a
   0.33% fixed-loss increase and a 7.05% back-to-back full-sequence speed improvement.
-- 2026-09-18: started [[stage-3-kv-cache]] with isolated, preallocated GQA-aware cache storage.
+- 2026-09-18: completed [[stage-3-kv-cache]]. The 2 MiB GQA cache is 75% smaller than MHA;
+  cached decoding was 1.09x faster with 7.2% lower peak allocation at 400 generated tokens.

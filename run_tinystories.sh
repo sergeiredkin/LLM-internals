@@ -19,8 +19,14 @@ length=${length:-300}
 read -r -p "Creativity 0.5-1.2 [0.8]: " temperature
 temperature=${temperature:-0.8}
 
+if [[ -f runs/tinystories-rope-swiglu-gqa/best.pt ]]; then
+  CHECKPOINT="runs/tinystories-rope-swiglu-gqa/best.pt"
+else
+  CHECKPOINT="runs/tinystories/best.pt"
+fi
+
 conda run -n "$ENV_NAME" python -m scripts.generate \
-  --checkpoint runs/tinystories/best.pt \
+  --checkpoint "$CHECKPOINT" \
   --prompt "$prompt" \
   --max-new-tokens "$length" \
   --temperature "$temperature" \
