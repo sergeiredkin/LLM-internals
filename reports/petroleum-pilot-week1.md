@@ -39,13 +39,18 @@ BSEE remain separate structured layers.
 
 ## Extraction findings
 
-The 50-sample review found approximately 12 suspect samples by simple inspection:
+The 50-sample review found 10 suspect samples in the first-pass label pass and 40 samples suitable
+for manual confirmation. The label file is `data/petroleum/review-50-labeled.jsonl`; it is ignored
+by Git because it is generated corpus data.
 
 - figure/map-only pages with little useful text
 - legacy table text with corrupted symbols or column order
 - references/bibliography passages
 - title-only or page-header-only chunks
 - one malformed PDF page that pypdf could not parse
+
+The first-pass labels are not a substitute for domain-expert review. They make the decision and
+reason explicit so a human can correct them without losing the original sample.
 
 The ingestion script continued safely, preserved the PDF checksum, and reported the failed page:
 
