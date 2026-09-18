@@ -11,6 +11,17 @@ from .config import (
     load_config,
 )
 from .data import TokenCorpus, prepare_char_corpus
+from .eia import (
+    EIAObservation,
+    change,
+    connect,
+    insert_observations,
+    latest_value,
+    observation_from_record,
+    percent_change,
+    series_values,
+    year_over_year,
+)
 from .layers import SwiGLU, matched_swiglu_hidden_size
 from .lora import (
     LoRALinear,
@@ -52,6 +63,15 @@ from .tokenizer import BPETokenizer, CharTokenizer, load_tokenizer, tokenizer_fr
 
 __all__ = [
     "GPT",
+    "EIAObservation",
+    "connect",
+    "observation_from_record",
+    "insert_observations",
+    "latest_value",
+    "series_values",
+    "year_over_year",
+    "change",
+    "percent_change",
     "quality_flags",
     "Document",
     "Chunk",

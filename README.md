@@ -205,7 +205,8 @@ See `Project/stage-6-lora-qlora.md`.
 The petroleum-domain RAG foundation is now in `llm/rag.py`, with JSONL ingestion, provenance-preserving
 chunking, deterministic BM25 retrieval, citation-labelled context assembly, and retrieval metrics.
 Queries with no positive lexical evidence explicitly abstain. No unlicensed petroleum data is
-included; see `Project/stage-7-petroleum-rag.md`.
+included; see `Project/stage-7-petroleum-rag.md`. The Week 2 EIA pilot now has normalized local storage and
+read-only year-over-year calculations; see `reports/eia-week2-pilot.md`.
 
 ## Roadmap
 

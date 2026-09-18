@@ -96,6 +96,22 @@ page. The first filter retains 2,859 chunks and rejects 444 obvious extraction f
 50 review samples need filtering or manual attention, so the extraction pipeline is working but the
 corpus is not yet production-ready.
 
+## Week 2 EIA pilot
+
+`reports/eia-week2-pilot.md` documents the live EIA pull. SQLite is used locally because PostgreSQL
+is not installed; the schema is relational and ready for migration. Crude production, inventories,
+refinery inputs, and spot prices were ingested into the pilot store. Product supplied was temporarily
+rate-limited by the EIA API and must be retried with a registered key.
+
+Example:
+
+```bash
+python -m scripts.query_eia \
+  --database data/petroleum/eia.sqlite \
+  --series MCRFPUS1 \
+  --yoy-period 2025-01
+```
+
 ## Next steps
 
 - [x] Select and document a 12-report USGS pilot corpus and record checksums.
@@ -105,5 +121,6 @@ corpus is not yet production-ready.
 - [ ] Normalize the selected corpus to JSONL and create deterministic train/validation/query splits.
 - [ ] Establish BM25 metrics on the fixed query set.
 - [x] Add context assembly with citations and an abstention rule.
+- [x] Add EIA normalized local storage, ingestion, read-only queries, and calculations.
 - [ ] Create petroleum instruction examples only from retrieved, licensed evidence.
 - [ ] Train and evaluate a small QLoRA adapter.
