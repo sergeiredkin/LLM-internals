@@ -63,11 +63,11 @@ GQA therefore reduces cache elements by 75%.
 
 ### Attention integration
 
-- [ ] Accept an optional layer cache and position offset in attention.
-- [ ] Apply RoPE using the absolute cache position.
-- [ ] Append unexpanded K/V before temporary GQA head expansion.
-- [ ] Use a causal mask correctly for multi-token prefill and incremental decode.
-- [ ] Verify cached and uncached attention outputs agree.
+- [x] Accept an optional layer cache and position offset in attention.
+- [x] Apply RoPE using the absolute cache position.
+- [x] Append unexpanded K/V before temporary GQA head expansion.
+- [x] Use a causal mask correctly for multi-token prefill and incremental decode.
+- [x] Verify cached and uncached attention outputs agree.
 
 ### Model integration
 
@@ -87,5 +87,8 @@ GQA therefore reduces cache elements by 75%.
 
 ## Log
 
-- 2026-09-18: implemented the isolated preallocated per-layer cache. GPT and attention behavior are
-  intentionally unchanged until cache storage tests pass.
+- 2026-09-18: implemented the isolated preallocated per-layer cache. GPT and attention behavior
+  remained unchanged until cache storage tests passed.
+- 2026-09-18: integrated optional per-layer caching into attention. Token-by-token and chunked
+  cached outputs match full causal attention; maximum observed FP32 difference was 1.79e-7. The
+  cache retains two unexpanded GQA heads. All 57 tests pass.

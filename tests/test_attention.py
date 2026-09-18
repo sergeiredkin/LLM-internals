@@ -5,6 +5,7 @@ import unittest
 import torch
 
 from llm.attention import CausalSelfAttention, repeat_kv
+from llm.cache import LayerKVCache
 from llm.config import ModelConfig
 from scripts.overfit_batch import small_attention_heads
 
@@ -71,6 +72,42 @@ class GroupedQueryAttentionTests(unittest.TestCase):
         self.assertEqual(small_attention_heads(8, 2), (4, 1))
         with self.assertRaisesRegex(ValueError, "sharing ratio"):
             small_attention_heads(12, 2)
+
+    def test_token_by_token_cache_matches_full_causal_attention(self) -> None:
+        torch.manual_seed(7)
+        attention = CausalSelfAttention(attention_config(n_kv_heads=2)).eval()
+        x = torch.randn(2, 9, 64)
+        cache = LayerKVCache(
+            2, 2, 9, 8, device=x.device, dtype=x.dtype
+        )
+        with torch.no_grad():
+            full = attention(x)
+            cached = torch.cat(
+                [attention(x[:, position : position + 1], cache) for position in range(9)],
+                dim=1,
+            )
+        torch.testing.assert_close(cached, full, atol=1e-5, rtol=1e-5)
+        self.assertEqual(cache.length, 9)
+        self.assertEqual(cache.keys.shape[1], 2)
+
+    def test_chunked_cache_matches_full_causal_attention(self) -> None:
+        torch.manual_seed(11)
+        attention = CausalSelfAttention(attention_config(n_kv_heads=2)).eval()
+        x = torch.randn(1, 10, 64)
+        cache = LayerKVCache(
+            1, 2, 10, 8, device=x.device, dtype=x.dtype
+        )
+        with torch.no_grad():
+            full = attention(x)
+            cached = torch.cat(
+                (
+                    attention(x[:, :4], cache),
+                    attention(x[:, 4:7], cache),
+                    attention(x[:, 7:], cache),
+                ),
+                dim=1,
+            )
+        torch.testing.assert_close(cached, full, atol=1e-5, rtol=1e-5)
 
     def test_invalid_repeat_inputs_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "shape"):

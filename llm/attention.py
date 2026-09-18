@@ -6,6 +6,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from .cache import LayerKVCache
 from .config import ModelConfig
 from .rope import RotaryEmbedding
 
@@ -52,26 +53,51 @@ class CausalSelfAttention(nn.Module):
         batch, sequence, _ = x.shape
         return x.view(batch, sequence, n_heads, self.head_dim).transpose(1, 2)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        cache: LayerKVCache | None = None,
+    ) -> torch.Tensor:
         batch, sequence, _ = x.shape
         q = self._split_heads(self.q_proj(x), self.n_heads)
         k = self._split_heads(self.k_proj(x), self.n_kv_heads)
         v = self._split_heads(self.v_proj(x), self.n_kv_heads)
 
+        position_offset = cache.length if cache is not None else 0
         if self.rope is not None:
-            q, k = self.rope(q, k)
+            q, k = self.rope(q, k, position_offset=position_offset)
+
+        if cache is not None:
+            k, v = cache.append(k, v)
 
         if self.n_kv_heads != self.n_heads:
             repeats = self.n_heads // self.n_kv_heads
             k = repeat_kv(k, repeats)
             v = repeat_kv(v, repeats)
 
+        attention_mask = None
+        is_causal = cache is None or position_offset == 0
+        if cache is not None and position_offset > 0 and sequence > 1:
+            query_positions = torch.arange(
+                position_offset,
+                position_offset + sequence,
+                device=x.device,
+            )
+            key_positions = torch.arange(k.shape[2], device=x.device)
+            attention_mask = key_positions[None, :] <= query_positions[:, None]
+        # A single decode query is the newest position and can attend to the
+        # complete cache. PyTorch's non-square is_causal mask is upper-left
+        # aligned, so is_causal must be False for this case.
+        if cache is not None and position_offset > 0:
+            is_causal = False
+
         output = F.scaled_dot_product_attention(
             q,
             k,
             v,
+            attn_mask=attention_mask,
             dropout_p=self.dropout_p if self.training else 0.0,
-            is_causal=True,
+            is_causal=is_causal,
         )
         output = output.transpose(1, 2).contiguous().view(batch, sequence, -1)
         return self.resid_dropout(self.out_proj(output))
