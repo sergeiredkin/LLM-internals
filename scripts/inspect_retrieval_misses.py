@@ -24,7 +24,9 @@ def main() -> None:
     retriever = BM25Retriever(chunks)
     misses = []
     for query in (json.loads(line) for line in args.queries.open(encoding="utf-8") if line.strip()):
-        results = retriever.retrieve(query["query"], top_k=args.top_k)
+        results = retriever.retrieve(
+            query["query"], top_k=args.top_k, group_by_document=True
+        )
         relevant = set(query["relevant_document_ids"])
         if any(result.chunk.document_id in relevant for result in results):
             continue

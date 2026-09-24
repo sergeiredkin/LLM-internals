@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -9,8 +10,10 @@ from llm.rag import (
     assemble_context,
     Document,
     chunk_document,
+    load_jsonl_chunks,
     load_jsonl_documents,
     retrieval_metrics,
+    expand_petroleum_query,
     tokenize,
     write_jsonl_documents,
 )
@@ -43,6 +46,12 @@ class RAGTests(unittest.TestCase):
     def test_tokenize_is_case_insensitive_and_stable(self) -> None:
         self.assertEqual(tokenize("API's Well-Log 12"), ["api's", "well-log", "12"])
 
+    def test_petroleum_query_expansion_is_conservative(self) -> None:
+        expanded = expand_petroleum_query("How does salt act as a seal?")
+        self.assertIn("salt", expanded)
+        self.assertIn("evaporite", expanded)
+        self.assertIn("role", expanded)
+
     def test_chunking_preserves_provenance_and_overlap(self) -> None:
         document = Document("doc-1", "one two three four five six seven")
         chunks = chunk_document(document, chunk_size=4, overlap=1)
@@ -60,6 +69,22 @@ class RAGTests(unittest.TestCase):
             loaded = load_jsonl_documents(path)
             self.assertEqual(loaded, self.documents)
 
+    def test_pre_chunked_jsonl_loads_without_rechunking(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "chunks.jsonl"
+            path.write_text(json.dumps({
+                "chunk_id": "page#chunk-0000",
+                "document_id": "page",
+                "text": "one two three",
+                "source": "report.pdf",
+                "title": "Report",
+                "metadata": {"page": 7},
+            }) + "\n", encoding="utf-8")
+            chunks = load_jsonl_chunks(path)
+            self.assertEqual(len(chunks), 1)
+            self.assertEqual(chunks[0].chunk_id, "page#chunk-0000")
+            self.assertEqual(chunks[0].metadata["page"], "7")
+
     def test_bm25_retrieves_relevant_petroleum_document(self) -> None:
         chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]
         retriever = BM25Retriever(chunks)
@@ -74,6 +99,18 @@ class RAGTests(unittest.TestCase):
         ]
         result = BM25Retriever(chunks).retrieve("absent", top_k=2)
         self.assertEqual([item.chunk.chunk_id for item in result], ["a", "b"])
+
+    def test_grouped_retrieval_keeps_one_chunk_per_parent_document(self) -> None:
+        chunks = [
+            Chunk("page-a-1", "page-a", "pressure pressure drilling", "", "", {}),
+            Chunk("page-a-2", "page-a", "pressure drilling", "", "", {}),
+            Chunk("page-b-1", "page-b", "pressure drilling", "", "", {}),
+        ]
+        results = BM25Retriever(chunks).retrieve(
+            "pressure drilling", top_k=2, group_by_document=True
+        )
+        self.assertEqual(len(results), 2)
+        self.assertEqual(len({item.chunk.document_id for item in results}), 2)
 
     def test_context_assembly_has_citations_and_source_provenance(self) -> None:
         chunks = [chunk_document(document, chunk_size=100, overlap=0)[0] for document in self.documents]

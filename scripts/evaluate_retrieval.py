@@ -7,7 +7,13 @@ import argparse
 import json
 from pathlib import Path
 
-from llm.rag import BM25Retriever, chunk_document, load_jsonl_documents, retrieval_metrics
+from llm.rag import (
+    BM25Retriever,
+    chunk_document,
+    load_jsonl_chunks,
+    load_jsonl_documents,
+    retrieval_metrics,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -18,19 +24,34 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--chunk-size", type=int, default=160)
     parser.add_argument("--overlap", type=int, default=32)
     parser.add_argument("--top-k", type=int, default=5)
+    parser.add_argument(
+        "--pre-chunked",
+        action="store_true",
+        help="load chunk records directly instead of chunking document records",
+    )
+    parser.add_argument(
+        "--expand-petroleum-query",
+        action="store_true",
+        help="add conservative petroleum synonyms to each query",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    documents = load_jsonl_documents(args.documents)
-    chunks = [
-        chunk
-        for document in documents
-        for chunk in chunk_document(
-            document, chunk_size=args.chunk_size, overlap=args.overlap
-        )
-    ]
+    if args.pre_chunked:
+        chunks = load_jsonl_chunks(args.documents)
+        document_count = len({chunk.document_id for chunk in chunks})
+    else:
+        documents = load_jsonl_documents(args.documents)
+        document_count = len(documents)
+        chunks = [
+            chunk
+            for document in documents
+            for chunk in chunk_document(
+                document, chunk_size=args.chunk_size, overlap=args.overlap
+            )
+        ]
     with args.queries.open(encoding="utf-8") as handle:
         queries = []
         for line_number, line in enumerate(handle, 1):
@@ -41,9 +62,14 @@ def main() -> None:
                 raise SystemExit(f"invalid query JSONL at line {line_number}") from error
 
     retriever = BM25Retriever(chunks)
-    metrics = retrieval_metrics(retriever, queries, top_k=args.top_k)
+    metrics = retrieval_metrics(
+        retriever,
+        queries,
+        top_k=args.top_k,
+        expand_query=args.expand_petroleum_query,
+    )
     result = {
-        "documents": len(documents),
+        "documents": document_count,
         "chunks": len(chunks),
         "chunk_size": args.chunk_size,
         "overlap": args.overlap,
@@ -52,7 +78,7 @@ def main() -> None:
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-    print(f"Documents:       {len(documents)}")
+    print(f"Documents:       {document_count}")
     print(f"Chunks:           {len(chunks)}")
     print(f"Hit rate@{args.top_k}:   {metrics['hit_rate_at_k']:.3f}")
     print(f"Recall@{args.top_k}:     {metrics['recall_at_k']:.3f}")

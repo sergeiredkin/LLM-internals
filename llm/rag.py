@@ -9,12 +9,28 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9]+(?:['-][A-Za-z0-9]+)?")
+_PETROLEUM_QUERY_EXPANSIONS = {
+    "act": ("role", "function"),
+    "hydrocarbons": ("oil", "gas", "petroleum"),
+    "resource": ("oil-in-place", "deposit"),
+    "effects": ("impact", "water-quality", "contamination"),
+    "salt": ("seal", "evaporite", "anhydrite"),
+    "aquifers": ("groundwater", "water-quality"),
+}
 
 
 def tokenize(text: str) -> list[str]:
     """Tokenize text consistently for indexing and queries."""
 
     return [match.group(0).lower() for match in _TOKEN_RE.finditer(text)]
+
+
+def expand_petroleum_query(query: str) -> str:
+    """Add conservative petroleum vocabulary without changing original query terms."""
+
+    terms = tokenize(query)
+    additions = [term for token in terms for term in _PETROLEUM_QUERY_EXPANSIONS.get(token, ())]
+    return query + (" " + " ".join(dict.fromkeys(additions)) if additions else "")
 
 
 @dataclass(frozen=True)
@@ -126,6 +142,32 @@ def load_jsonl_documents(path: str | Path) -> list[Document]:
     return documents
 
 
+def load_jsonl_chunks(path: str | Path) -> list[Chunk]:
+    """Load an already chunked JSONL corpus without chunking it a second time."""
+
+    chunks: list[Chunk] = []
+    with Path(path).open(encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+                metadata = record.get("metadata") or {}
+                chunks.append(
+                    Chunk(
+                        chunk_id=str(record["chunk_id"]),
+                        document_id=str(record["document_id"]),
+                        text=str(record["text"]),
+                        source=str(record.get("source", "")),
+                        title=str(record.get("title", "")),
+                        metadata={str(k): str(v) for k, v in metadata.items()},
+                    )
+                )
+            except (KeyError, TypeError, ValueError) as error:
+                raise ValueError(f"invalid JSONL chunk at line {line_number}") from error
+    return chunks
+
+
 def write_jsonl_documents(path: str | Path, documents: list[Document]) -> None:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -177,14 +219,35 @@ class BM25Retriever:
             score += idf * frequency * (self.k1 + 1.0) / denominator
         return score
 
-    def retrieve(self, query: str, *, top_k: int = 5) -> list[RetrievalResult]:
+    def retrieve(
+        self,
+        query: str,
+        *,
+        top_k: int = 5,
+        group_by_document: bool = False,
+        expand_query: bool = False,
+    ) -> list[RetrievalResult]:
+        """Retrieve chunks, optionally keeping only the best chunk per parent document.
+
+        Petroleum page records can produce several highly similar chunks. Grouping prevents
+        one page from consuming the entire top-k and uses max-score aggregation for a stable
+        parent-page ranking.
+        """
+
         if top_k <= 0:
             raise ValueError("top_k must be positive")
+        if expand_query:
+            query = expand_petroleum_query(query)
         scored = [
             RetrievalResult(chunk, self.score(query, index))
             for index, chunk in enumerate(self.chunks)
         ]
         scored.sort(key=lambda result: (-result.score, result.chunk.chunk_id))
+        if group_by_document:
+            grouped: dict[str, RetrievalResult] = {}
+            for result in scored:
+                grouped.setdefault(result.chunk.document_id, result)
+            scored = list(grouped.values())
         return scored[:top_k]
 
 
@@ -195,6 +258,8 @@ def assemble_context(
     top_k: int = 5,
     max_characters: int = 4000,
     minimum_score: float = 0.0,
+    group_by_document: bool = True,
+    expand_query: bool = False,
 ) -> ContextResult:
     """Create citation-labelled evidence, abstaining when lexical evidence is absent.
 
@@ -206,7 +271,12 @@ def assemble_context(
         raise ValueError("max_characters must be positive")
     if minimum_score < 0:
         raise ValueError("minimum_score cannot be negative")
-    candidates = retriever.retrieve(query, top_k=top_k)
+    candidates = retriever.retrieve(
+        query,
+        top_k=top_k,
+        group_by_document=group_by_document,
+        expand_query=expand_query,
+    )
     candidates = [result for result in candidates if result.score >= minimum_score]
     if not candidates or candidates[0].score <= 0.0:
         return ContextResult(
@@ -265,6 +335,8 @@ def retrieval_metrics(
     queries: list[tuple[str, set[str]]],
     *,
     top_k: int = 5,
+    group_by_document: bool = True,
+    expand_query: bool = False,
 ) -> dict[str, float]:
     """Calculate hit rate, recall, and reciprocal rank for labelled query IDs."""
 
@@ -275,7 +347,12 @@ def retrieval_metrics(
     retrieved_relevant = 0
     total_relevant = 0
     for query, relevant_ids in queries:
-        results = retriever.retrieve(query, top_k=top_k)
+        results = retriever.retrieve(
+            query,
+            top_k=top_k,
+            group_by_document=group_by_document,
+            expand_query=expand_query,
+        )
         result_ids = [result.chunk.document_id for result in results]
         relevant_ids = set(relevant_ids)
         total_relevant += len(relevant_ids)

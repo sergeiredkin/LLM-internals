@@ -7,7 +7,13 @@ import argparse
 import json
 from pathlib import Path
 
-from llm.rag import BM25Retriever, assemble_context, chunk_document, load_jsonl_documents
+from llm.rag import (
+    BM25Retriever,
+    assemble_context,
+    chunk_document,
+    load_jsonl_chunks,
+    load_jsonl_documents,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -19,26 +25,40 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--overlap", type=int, default=32)
     parser.add_argument("--max-characters", type=int, default=4000)
     parser.add_argument("--minimum-score", type=float, default=0.0)
+    parser.add_argument(
+        "--pre-chunked",
+        action="store_true",
+        help="load chunk records directly instead of chunking document records",
+    )
+    parser.add_argument(
+        "--expand-petroleum-query",
+        action="store_true",
+        help="add conservative petroleum synonyms to the query",
+    )
     parser.add_argument("--output", type=Path, default=None)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    documents = load_jsonl_documents(args.documents)
-    chunks = [
-        chunk
-        for document in documents
-        for chunk in chunk_document(
-            document, chunk_size=args.chunk_size, overlap=args.overlap
-        )
-    ]
+    if args.pre_chunked:
+        chunks = load_jsonl_chunks(args.documents)
+    else:
+        documents = load_jsonl_documents(args.documents)
+        chunks = [
+            chunk
+            for document in documents
+            for chunk in chunk_document(
+                document, chunk_size=args.chunk_size, overlap=args.overlap
+            )
+        ]
     result = assemble_context(
         BM25Retriever(chunks),
         args.query,
         top_k=args.top_k,
         max_characters=args.max_characters,
         minimum_score=args.minimum_score,
+        expand_query=args.expand_petroleum_query,
     )
     payload = {
         "query": result.query,

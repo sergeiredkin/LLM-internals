@@ -28,7 +28,8 @@ The retrieval-only CLI is:
 
 ```bash
 python -m scripts.retrieve_context \
-  --documents data/petroleum/documents.jsonl \
+  --documents data/petroleum/chunks-expanded-clean.jsonl \
+  --pre-chunked \
   --query "What controls bottom-hole pressure?" \
   --top-k 5
 ```
@@ -40,7 +41,8 @@ The evaluation CLI is:
 
 ```bash
 python -m scripts.evaluate_retrieval \
-  --documents data/petroleum/documents.jsonl \
+  --documents data/petroleum/chunks-expanded-clean.jsonl \
+  --pre-chunked \
   --queries data/petroleum/queries.jsonl \
   --output reports/results/petroleum-retrieval.json
 ```
