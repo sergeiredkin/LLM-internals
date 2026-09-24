@@ -94,6 +94,17 @@ metrics so a retrieved passage is not mistaken for a supported answer. The draft
 `scripts/build_answer_eval_draft.py` creates provenance-linked records for manual rewriting; its
 extractive smoke-test scores must not be treated as final answer quality.
 
+The production retrieval configuration can now be enabled directly from the context CLI:
+
+```bash
+python -m scripts.retrieve_context \
+  --documents data/petroleum/chunks-expanded-with-table-facts.jsonl \
+  --pre-chunked \
+  --query "What was the purpose of the Indian National Gas Hydrate Program Expedition 01?" \
+  --expand-petroleum-query --section-aware --summary-aware \
+  --semantic-rerank --prefer-primary-evidence
+```
+
 The retrieval-only CLI is:
 
 ```bash

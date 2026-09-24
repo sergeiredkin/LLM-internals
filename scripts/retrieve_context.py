@@ -35,6 +35,10 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="add conservative petroleum synonyms to the query",
     )
+    parser.add_argument("--section-aware", action="store_true")
+    parser.add_argument("--summary-aware", action="store_true")
+    parser.add_argument("--semantic-rerank", action="store_true")
+    parser.add_argument("--prefer-primary-evidence", action="store_true")
     parser.add_argument("--output", type=Path, default=None)
     return parser.parse_args()
 
@@ -59,6 +63,10 @@ def main() -> None:
         max_characters=args.max_characters,
         minimum_score=args.minimum_score,
         expand_query=args.expand_petroleum_query,
+        section_aware=args.section_aware,
+        summary_aware=args.summary_aware,
+        semantic_rerank=args.semantic_rerank,
+        prefer_primary_evidence=args.prefer_primary_evidence,
     )
     payload = {
         "query": result.query,
