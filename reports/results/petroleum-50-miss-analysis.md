@@ -15,4 +15,6 @@ The three questions whose original labels pointed to title/abstract pages were r
 answer passages without changing the original 18-question set. No source was added and no question
 was removed.
 
-Next retrieval work should target section-heading and summary-page boosts, not broad corpus expansion.
+Section-aware ranking was then added for these intents. With table facts, primary reranking, and
+section-aware ranking, results reached hit@5 0.980, recall@5 0.962, and MRR@5 0.708. One Fayetteville
+shallow-aquifer question remains outside top-5 and needs a future title/abstract-aware ranker.

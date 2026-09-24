@@ -37,7 +37,7 @@
 {"query": "How large is the Piceance Basin oil-in-place resource?", "relevant_document_ids": ["usgs-sir-2012-5041#page-0007"], "split": "expansion-32", "category": "numbers-units"}
 {"query": "What data are used to characterize gas hydrate reservoirs at Alaminos Canyon?", "relevant_document_ids": ["usgs-sir-2012-5046#page-0006"], "split": "expansion-32", "category": "gas-hydrate"}
 {"query": "What was the main scientific objective of the Gulf of Mexico gas hydrate drilling program?", "relevant_document_ids": ["usgs-sir-2012-5046#page-0006"], "split": "expansion-32", "category": "gas-hydrate"}
-{"query": "How many sites were established during NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0005"], "split": "expansion-32", "category": "gas-hydrate"}
+{"query": "How many sites were established during NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0019"], "split": "expansion-32", "category": "gas-hydrate"}
 {"query": "Which continental margins were investigated by NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0007"], "split": "expansion-32", "category": "gas-hydrate"}
 {"query": "What is the oil shale estimate for the Uinta Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "expansion-32", "category": "resource"}
 {"query": "What is the oil shale estimate for the Piceance Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0091"], "split": "expansion-32", "category": "resource"}

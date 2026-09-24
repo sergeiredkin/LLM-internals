@@ -39,6 +39,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="slightly downrank derived table facts behind source chunks",
     )
+    parser.add_argument(
+        "--section-aware",
+        action="store_true",
+        help="boost evidence passages matching the query's petroleum section intent",
+    )
     return parser.parse_args()
 
 
@@ -73,6 +78,7 @@ def main() -> None:
         top_k=args.top_k,
         expand_query=args.expand_petroleum_query,
         prefer_primary_evidence=args.prefer_primary_evidence,
+        section_aware=args.section_aware,
     )
     result = {
         "documents": document_count,
