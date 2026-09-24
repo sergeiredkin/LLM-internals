@@ -5,10 +5,49 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 from llm.petroleum_quality import table_candidate_score
 from llm.rag import Document, chunk_document
+
+
+def merge_table_continuations(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Merge a table page with nearby pages labelled as its continuation."""
+
+    merged: list[dict[str, object]] = []
+    index = 0
+    while index < len(records):
+        record = records[index]
+        text = str(record.get("text", ""))
+        if not re.search(r"\btable\s+\d+\s*[.:]", text, re.IGNORECASE):
+            merged.append(record)
+            index += 1
+            continue
+        source_id = str((record.get("metadata") or {}).get("source_id", ""))
+        end = index
+        for lookahead in range(index + 1, min(index + 4, len(records))):
+            candidate = records[lookahead]
+            candidate_source = str((candidate.get("metadata") or {}).get("source_id", ""))
+            candidate_text = str(candidate.get("text", ""))
+            if candidate_source != source_id:
+                break
+            if re.search(r"\btable\s+\d+[\s.:,-]*(?:con['’]?t|continued)", candidate_text, re.IGNORECASE):
+                end = lookahead
+                break
+        if end == index:
+            merged.append(record)
+            index += 1
+            continue
+        combined = dict(record)
+        combined["text"] = "\n".join(str(records[pos].get("text", "")) for pos in range(index, end + 1))
+        combined["table_page_range"] = [
+            str((records[pos].get("metadata") or {}).get("page", ""))
+            for pos in range(index, end + 1)
+        ]
+        merged.append(combined)
+        index = end + 1
+    return merged
 
 
 def main() -> None:
@@ -18,17 +57,22 @@ def main() -> None:
     parser.add_argument("--minimum-score", type=int, default=10)
     parser.add_argument("--chunk-size", type=int, default=160)
     parser.add_argument("--overlap", type=int, default=32)
+    parser.add_argument(
+        "--merge-continuations",
+        action="store_true",
+        help="merge nearby pages containing a labelled table continuation",
+    )
     args = parser.parse_args()
     if args.minimum_score <= 0:
         raise SystemExit("--minimum-score must be positive")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     selected = 0
-    with args.pages.open(encoding="utf-8") as source, args.output.open("w", encoding="utf-8") as output:
-        for line_number, line in enumerate(source, 1):
-            if not line.strip():
-                continue
-            record = json.loads(line)
+    records = [json.loads(line) for line in args.pages.open(encoding="utf-8") if line.strip()]
+    if args.merge_continuations:
+        records = merge_table_continuations(records)
+    with args.output.open("w", encoding="utf-8") as output:
+        for line_number, record in enumerate(records, 1):
             score = table_candidate_score(str(record.get("text", "")))
             if score < args.minimum_score:
                 continue
@@ -42,6 +86,8 @@ def main() -> None:
                     "record_type": "table_candidate",
                     "table_candidate_score": str(score),
                     "input_line": str(line_number),
+                    **({"table_page_range": ",".join(map(str, record["table_page_range"]))}
+                       if record.get("table_page_range") else {}),
                 },
             )
             table_chunks = chunk_document(

@@ -69,4 +69,4 @@ baseline remains reproducible.
 1. Add parent-page aggregation and a per-page diversity limit to retrieval.
 2. Add controlled petroleum query expansion and compare against the unchanged fixed benchmark.
 3. Acquire the complete NGHP-01 report and replace the front-matter-only source.
-4. Add a separate table/figure extraction path.
+4. Add a separate table/figure extraction path. The first table candidate corpus now merges labelled continuation pages; NPR-4 Table 4 pages 55–57 form one table group and the isolated NPR-4 evaluation retrieves the relevant group at hit rate@5 1.000.

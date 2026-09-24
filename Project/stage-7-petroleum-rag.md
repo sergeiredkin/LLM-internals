@@ -29,11 +29,14 @@ A separate table-candidate extraction path is now available. It detects table-li
 ```bash
 python -m scripts.extract_petroleum_tables \
   --pages data/petroleum/pages-expanded.jsonl \
-  --output data/petroleum/table-candidates.jsonl
+  --output data/petroleum/table-candidates.jsonl \
+  --merge-continuations
 ```
 
-The current threshold produces 98 candidate pages. This is an initial table-preservation path, not
-semantic table parsing; continuation-page merging and row reconstruction remain future work.
+The current threshold produces 97 candidate table groups. Continuation pages are merged when a
+labelled continuation is detected; for example, the NPR-4 Table 4 group preserves pages 55–57.
+This is an initial table-preservation path, not semantic column parsing; row reconstruction remains
+future work.
 
 The retrieval-only CLI is:
 

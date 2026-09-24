@@ -1,6 +1,7 @@
 import unittest
 
 from llm.petroleum_quality import quality_flags, table_candidate_score
+from scripts.extract_petroleum_tables import merge_table_continuations
 
 
 class PetroleumQualityTests(unittest.TestCase):
@@ -10,6 +11,17 @@ class PetroleumQualityTests(unittest.TestCase):
             "OF HYDROCARBON RESERVOIR THICKNESS REMARKS"
         )
         self.assertGreaterEqual(score, 4)
+
+    def test_table_continuations_merge_and_preserve_start_page(self) -> None:
+        records = [
+            {"document_id": "src#page-0055", "text": "Table 4. Petroleum geology", "metadata": {"source_id": "src", "page": "55"}},
+            {"document_id": "src#page-0056", "text": "continued rows", "metadata": {"source_id": "src", "page": "56"}},
+            {"document_id": "src#page-0057", "text": "Table 4. con't. more rows", "metadata": {"source_id": "src", "page": "57"}},
+        ]
+        merged = merge_table_continuations(records)
+        self.assertEqual(len(merged), 1)
+        self.assertEqual(merged[0]["document_id"], "src#page-0055")
+        self.assertEqual(merged[0]["table_page_range"], ["55", "56", "57"])
 
     def test_good_prose_is_kept(self) -> None:
         text = " ".join(
