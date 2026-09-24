@@ -229,6 +229,7 @@ class BM25Retriever:
         top_k: int = 5,
         group_by_document: bool = False,
         expand_query: bool = False,
+        prefer_primary_evidence: bool = False,
     ) -> list[RetrievalResult]:
         """Retrieve chunks, optionally keeping only the best chunk per parent document.
 
@@ -241,10 +242,12 @@ class BM25Retriever:
             raise ValueError("top_k must be positive")
         if expand_query:
             query = expand_petroleum_query(query)
-        scored = [
-            RetrievalResult(chunk, self.score(query, index))
-            for index, chunk in enumerate(self.chunks)
-        ]
+        scored = []
+        for index, chunk in enumerate(self.chunks):
+            score = self.score(query, index)
+            if prefer_primary_evidence and chunk.metadata.get("record_type") == "table_fact_candidate":
+                score *= 0.90
+            scored.append(RetrievalResult(chunk, score))
         scored.sort(key=lambda result: (-result.score, result.chunk.chunk_id))
         if group_by_document:
             grouped: dict[str, RetrievalResult] = {}
@@ -263,6 +266,7 @@ def assemble_context(
     minimum_score: float = 0.0,
     group_by_document: bool = True,
     expand_query: bool = False,
+    prefer_primary_evidence: bool = False,
 ) -> ContextResult:
     """Create citation-labelled evidence, abstaining when lexical evidence is absent.
 
@@ -279,6 +283,7 @@ def assemble_context(
         top_k=top_k,
         group_by_document=group_by_document,
         expand_query=expand_query,
+        prefer_primary_evidence=prefer_primary_evidence,
     )
     candidates = [result for result in candidates if result.score >= minimum_score]
     if not candidates or candidates[0].score <= 0.0:
@@ -340,6 +345,7 @@ def retrieval_metrics(
     top_k: int = 5,
     group_by_document: bool = True,
     expand_query: bool = False,
+    prefer_primary_evidence: bool = False,
 ) -> dict[str, float]:
     """Calculate hit rate, recall, and reciprocal rank for labelled query IDs."""
 
@@ -355,6 +361,7 @@ def retrieval_metrics(
             top_k=top_k,
             group_by_document=group_by_document,
             expand_query=expand_query,
+            prefer_primary_evidence=prefer_primary_evidence,
         )
         result_ids = [result.chunk.document_id for result in results]
         relevant_ids = set(relevant_ids)

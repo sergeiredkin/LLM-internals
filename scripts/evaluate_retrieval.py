@@ -34,6 +34,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="add conservative petroleum synonyms to each query",
     )
+    parser.add_argument(
+        "--prefer-primary-evidence",
+        action="store_true",
+        help="slightly downrank derived table facts behind source chunks",
+    )
     return parser.parse_args()
 
 
@@ -67,6 +72,7 @@ def main() -> None:
         queries,
         top_k=args.top_k,
         expand_query=args.expand_petroleum_query,
+        prefer_primary_evidence=args.prefer_primary_evidence,
     )
     result = {
         "documents": document_count,

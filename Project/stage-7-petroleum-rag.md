@@ -65,8 +65,15 @@ python -m scripts.build_petroleum_augmented \
 ```
 
 On the 18-question benchmark, the augmented corpus improved hit rate@5 from 0.889 to 0.944 and
-recall@5 from 0.850 to 0.900, while MRR moved from 0.592 to 0.578. Therefore table facts should
-remain an optional recall layer until reranking restores first-result quality.
+recall@5 from 0.850 to 0.900, while MRR moved from 0.592 to 0.578. An optional primary-evidence rerank is available:
+
+```bash
+python -m scripts.evaluate_retrieval ... --prefer-primary-evidence
+```
+
+With the current conservative 0.90 downweight for derived facts, MRR returns to 0.592 and the
+benchmark remains at the original 0.889 hit rate / 0.850 recall. This gives us an explicit choice:
+use augmented retrieval for recall, or primary-evidence reranking for answer quality.
 
 The retrieval-only CLI is:
 
