@@ -1,6 +1,7 @@
 import unittest
 
 from llm.petroleum_quality import quality_flags, reconstruct_table_rows, table_candidate_score
+from scripts.construct_petroleum_table_facts import facts_from_row
 from scripts.extract_petroleum_tables import merge_table_continuations
 
 
@@ -11,6 +12,15 @@ class PetroleumQualityTests(unittest.TestCase):
             "OF HYDROCARBON RESERVOIR THICKNESS REMARKS"
         )
         self.assertGreaterEqual(score, 4)
+
+    def test_table_fact_extraction_is_conservative_and_cited(self) -> None:
+        facts = facts_from_row({
+            "chunk_id": "src#row", "document_id": "src#page-0055",
+            "text": "Possible play over a large area south of Barrow. Indigenous hydrocarbons limited to dry gas.",
+        })
+        self.assertEqual(len(facts), 1)
+        self.assertIn("Hydrocarbon type: dry gas.", facts[0]["text"])
+        self.assertEqual(facts[0]["metadata"]["confidence"], "medium")
 
     def test_table_row_reconstruction_preserves_row_markers(self) -> None:
         rows = reconstruct_table_rows(

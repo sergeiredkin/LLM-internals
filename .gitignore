@@ -23,5 +23,6 @@ data/petroleum/chunks-expanded-clean.jsonl
 data/petroleum/chunks-expanded-rejected.jsonl
 data/petroleum/table-candidates.jsonl
 data/petroleum/table-row-candidates.jsonl
+data/petroleum/table-fact-candidates.jsonl
 data/petroleum/review-expanded-100.jsonl
 data/petroleum/review-*.jsonl

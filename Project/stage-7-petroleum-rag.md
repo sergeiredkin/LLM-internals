@@ -44,7 +44,16 @@ python -m scripts.reconstruct_petroleum_tables \
 ```
 
 It produces 216 auditable row-like records. It deliberately does not fabricate column alignment;
-semantic column reconstruction still requires manual review or a stronger table extractor.
+A conservative fact-candidate path is also available:
+
+```bash
+python -m scripts.construct_petroleum_table_facts \
+  --rows data/petroleum/table-row-candidates.jsonl \
+  --output data/petroleum/table-fact-candidates.jsonl
+```
+
+It emits 128 fact candidates with explicit confidence and evidence text. It extracts facts such as
+“dry gas” and “south of Barrow” but does not claim that PDF column alignment is fully recovered.
 
 The retrieval-only CLI is:
 
