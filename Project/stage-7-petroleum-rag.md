@@ -101,11 +101,12 @@ is not yet production-ready.
 
 ## Corpus expansion pilot
 
-`reports/petroleum-expansion-pilot.md` records expansion from 12 to 20 checksum-verified USGS
-reports: 1,838 recovered pages, 4,613 chunks, 4,069 clean chunks, and 544 rejected chunks. The
-fixed BM25 metrics remain hit rate@5 0.800, recall@5 0.818, and MRR@5 0.683. The 100-sample review is confirmed: 84 prose candidates and 16 rejected. The expanded 18-question
-BM25 evaluation scores hit rate@5 0.722, recall@5 0.737, and MRR@5 0.479. Do not expand toward 50
-reports until the five misses are inspected.
+`reports/petroleum-expansion-pilot.md` records the original expansion to 20 checksum-verified USGS
+reports. The current corpus also includes a separate 34-page Expedition Summary source for the
+Indian National Gas Hydrate Program: 21 manifest sources, 1,869 recovered pages, 4,818 chunks,
+4,275 clean chunks, and 543 rejected chunks. The fixed 18-question evaluation is now run with
+parent-page grouping and optional controlled query expansion: hit rate@5 0.833, recall@5 0.842,
+and MRR@5 0.536. Do not expand toward 50 reports until the remaining misses are resolved.
 
 ## Week 2 EIA pilot
 
@@ -132,7 +133,8 @@ checksum. No ambiguous BSEE values are loaded.
 
 ## Next steps
 
-- [x] Select and document a 20-report USGS pilot corpus and record checksums.
+- [x] Select and document the 20-report USGS pilot corpus and record checksums.
+- [x] Add a checksum-verified Expedition Summary source for the Indian Gas Hydrate question.
 - [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
 - [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
 - [x] Create and manually confirm an auditable label file for the 50 pilot review records.
