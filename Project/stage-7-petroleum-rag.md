@@ -79,7 +79,9 @@ Answer-level evaluation is now available through `scripts/evaluate_answers.py`. 
 contains `query`, `answer`, `citations`, and `evidence` records with `document_id` and `text`.
 The evaluator reports citation coverage, lexical support, numeric/unit grounding, abstention
 accuracy, and a conservative grounded-answer rate. It is deliberately separate from retrieval
-metrics so a retrieved passage is not mistaken for a supported answer.
+metrics so a retrieved passage is not mistaken for a supported answer. The draft generator
+`scripts/build_answer_eval_draft.py` creates provenance-linked records for manual rewriting; its
+extractive smoke-test scores must not be treated as final answer quality.
 
 The retrieval-only CLI is:
 
