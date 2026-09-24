@@ -49,6 +49,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="boost query-matching abstract/summary openings",
     )
+    parser.add_argument(
+        "--semantic-rerank",
+        action="store_true",
+        help="rerank using query-term coverage in text, title, and opening context",
+    )
     return parser.parse_args()
 
 
@@ -85,6 +90,7 @@ def main() -> None:
         prefer_primary_evidence=args.prefer_primary_evidence,
         section_aware=args.section_aware,
         summary_aware=args.summary_aware,
+        semantic_rerank=args.semantic_rerank,
     )
     result = {
         "documents": document_count,

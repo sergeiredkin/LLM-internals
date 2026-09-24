@@ -17,5 +17,6 @@ was removed.
 
 Section-aware ranking was then added for these intents. With table facts, primary reranking, and
 section-aware ranking, results reached hit@5 0.980, recall@5 0.962, and MRR@5 0.708. Summary-aware
-ranking improved MRR to 0.744 with the same hit and recall. One Fayetteville shallow-aquifer question
-remains outside top-5 and needs a stronger semantic reranker.
+ranking improved MRR to 0.744 with the same hit and recall. The lightweight semantic reranker
+further improved recall to 0.981 and MRR to 0.759, with hit@5 0.980. Two difficult questions remain
+outside top-5: Fayetteville shallow-aquifer effects and offshore-oil share.

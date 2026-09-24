@@ -268,6 +268,7 @@ class BM25Retriever:
         prefer_primary_evidence: bool = False,
         section_aware: bool = False,
         summary_aware: bool = False,
+        semantic_rerank: bool = False,
     ) -> list[RetrievalResult]:
         """Retrieve chunks, optionally keeping only the best chunk per parent document.
 
@@ -285,6 +286,12 @@ class BM25Retriever:
             score = self.score(query, index)
             if section_aware:
                 score += section_evidence_boost(query, chunk.text, summary_aware=summary_aware)
+            if semantic_rerank:
+                query_terms = set(tokenize(query))
+                combined_terms = set(tokenize(chunk.text + " " + chunk.title))
+                opening_terms = set(tokenize((chunk.title + " " + chunk.text)[:320]))
+                score += 4.0 * len(query_terms & combined_terms) / max(len(query_terms), 1)
+                score += 2.0 * len(query_terms & opening_terms) / max(len(query_terms), 1)
             if prefer_primary_evidence and chunk.metadata.get("record_type") == "table_fact_candidate":
                 score *= 0.90
             scored.append(RetrievalResult(chunk, score))
@@ -309,6 +316,7 @@ def assemble_context(
     prefer_primary_evidence: bool = False,
     section_aware: bool = False,
     summary_aware: bool = False,
+    semantic_rerank: bool = False,
 ) -> ContextResult:
     """Create citation-labelled evidence, abstaining when lexical evidence is absent.
 
@@ -328,6 +336,7 @@ def assemble_context(
         prefer_primary_evidence=prefer_primary_evidence,
         section_aware=section_aware,
         summary_aware=summary_aware,
+        semantic_rerank=semantic_rerank,
     )
     candidates = [result for result in candidates if result.score >= minimum_score]
     if not candidates or candidates[0].score <= 0.0:
@@ -392,6 +401,7 @@ def retrieval_metrics(
     prefer_primary_evidence: bool = False,
     section_aware: bool = False,
     summary_aware: bool = False,
+    semantic_rerank: bool = False,
 ) -> dict[str, float]:
     """Calculate hit rate, recall, and reciprocal rank for labelled query IDs."""
 
@@ -410,6 +420,7 @@ def retrieval_metrics(
             prefer_primary_evidence=prefer_primary_evidence,
             section_aware=section_aware,
             summary_aware=summary_aware,
+            semantic_rerank=semantic_rerank,
         )
         result_ids = [result.chunk.document_id for result in results]
         relevant_ids = set(relevant_ids)

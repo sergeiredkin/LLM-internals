@@ -61,8 +61,10 @@ passages. On the 50-question benchmark, augmented retrieval with section-aware r
 reranking reached hit@5 0.980, recall@5 0.962, and MRR@5 0.708.
 
 Summary-aware ranking is available with `--summary-aware` and boosts query-matching abstract,
-summary, and introduction openings. On the 50-question benchmark, adding it improved MRR@5 from
-0.708 to 0.744 while retaining hit@5 0.980 and recall@5 0.962.
+summary, and introduction openings. The lightweight semantic reranker is available with
+`--semantic-rerank`; it scores query-term coverage across the passage, title, and opening context.
+On the 50-question benchmark, the combined configuration reached hit@5 0.980, recall@5 0.981,
+and MRR@5 0.759.
 
 The optional augmented corpus can be built with:
 
