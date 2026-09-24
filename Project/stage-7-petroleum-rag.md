@@ -55,6 +55,19 @@ python -m scripts.construct_petroleum_table_facts \
 It emits 128 fact candidates with explicit confidence and evidence text. It extracts facts such as
 “dry gas” and “south of Barrow” but does not claim that PDF column alignment is fully recovered.
 
+The optional augmented corpus can be built with:
+
+```bash
+python -m scripts.build_petroleum_augmented \
+  --base data/petroleum/chunks-expanded-clean.jsonl \
+  --table-facts data/petroleum/table-fact-candidates.jsonl \
+  --output data/petroleum/chunks-expanded-with-table-facts.jsonl
+```
+
+On the 18-question benchmark, the augmented corpus improved hit rate@5 from 0.889 to 0.944 and
+recall@5 from 0.850 to 0.900, while MRR moved from 0.592 to 0.578. Therefore table facts should
+remain an optional recall layer until reranking restores first-result quality.
+
 The retrieval-only CLI is:
 
 ```bash
