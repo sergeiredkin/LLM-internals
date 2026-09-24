@@ -16,9 +16,9 @@
 {"query": "What petroleum system is assessed in the Cook Inlet-Susitna region?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "original-18"}
 {"query": "What reservoir characteristics are described for the Upper Cretaceous Austin Chalk?", "relevant_document_ids": ["usgs-sir-2012-5159#page-0007"], "split": "original-18"}
 {"query": "What potential effects can Fayetteville Shale gas production have on shallow aquifers?", "relevant_document_ids": ["usgs-sir-2012-5273#page-0011"], "split": "original-18"}
-{"query": "What assessment province is covered by the Amerasia Basin report?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0001"], "split": "expansion-32", "category": "geology"}
+{"query": "What assessment province is covered by the Amerasia Basin report?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0009"], "split": "expansion-32", "category": "geology"}
 {"query": "What are the main reservoir facies described for the Amerasia Basin?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0024"], "split": "expansion-32", "category": "geology"}
-{"query": "What petroleum province is assessed in the Arctic Alaska report?", "relevant_document_ids": ["usgs-sir-2012-5147-arctic-alaska#page-0001"], "split": "expansion-32", "category": "geology"}
+{"query": "What petroleum province is assessed in the Arctic Alaska report?", "relevant_document_ids": ["usgs-sir-2012-5147-arctic-alaska#page-0003"], "split": "expansion-32", "category": "geology"}
 {"query": "What types of traps produce Pennsylvanian hydrocarbons in the San Juan Basin?", "relevant_document_ids": ["usgs-of-1987-0450b-san-juan#page-0019"], "split": "expansion-32", "category": "petroleum-system"}
 {"query": "Which formation contains the main Pennsylvanian reservoirs in the San Juan Basin?", "relevant_document_ids": ["usgs-of-1987-0450b-san-juan#page-0019"], "split": "expansion-32", "category": "petroleum-system"}
 {"query": "Where are potential petroleum accumulations identified in Malawi?", "relevant_document_ids": ["usgs-of-1984-0384-malawi#page-0003"], "split": "expansion-32", "category": "geology"}
@@ -40,7 +40,7 @@
 {"query": "How many sites were established during NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0005"], "split": "expansion-32", "category": "gas-hydrate"}
 {"query": "Which continental margins were investigated by NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0007"], "split": "expansion-32", "category": "gas-hydrate"}
 {"query": "What is the oil shale estimate for the Uinta Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "expansion-32", "category": "resource"}
-{"query": "What is the oil shale estimate for the Piceance Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "expansion-32", "category": "resource"}
+{"query": "What is the oil shale estimate for the Piceance Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0091"], "split": "expansion-32", "category": "resource"}
 {"query": "What resource is assessed in the Cook Inlet-Susitna total petroleum system?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "expansion-32", "category": "resource"}
 {"query": "How large is the Cook Inlet Coal-Bed Gas TPS?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "expansion-32", "category": "numbers-units"}
 {"query": "What controls production from the Austin Chalk reservoir?", "relevant_document_ids": ["usgs-sir-2012-5159#page-0007"], "split": "expansion-32", "category": "petroleum-system"}
