@@ -75,6 +75,12 @@ With the current conservative 0.90 downweight for derived facts, MRR returns to 
 benchmark remains at the original 0.889 hit rate / 0.850 recall. This gives us an explicit choice:
 use augmented retrieval for recall, or primary-evidence reranking for answer quality.
 
+Answer-level evaluation is now available through `scripts/evaluate_answers.py`. Each JSONL record
+contains `query`, `answer`, `citations`, and `evidence` records with `document_id` and `text`.
+The evaluator reports citation coverage, lexical support, numeric/unit grounding, abstention
+accuracy, and a conservative grounded-answer rate. It is deliberately separate from retrieval
+metrics so a retrieved passage is not mistaken for a supported answer.
+
 The retrieval-only CLI is:
 
 ```bash

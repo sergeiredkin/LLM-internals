@@ -1,5 +1,6 @@
 import unittest
 
+from llm.answer_quality import evaluate_answer
 from llm.petroleum_quality import quality_flags, reconstruct_table_rows, table_candidate_score
 from scripts.construct_petroleum_table_facts import facts_from_row
 from scripts.extract_petroleum_tables import merge_table_continuations
@@ -12,6 +13,25 @@ class PetroleumQualityTests(unittest.TestCase):
             "OF HYDROCARBON RESERVOIR THICKNESS REMARKS"
         )
         self.assertGreaterEqual(score, 4)
+
+    def test_answer_quality_checks_citations_and_numbers(self) -> None:
+        result = evaluate_answer({
+            "query": "How deep?", "answer": "The depth was 25,000 feet.",
+            "citations": ["src#page-1"],
+            "evidence": [{"document_id": "src#page-1", "text": "Depth was 25,000 feet."}],
+        })
+        self.assertEqual(result["citation_coverage"], 1.0)
+        self.assertEqual(result["numeric_grounding"], 1.0)
+        self.assertTrue(result["grounded"])
+
+    def test_answer_quality_detects_unsupported_number(self) -> None:
+        result = evaluate_answer({
+            "query": "How deep?", "answer": "The depth was 30,000 feet.",
+            "citations": ["src#page-1"],
+            "evidence": [{"document_id": "src#page-1", "text": "Depth was 25,000 feet."}],
+        })
+        self.assertEqual(result["numeric_grounding"], 0.0)
+        self.assertFalse(result["grounded"])
 
     def test_table_fact_extraction_is_conservative_and_cited(self) -> None:
         facts = facts_from_row({
