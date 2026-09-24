@@ -269,6 +269,7 @@ class BM25Retriever:
         section_aware: bool = False,
         summary_aware: bool = False,
         semantic_rerank: bool = False,
+        source_aware: bool = False,
     ) -> list[RetrievalResult]:
         """Retrieve chunks, optionally keeping only the best chunk per parent document.
 
@@ -294,6 +295,8 @@ class BM25Retriever:
                 score += 2.0 * len(query_terms & opening_terms) / max(len(query_terms), 1)
             if prefer_primary_evidence and chunk.metadata.get("record_type") == "table_fact_candidate":
                 score *= 0.90
+            if source_aware and chunk.metadata.get("source_role") == "overview":
+                score *= 0.85
             scored.append(RetrievalResult(chunk, score))
         scored.sort(key=lambda result: (-result.score, result.chunk.chunk_id))
         if group_by_document:
@@ -317,6 +320,7 @@ def assemble_context(
     section_aware: bool = False,
     summary_aware: bool = False,
     semantic_rerank: bool = False,
+    source_aware: bool = False,
 ) -> ContextResult:
     """Create citation-labelled evidence, abstaining when lexical evidence is absent.
 
@@ -337,6 +341,7 @@ def assemble_context(
         section_aware=section_aware,
         summary_aware=summary_aware,
         semantic_rerank=semantic_rerank,
+        source_aware=source_aware,
     )
     candidates = [result for result in candidates if result.score >= minimum_score]
     if not candidates or candidates[0].score <= 0.0:
@@ -402,6 +407,7 @@ def retrieval_metrics(
     section_aware: bool = False,
     summary_aware: bool = False,
     semantic_rerank: bool = False,
+    source_aware: bool = False,
 ) -> dict[str, float]:
     """Calculate hit rate, recall, and reciprocal rank for labelled query IDs."""
 
@@ -421,6 +427,7 @@ def retrieval_metrics(
             section_aware=section_aware,
             summary_aware=summary_aware,
             semantic_rerank=semantic_rerank,
+            source_aware=source_aware,
         )
         result_ids = [result.chunk.document_id for result in results]
         relevant_ids = set(relevant_ids)

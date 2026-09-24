@@ -35,7 +35,8 @@ MRR@5:    0.757
 ```
 
 The source is checksum-valid and public-domain, but its short high-level content introduces
-retrieval noise. It remains in the verified corpus and is marked for source-aware weighting or
-section filtering before being used in the production default.
+retrieval noise. It remains in the verified corpus and is marked with `source_role: overview`.
+Source-aware weighting now downranks overview material without changing the 50-question regression.
 
-Combined verified manifest size: 25 sources.
+Combined verified manifest size: 25 sources. With source-aware weighting enabled, the production
+benchmark returns hit@5 0.980, recall@5 0.981, and MRR@5 0.761.

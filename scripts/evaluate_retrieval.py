@@ -54,6 +54,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="rerank using query-term coverage in text, title, and opening context",
     )
+    parser.add_argument("--source-aware", action="store_true", help="downrank overview-only sources")
     return parser.parse_args()
 
 
@@ -91,6 +92,7 @@ def main() -> None:
         section_aware=args.section_aware,
         summary_aware=args.summary_aware,
         semantic_rerank=args.semantic_rerank,
+        source_aware=args.source_aware,
     )
     result = {
         "documents": document_count,

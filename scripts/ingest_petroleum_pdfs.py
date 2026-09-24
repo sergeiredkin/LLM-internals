@@ -108,6 +108,7 @@ def main() -> None:
                         "page": str(page_number),
                         "sha256": actual_hash,
                         "extraction": "pypdf-text",
+                        "source_role": str(record.get("source_role", "domain-report")),
                     },
                 }
                 output.write(json.dumps(document, ensure_ascii=False) + "\n")

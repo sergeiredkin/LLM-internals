@@ -26,7 +26,7 @@ def main() -> None:
     metrics = retrieval_metrics(
         BM25Retriever(chunks), queries, top_k=args.top_k, expand_query=True,
         prefer_primary_evidence=True, section_aware=True, summary_aware=True,
-        semantic_rerank=True,
+        semantic_rerank=True, source_aware=True,
     )
     result = {"configuration": "production-lexical-v1", "chunks": len(chunks), "queries": len(queries), "top_k": args.top_k, "metrics": metrics}
     args.output.parent.mkdir(parents=True, exist_ok=True)
