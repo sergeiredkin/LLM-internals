@@ -23,6 +23,8 @@ def main() -> None:
         "citation_coverage": sum(float(r["citation_coverage"]) for r in results) / len(results),
         "citation_support": sum(float(r["citation_support"]) for r in results) / len(results),
         "lexical_support": sum(float(r["lexical_support"]) for r in results) / len(results),
+        "sentence_support": sum(float(r["sentence_support"]) for r in results) / len(results),
+        "unsupported_sentence_rate": sum(float(r["unsupported_sentence_rate"]) for r in results) / len(results),
         "numeric_grounding": sum(float(r["numeric_grounding"]) for r in results) / len(results),
         "abstention_accuracy": sum(bool(r["abstention_correct"]) for r in results) / len(results),
         "grounded_rate": sum(bool(r["grounded"]) for r in results) / len(results),

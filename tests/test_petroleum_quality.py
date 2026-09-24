@@ -23,6 +23,7 @@ class PetroleumQualityTests(unittest.TestCase):
         self.assertEqual(result["citation_coverage"], 1.0)
         self.assertEqual(result["numeric_grounding"], 1.0)
         self.assertTrue(result["grounded"])
+        self.assertGreaterEqual(result["sentence_support"], 0.8)
 
     def test_answer_quality_detects_unsupported_number(self) -> None:
         result = evaluate_answer({
@@ -32,6 +33,7 @@ class PetroleumQualityTests(unittest.TestCase):
         })
         self.assertEqual(result["numeric_grounding"], 0.0)
         self.assertFalse(result["grounded"])
+        self.assertEqual(result["unsupported_sentence_rate"], 0.0)
 
     def test_table_fact_extraction_is_conservative_and_cited(self) -> None:
         facts = facts_from_row({
