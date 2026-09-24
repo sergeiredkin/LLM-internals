@@ -1,6 +1,6 @@
 import unittest
 
-from llm.petroleum_quality import quality_flags, table_candidate_score
+from llm.petroleum_quality import quality_flags, reconstruct_table_rows, table_candidate_score
 from scripts.extract_petroleum_tables import merge_table_continuations
 
 
@@ -11,6 +11,13 @@ class PetroleumQualityTests(unittest.TestCase):
             "OF HYDROCARBON RESERVOIR THICKNESS REMARKS"
         )
         self.assertGreaterEqual(score, 4)
+
+    def test_table_row_reconstruction_preserves_row_markers(self) -> None:
+        rows = reconstruct_table_rows(
+            "Table 4. Header If present in NPR4, dry gas. Summary of play."
+        )
+        self.assertEqual(len(rows), 3)
+        self.assertIn("dry gas", rows[1])
 
     def test_table_continuations_merge_and_preserve_start_page(self) -> None:
         records = [

@@ -25,6 +25,21 @@ def table_candidate_score(text: str) -> int:
     return marker_count + min(uppercase_words, 5)
 
 
+def reconstruct_table_rows(text: str) -> list[str]:
+    """Split common extracted table prose into auditable row-like records.
+
+    PDF extraction rarely preserves columns. These row-like spans retain source wording while
+    avoiding fabricated column alignment; callers should treat them as candidates for review.
+    """
+
+    normalized = re.sub(r"[ \t]+", " ", text.replace("\u00ad", "")).strip()
+    if not normalized:
+        return []
+    markers = r"(?=(?:If present|Possible play|Summary of|Table \d+\.?))"
+    rows = [part.strip(" \n") for part in re.split(markers, normalized, flags=re.IGNORECASE) if part.strip()]
+    return rows or [normalized]
+
+
 def quality_flags(text: str, *, minimum_characters: int = 200) -> list[str]:
     """Return rejection flags without pretending to judge scientific correctness."""
 

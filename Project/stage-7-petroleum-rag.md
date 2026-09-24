@@ -35,8 +35,16 @@ python -m scripts.extract_petroleum_tables \
 
 The current threshold produces 97 candidate table groups. Continuation pages are merged when a
 labelled continuation is detected; for example, the NPR-4 Table 4 group preserves pages 55–57.
-This is an initial table-preservation path, not semantic column parsing; row reconstruction remains
-future work.
+A row-candidate path is also available:
+
+```bash
+python -m scripts.reconstruct_petroleum_tables \
+  --pages data/petroleum/pages-expanded.jsonl \
+  --output data/petroleum/table-row-candidates.jsonl
+```
+
+It produces 216 auditable row-like records. It deliberately does not fabricate column alignment;
+semantic column reconstruction still requires manual review or a stronger table extractor.
 
 The retrieval-only CLI is:
 
