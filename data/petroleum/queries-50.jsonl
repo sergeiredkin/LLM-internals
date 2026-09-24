@@ -1,0 +1,50 @@
+{"query": "What formations are identified as proven reservoirs in the Amerasia Basin assessment?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0024"], "split": "original-18"}
+{"query": "What types of traps commonly control Pennsylvanian production in the San Juan Basin?", "relevant_document_ids": ["usgs-of-1987-0450b-san-juan#page-0019"], "split": "original-18"}
+{"query": "What does the Malawi report say about evidence for petroleum accumulations?", "relevant_document_ids": ["usgs-of-1984-0384-malawi#page-0003"], "split": "original-18"}
+{"query": "How does salt act in the petroleum system of East Siberia?", "relevant_document_ids": ["usgs-of-1985-0367-east-siberia#page-0083"], "split": "original-18"}
+{"query": "How many Indonesian basins are identified as having appreciable petroleum-generating potential?", "relevant_document_ids": ["usgs-of-1988-0379-indonesia#page-0017"], "split": "original-18"}
+{"query": "What range of undiscovered recoverable offshore oil does the world petroleum resources report assess?", "relevant_document_ids": ["usgs-of-1985-0248-world-resources#page-0016"], "split": "original-18"}
+{"query": "What kind of hydrocarbons are considered likely in the southern area of the Naval Petroleum Reserve No. 4?", "relevant_document_ids": ["usgs-of-1977-0475-npr4#page-0055"], "split": "original-18"}
+{"query": "What geological structure characterizes the Caera basin in Southern South America?", "relevant_document_ids": ["usgs-of-1994-0559-south-america#page-0124"], "split": "original-18"}
+{"query": "What thermal gradient is reported for the Bombay Shelf?", "relevant_document_ids": ["usgs-of-1986-0080-south-asia#page-0022", "usgs-of-1986-0080-south-asia#page-0047"], "split": "original-18"}
+{"query": "Which rocks are considered important hydrocarbon source beds in the Permian Basin?", "relevant_document_ids": ["usgs-of-1988-0450z-permian#page-0022"], "split": "original-18"}
+{"query": "What is the effect of sodium bicarbonate in produced water from coalbed natural gas production?", "relevant_document_ids": ["usgs-sir-2012-5008#page-0011"], "split": "original-18"}
+{"query": "What petroleum resource is mapped in the Piceance Basin oil shale study?", "relevant_document_ids": ["usgs-sir-2012-5041#page-0007"], "split": "original-18"}
+{"query": "What is analyzed in the Gulf of Mexico gas hydrate well study?", "relevant_document_ids": ["usgs-sir-2012-5046#page-0006"], "split": "original-18"}
+{"query": "What was the purpose of the Indian National Gas Hydrate Program Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0005", "usgs-sir-2012-5054-summary#page-0007"], "split": "original-18"}
+{"query": "How much in-place oil shale resource is estimated in the Green River Formation?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "original-18"}
+{"query": "What petroleum system is assessed in the Cook Inlet-Susitna region?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "original-18"}
+{"query": "What reservoir characteristics are described for the Upper Cretaceous Austin Chalk?", "relevant_document_ids": ["usgs-sir-2012-5159#page-0007"], "split": "original-18"}
+{"query": "What potential effects can Fayetteville Shale gas production have on shallow aquifers?", "relevant_document_ids": ["usgs-sir-2012-5273#page-0011"], "split": "original-18"}
+{"query": "What assessment province is covered by the Amerasia Basin report?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0001"], "split": "expansion-32", "category": "geology"}
+{"query": "What are the main reservoir facies described for the Amerasia Basin?", "relevant_document_ids": ["usgs-sir-2012-5146-amerasia#page-0024"], "split": "expansion-32", "category": "geology"}
+{"query": "What petroleum province is assessed in the Arctic Alaska report?", "relevant_document_ids": ["usgs-sir-2012-5147-arctic-alaska#page-0001"], "split": "expansion-32", "category": "geology"}
+{"query": "What types of traps produce Pennsylvanian hydrocarbons in the San Juan Basin?", "relevant_document_ids": ["usgs-of-1987-0450b-san-juan#page-0019"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "Which formation contains the main Pennsylvanian reservoirs in the San Juan Basin?", "relevant_document_ids": ["usgs-of-1987-0450b-san-juan#page-0019"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "Where are potential petroleum accumulations identified in Malawi?", "relevant_document_ids": ["usgs-of-1984-0384-malawi#page-0003"], "split": "expansion-32", "category": "geology"}
+{"query": "What is the role of salt in East Siberian petroleum accumulations?", "relevant_document_ids": ["usgs-of-1985-0367-east-siberia#page-0083"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "How many Indonesian basins contain thermally mature source sediments?", "relevant_document_ids": ["usgs-of-1988-0379-indonesia#page-0017"], "split": "expansion-32", "category": "assessment"}
+{"query": "What fraction of undiscovered oil is credited to offshore regions?", "relevant_document_ids": ["usgs-of-1985-0248-world-resources#page-0016"], "split": "expansion-32", "category": "assessment"}
+{"query": "What is the most-likely estimate of undiscovered offshore oil?", "relevant_document_ids": ["usgs-of-1985-0248-world-resources#page-0016"], "split": "expansion-32", "category": "assessment"}
+{"query": "What type of margin characterizes the Caera basin?", "relevant_document_ids": ["usgs-of-1994-0559-south-america#page-0124"], "split": "expansion-32", "category": "geology"}
+{"query": "What is the main petroleum source formation in the Caera basin?", "relevant_document_ids": ["usgs-of-1994-0559-south-america#page-0124"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What thermal gradient is reported for the Bombay Shelf?", "relevant_document_ids": ["usgs-of-1986-0080-south-asia#page-0022"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "Which formation is an important source rock in the Permian Basin?", "relevant_document_ids": ["usgs-of-1988-0450z-permian#page-0022"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What are the major source-bed types in the Permian Basin?", "relevant_document_ids": ["usgs-of-1988-0450z-permian#page-0022"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What aquatic-life risk is associated with sodium bicarbonate?", "relevant_document_ids": ["usgs-sir-2012-5008#page-0011"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "What concentration caused 50 percent mortality in sodium-bicarbonate tests?", "relevant_document_ids": ["usgs-sir-2012-5008#page-0011"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "What formation contains the Piceance Basin oil shale resource?", "relevant_document_ids": ["usgs-sir-2012-5041#page-0007"], "split": "expansion-32", "category": "resource"}
+{"query": "How large is the Piceance Basin oil-in-place resource?", "relevant_document_ids": ["usgs-sir-2012-5041#page-0007"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "What data are used to characterize gas hydrate reservoirs at Alaminos Canyon?", "relevant_document_ids": ["usgs-sir-2012-5046#page-0006"], "split": "expansion-32", "category": "gas-hydrate"}
+{"query": "What was the main scientific objective of the Gulf of Mexico gas hydrate drilling program?", "relevant_document_ids": ["usgs-sir-2012-5046#page-0006"], "split": "expansion-32", "category": "gas-hydrate"}
+{"query": "How many sites were established during NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0005"], "split": "expansion-32", "category": "gas-hydrate"}
+{"query": "Which continental margins were investigated by NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0007"], "split": "expansion-32", "category": "gas-hydrate"}
+{"query": "What is the oil shale estimate for the Uinta Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "expansion-32", "category": "resource"}
+{"query": "What is the oil shale estimate for the Piceance Basin?", "relevant_document_ids": ["usgs-sir-2012-5076#page-0009"], "split": "expansion-32", "category": "resource"}
+{"query": "What resource is assessed in the Cook Inlet-Susitna total petroleum system?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "expansion-32", "category": "resource"}
+{"query": "How large is the Cook Inlet Coal-Bed Gas TPS?", "relevant_document_ids": ["usgs-sir-2012-5145#page-0007"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "What controls production from the Austin Chalk reservoir?", "relevant_document_ids": ["usgs-sir-2012-5159#page-0007"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What is the permeability of the Austin Chalk reservoir?", "relevant_document_ids": ["usgs-sir-2012-5159#page-0007"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What is the thickness range of the Fayetteville Shale?", "relevant_document_ids": ["usgs-sir-2012-5273#page-0011"], "split": "expansion-32", "category": "numbers-units"}
+{"query": "What techniques enable Fayetteville Shale gas extraction?", "relevant_document_ids": ["usgs-sir-2012-5273#page-0011"], "split": "expansion-32", "category": "petroleum-system"}
+{"query": "What was the primary goal of NGHP Expedition 01?", "relevant_document_ids": ["usgs-sir-2012-5054-summary#page-0007"], "split": "expansion-32", "category": "gas-hydrate"}
