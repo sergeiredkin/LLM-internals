@@ -51,6 +51,8 @@ class RAGTests(unittest.TestCase):
         self.assertIn("salt", expanded)
         self.assertIn("evaporite", expanded)
         self.assertIn("role", expanded)
+        self.assertIn("objective", expand_petroleum_query("What was the purpose?"))
+        self.assertIn("probable", expand_petroleum_query("What is likely?"))
 
     def test_chunking_preserves_provenance_and_overlap(self) -> None:
         document = Document("doc-1", "one two three four five six seven")

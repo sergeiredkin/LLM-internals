@@ -11,7 +11,7 @@
 | 1 | How does salt act in the petroleum system of East Siberia? | Query vocabulary / passage competition | The target page explicitly says salt is the seal, but the query uses `act` and `petroleum system`; BM25 favors other East Siberia pages. | Add controlled domain synonyms (`role`, `seal`, `evaporite`, `anhydrite`) and test query expansion separately. |
 | 2 | What kind of hydrocarbons are considered likely in the southern area of NPR-4? | Table extraction / chunking | The target evidence is in an extracted table and says indigenous hydrocarbons are overmature and limited to dry gas. The table is split across chunks and some parts are rejected as corrupted. | Build a table-aware representation; do not rely on ordinary prose filtering for this passage. |
 | 3 | What petroleum resource is mapped in the Piceance Basin oil shale study? | Chunk competition / query wording | Page 7 contains the answer, including 1.53 trillion barrels of oil in place, but several chunks from other pages outrank it. | Aggregate scores by parent page/report before selecting top-k passages; add a numeric-resource query variant. |
-| 4 | What was the purpose of the Indian National Gas Hydrate Program Expedition 01? | Newly covered source / chunk competition | A checksum-verified 34-page Expedition Summary was added. Its page 7 contains the project goal and directly supports the question, but it still loses top-k to other NGHP pages. | Improve section-aware ranking or add a summary/abstract boost; retain the corrected page-7 label. |
+| 4 | What was the purpose of the Indian National Gas Hydrate Program Expedition 01? | Newly covered source / chunk competition | A checksum-verified 34-page Expedition Summary was added. Its abstract on page 5 and project goal on page 7 support the question; page 5 is the highest-ranked answer passage. | Retain both page 5 and page 7 as relevant labels and improve section-aware ranking for summary/goal passages. |
 | 5 | What potential effects can Fayetteville Shale gas production have on shallow aquifers? | Chunk competition / page-level duplication | The target abstract page contains the answer, but multiple chunks from pages 12 and 38 occupy top-k. | Use parent-page diversity or aggregate page scores; retain the abstract as a high-value answer passage. |
 
 ## Parent-page grouping result
@@ -46,8 +46,8 @@ What oil-in-place resource is described for the Piceance Basin?
 How can drilling, hydraulic fracturing, and flowback affect shallow groundwater?
 ```
 
-The Indian Expedition question now has a supported page-7 label in the added Expedition Summary;
-query variants can be evaluated after section-aware ranking is improved.
+The Indian Expedition question now has supported page-5 and page-7 labels in the added Expedition
+Summary. The abstract page is the best direct answer passage.
 
 ## Controlled expansion result
 

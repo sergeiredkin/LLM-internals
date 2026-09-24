@@ -16,6 +16,9 @@ _PETROLEUM_QUERY_EXPANSIONS = {
     "effects": ("impact", "water-quality", "contamination"),
     "salt": ("seal", "evaporite", "anhydrite"),
     "aquifers": ("groundwater", "water-quality"),
+    "purpose": ("goal", "objective", "aim"),
+    "likely": ("probable", "expected"),
+    "kind": ("type", "category"),
 }
 
 
