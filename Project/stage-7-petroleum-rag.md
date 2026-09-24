@@ -60,6 +60,10 @@ signals for salt/seals, reservoir/facies, source beds, gas hydrates, margins, aq
 passages. On the 50-question benchmark, augmented retrieval with section-aware ranking and primary
 reranking reached hit@5 0.980, recall@5 0.962, and MRR@5 0.708.
 
+Summary-aware ranking is available with `--summary-aware` and boosts query-matching abstract,
+summary, and introduction openings. On the 50-question benchmark, adding it improved MRR@5 from
+0.708 to 0.744 while retaining hit@5 0.980 and recall@5 0.962.
+
 The optional augmented corpus can be built with:
 
 ```bash

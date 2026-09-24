@@ -44,6 +44,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="boost evidence passages matching the query's petroleum section intent",
     )
+    parser.add_argument(
+        "--summary-aware",
+        action="store_true",
+        help="boost query-matching abstract/summary openings",
+    )
     return parser.parse_args()
 
 
@@ -79,6 +84,7 @@ def main() -> None:
         expand_query=args.expand_petroleum_query,
         prefer_primary_evidence=args.prefer_primary_evidence,
         section_aware=args.section_aware,
+        summary_aware=args.summary_aware,
     )
     result = {
         "documents": document_count,
