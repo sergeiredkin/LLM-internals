@@ -1,9 +1,16 @@
 import unittest
 
-from llm.petroleum_quality import quality_flags
+from llm.petroleum_quality import quality_flags, table_candidate_score
 
 
 class PetroleumQualityTests(unittest.TestCase):
+    def test_table_candidate_score_detects_petroleum_table_page(self) -> None:
+        score = table_candidate_score(
+            "Table 4. Petroleum geology and play analysis. PROBABLE MAJOR TYPE "
+            "OF HYDROCARBON RESERVOIR THICKNESS REMARKS"
+        )
+        self.assertGreaterEqual(score, 4)
+
     def test_good_prose_is_kept(self) -> None:
         text = " ".join(
             [

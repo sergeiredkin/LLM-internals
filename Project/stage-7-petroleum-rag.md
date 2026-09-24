@@ -24,6 +24,17 @@ examples.
 - citation-labelled context assembly
 - explicit abstention when no evidence scores positively
 
+A separate table-candidate extraction path is now available. It detects table-like pages, preserves their provenance, and writes independently chunked records without mixing them into prose retrieval:
+
+```bash
+python -m scripts.extract_petroleum_tables \
+  --pages data/petroleum/pages-expanded.jsonl \
+  --output data/petroleum/table-candidates.jsonl
+```
+
+The current threshold produces 98 candidate pages. This is an initial table-preservation path, not
+semantic table parsing; continuation-page merging and row reconstruction remain future work.
+
 The retrieval-only CLI is:
 
 ```bash
@@ -139,7 +150,7 @@ checksum. No ambiguous BSEE values are loaded.
 - [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
 - [x] Create and manually confirm an auditable label file for the 50 pilot review records.
 - [x] Recover the malformed PDF page as a provenance-preserving figure-only record.
-- [ ] Resolve remaining table and extraction defects.
+- [ ] Resolve remaining table and extraction defects; table candidates are now isolated for follow-up.
 - [x] Normalize the selected corpus to JSONL and create a deterministic fixed query set.
 - [ ] Create deterministic train/validation splits for future adaptation.
 - [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.818, MRR@5 0.683 on the expanded corpus.

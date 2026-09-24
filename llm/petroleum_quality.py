@@ -5,6 +5,24 @@ from __future__ import annotations
 import re
 
 _WORD_RE = re.compile(r"[A-Za-z0-9]+")
+_TABLE_MARKERS = (
+    "table",
+    "play type",
+    "reservoir",
+    "hydrocarbon",
+    "probable",
+    "remarks",
+    "areal extent",
+)
+
+
+def table_candidate_score(text: str) -> int:
+    """Score pages that should be preserved for a separate table retrieval path."""
+
+    lowered = text.lower()
+    marker_count = sum(lowered.count(marker) for marker in _TABLE_MARKERS)
+    uppercase_words = len(re.findall(r"\b[A-Z][A-Z-]{2,}\b", text))
+    return marker_count + min(uppercase_words, 5)
 
 
 def quality_flags(text: str, *, minimum_characters: int = 200) -> list[str]:
