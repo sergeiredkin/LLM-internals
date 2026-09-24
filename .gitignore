@@ -26,3 +26,4 @@ data/petroleum/table-row-candidates.jsonl
 data/petroleum/table-fact-candidates.jsonl
 data/petroleum/review-expanded-100.jsonl
 data/petroleum/review-*.jsonl
+data/petroleum/answer-eval.jsonl

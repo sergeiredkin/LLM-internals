@@ -21,9 +21,11 @@ A draft extractive answer set was generated for all 18 questions with citations 
 The evaluator returned 1.000 for citation coverage, lexical support, numeric grounding, abstention,
 and grounded rate.
 
-These results are a pipeline smoke test, not a final answer-quality score: the draft answers are
-constructed from the cited evidence itself. The draft file must be manually rewritten into concise,
-independent gold answers before it is used as a quality benchmark.
+The extractive draft was replaced by 18 manually authored, provenance-linked answers in the local
+ignored file `data/petroleum/answer-eval.jsonl`. The reviewed set scores: citation coverage 1.000,
+citation support 1.000, numeric grounding 1.000, abstention accuracy 1.000, lexical support 0.849,
+and grounded-answer rate 1.000. This is now a usable answer-quality baseline, though the answers
+should receive a second human review before training data is created.
 
 ## Table validation
 
