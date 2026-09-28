@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import time
 import urllib.request
 from pathlib import Path
 
@@ -32,11 +33,22 @@ def safe_name(source_id: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", source_id).strip("._") or "source"
 
 
-def download(url: str, destination: Path, user_agent: str) -> None:
+def download(url: str, destination: Path, user_agent: str, timeout: int = 600, max_retries: int = 3) -> None:
     request = urllib.request.Request(url, headers={"User-Agent": user_agent})
-    with urllib.request.urlopen(request, timeout=120) as response, destination.open("wb") as handle:
-        while chunk := response.read(1024 * 1024):
-            handle.write(chunk)
+    last_err = None
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response, destination.open("wb") as handle:
+                while chunk := response.read(1024 * 1024):
+                    handle.write(chunk)
+            return
+        except Exception as err:  # URLError, timeout, connection issues from slow USGS servers
+            last_err = err
+            if attempt < max_retries - 1:
+                backoff = 2 ** attempt
+                print(f"WARN download {url} attempt {attempt+1}/{max_retries} failed: {err}; retrying in {backoff}s")
+                time.sleep(backoff)
+    raise RuntimeError(f"download failed after {max_retries} attempts: {last_err}") from last_err
 
 
 def main() -> None:
@@ -74,7 +86,7 @@ def main() -> None:
             if not destination.exists():
                 print(f"Downloading {source_id}: {url}")
                 temporary = destination.with_suffix(".pdf.tmp")
-                download(url, temporary, args.user_agent)
+                download(url, temporary, args.user_agent, timeout=600, max_retries=3)
                 temporary.replace(destination)
             actual_hash = sha256(destination)
             if expected_hash and actual_hash.lower() != str(expected_hash).lower():
