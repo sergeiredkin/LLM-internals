@@ -14,7 +14,7 @@ Build a reliable petroleum-domain RAG system with provenance, page-level citatio
 The working tree is clean. The latest pushed commit is:
 
 ```text
-33ce48f — petroleum-rag: add OF 2013-1094 Bakken source (#27, domain-report)
+9e85948 — no-mistakes(review): Remove continue-on-error so CI fails on test failures
 ```
 
 Full test suite:
