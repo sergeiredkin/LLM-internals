@@ -1,6 +1,6 @@
 # Petroleum RAG Handoff Note
 
-**Date:** 2026-09-24  
+**Date:** 2026-09-28  
 **Repository:** `/home/sergei/Documents/learngpt`  
 **Branch:** `main`  
 **Remote:** `https://github.com/sergeiredkin/LLM-internals.git`
@@ -14,7 +14,7 @@ Build a reliable petroleum-domain RAG system with provenance, page-level citatio
 The working tree is clean. The latest pushed commit is:
 
 ```text
-2a4f936 — Expand petroleum corpus with Antarctica report
+9e85948 — no-mistakes(review): Remove continue-on-error so CI fails on test failures
 ```
 
 Full test suite:
@@ -30,11 +30,11 @@ The NVIDIA RTX 3060 12 GB is available through CUDA.
 ### Corpus and provenance
 
 - Built a checksum-tracked petroleum manifest at `data/petroleum/manifest.jsonl`.
-- Expanded the verified corpus from 21 to **26 USGS/OSTI sources**.
+- Expanded the verified corpus from 21 to **27 USGS/OSTI sources** (latest: `usgs-of-2013-1094-bakken`, domain-report).
 - Preserved official URLs, source IDs, titles, publishers, publication dates, licenses, SHA-256 hashes, and source roles.
 - Added `scripts/validate_petroleum_manifest.py` for duplicate-ID, local-file, and checksum validation.
-- Added page-aware PDF ingestion through `scripts/ingest_petroleum_pdfs.py`.
-- Current latest extraction:
+- Added page-aware PDF ingestion through `scripts/ingest_petroleum_pdfs.py`, now with retry/backoff and a longer timeout for slow USGS/OSTI servers.
+- Extraction stats as of the 26-source corpus (not yet re-measured for source 27):
   - 26 sources
   - 2,082 recovered pages
   - 4,555 clean chunks
@@ -96,20 +96,20 @@ Table facts remain an optional recall layer and are downranked behind primary ev
 
 ### Current production metrics
 
-On the 50-question benchmark, with source-aware production retrieval:
-
-```text
-Hit@5:    0.980
-Recall@5: 0.981
-MRR@5:    0.761
-```
-
-The baseline before the latest corpus additions was approximately:
+On the 50-question benchmark, with source-aware production retrieval, after adding source #27:
 
 ```text
 Hit@5:    0.980
 Recall@5: 0.981
 MRR@5:    0.759
+```
+
+This is a minor, documented MRR drop from the 26-source baseline:
+
+```text
+Hit@5:    0.980
+Recall@5: 0.981
+MRR@5:    0.761
 ```
 
 ### GPU experiments
@@ -134,7 +134,7 @@ Important result reports are in `reports/results/`, including:
 
 ## Important limitations
 
-1. The corpus has **26 verified sources, not 50**.
+1. The corpus has **27 verified sources, not 50**.
 2. The 50-question benchmark must not be confused with 50 reports.
 3. The 50 answer records are not yet independently reviewed gold answers.
 4. One PDF page extraction failure remains isolated for review/OCR.
@@ -160,7 +160,7 @@ Important result reports are in `reports/results/`, including:
 
 ### Phase 3 — Expand the corpus
 
-Continue from 26 toward approximately 50 verified reports, one source at a time:
+Continue from 27 toward approximately 50 verified reports, one source at a time:
 
 1. Find an official USGS, EIA, BSEE, or OSTI source.
 2. Confirm the official PDF/URL and licensing status.
