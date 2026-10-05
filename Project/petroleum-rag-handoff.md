@@ -1,6 +1,6 @@
 # Petroleum RAG Handoff Note
 
-**Date:** 2026-09-28  
+**Date:** 2026-10-05  
 **Repository:** `/home/sergei/Documents/learngpt`  
 **Branch:** `main`  
 **Remote:** `https://github.com/sergeiredkin/LLM-internals.git`
@@ -233,3 +233,19 @@ conda run -n gpu-test python -m scripts.run_petroleum_production_benchmark \
 ```
 
 The current acceptance rule is: preserve provenance, pass tests, and do not regress the production benchmark without a documented reason and mitigation.
+
+## Automation update (2026-10-05)
+
+Phase 3 is now automated end-to-end by `scripts/run_petroleum_expansion.py`:
+
+```bash
+conda run -n gpu-test python -m scripts.run_petroleum_expansion --selfcheck          # rebuild + verify baseline
+conda run -n gpu-test python -m scripts.run_petroleum_expansion --auto 1 --commit    # discover, add, gate, commit, push
+conda run -n gpu-test python -m scripts.run_petroleum_expansion --auto 5 --commit    # batch expansion
+```
+
+- Discovery: USGS Publications Warehouse API first (series/DOI/PDF provenance gates; numbered series only), OSTI API fallback (USGS-publisher + no-journal gates).
+- Gates per source: checksum, manifest validation, 50-question benchmark regression vs `reports/results/petroleum-production-baseline.json`, full test suite, then commit+push (rebase-safe).
+- Failures auto-rollback (manifest + raw PDF) and are recorded with per-query miss diagnostics in `data/petroleum/auto-expansion-rejected.json` (Phase-2 evidence).
+- Corpus measured at 29 sources: 2,155+ pages, ~4,700 clean chunks; baseline Hit@5 0.980, Recall@5 0.981, MRR@5 0.761 (selfcheck-verified twice).
+- Known content-specific regressions so far: Cherokee Platform SIR 2020-5110 and PP 1824-R each cost exactly one Hit@5 question; South Florida OFR 2000-317 accepted with no hit/recall loss (MRR −0.010, within tolerance).
