@@ -33,16 +33,34 @@ from llm.rag import BM25Retriever, load_jsonl_chunks
 DEFAULT_DOCUMENTS = Path("data/petroleum/chunks-augmented.jsonl")
 DEFAULT_MODEL = "qwen3.5:latest"
 DEFAULT_URL = "http://localhost:11434"
-CITE_RE = re.compile(r"\[(\d{1,2})\]")
+CITE_RE = re.compile(r"\[([^\[\]]{1,40})\]")
+SOURCE_CITE_RE = re.compile(r"\bSource\s+(\d{1,2})\b", re.IGNORECASE)
+
+
+def parse_citations(reply: str) -> set[int]:
+    """Extract source indexes from bracket groups like [1], [1, 3], [2: page-0034],
+    [1, p. 106]. Leading integers of comma/colon-separated items count; page
+    annotations ('p. 106') survive parsing but are later bounds-filtered."""
+    indexes: set[int] = set()
+    for group in CITE_RE.findall(reply):
+        for token in re.split(r"[,;]", group):
+            match = re.match(r"\s*(\d{1,2})\b", token)
+            if match:
+                indexes.add(int(match.group(1)))
+    for n in SOURCE_CITE_RE.findall(reply):
+        indexes.add(int(n))
+    return indexes
 NOT_FOUND = "not found in the verified corpus"
 MAX_SOURCE_CHARS = 1400
 
 SYSTEM_PROMPT = (
     "You are a precise petroleum-geology research assistant. Answer ONLY using the "
     "numbered SOURCES provided in the user message. Cite every claim inline with its "
-    "source number, like [1] or [2]. If the sources do not contain the answer, reply "
-    "exactly: Not found in the verified corpus. Never use outside knowledge, never guess "
-    "numbers, and keep all figures and units exactly as written in the sources."
+    "source number, like [1] or [2]. If some part of the question is answerable from "
+    "the sources, answer that part and cite it. Reply exactly: Not found in the verified "
+    "corpus. - only when the question is entirely unanswerable from the sources. Never "
+    "use outside knowledge, never guess numbers, and keep all figures and units exactly "
+    "as written in the sources."
 )
 
 
@@ -51,7 +69,8 @@ def ollama_chat(url: str, model: str, question: str, sources: str, timeout: int)
         {
             "model": model,
             "stream": False,
-            "options": {"temperature": 0.1},
+            "think": False,  # qwen3+ reasoning mode burns hidden tokens; not needed for extractive QA
+            "options": {"temperature": 0.1, "num_predict": 512, "num_ctx": 8192},
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": f"QUESTION: {question}\n\nSOURCES:\n{sources}"},
@@ -68,13 +87,21 @@ def ollama_chat(url: str, model: str, question: str, sources: str, timeout: int)
 
 
 def format_sources(hits: list) -> tuple[str, list[str]]:
+    # The production retriever can return several chunks from the same parent
+    # page; keep the best-scored chunk per document_id so sources (and the
+    # citation map) are unambiguous.
+    seen: dict[str, object] = {}
+    for result in hits:
+        doc_id = result.chunk.document_id
+        if doc_id not in seen:
+            seen[doc_id] = result
+    unique = list(seen.values())
     blocks, doc_ids = [], []
-    for index, result in enumerate(hits, 1):
+    for index, result in enumerate(unique, 1):
         chunk = result.chunk
-        doc_id = chunk.document_id
         text = " ".join(chunk.text.split())[:MAX_SOURCE_CHARS]
-        blocks.append(f"[{index}] id={doc_id}\n{text}")
-        doc_ids.append(doc_id)
+        blocks.append(f"[{index}] id={chunk.document_id}\n{text}")
+        doc_ids.append(chunk.document_id)
     return "\n\n".join(blocks), doc_ids
 
 
@@ -92,9 +119,16 @@ def ask(retriever, question: str, args) -> dict:
     sources_text, doc_ids = format_sources(hits)
     raw_reply, latency = ollama_chat(args.url, args.model, question, sources_text, args.timeout)
 
-    cited_indexes = {int(n) for n in CITE_RE.findall(raw_reply)}
+    cited_indexes = parse_citations(raw_reply)
     cited_ids = [doc_ids[n - 1] for n in sorted(cited_indexes) if 1 <= n <= len(doc_ids)]
-    abstained = NOT_FOUND in raw_reply.lower()
+
+    # Hedging models answer correctly and still append the not-found boilerplate;
+    # an abstention only counts when there are no citations backing the reply.
+    reply = raw_reply
+    if cited_ids and NOT_FOUND.lower() in reply.lower():
+        pattern = re.compile(r"[^.!?]*" + re.escape(NOT_FOUND) + r"[^.!?]*[.!?]?", re.IGNORECASE)
+        reply = pattern.sub("", reply).strip()
+    abstained = not cited_ids and NOT_FOUND.lower() in raw_reply.lower()
     checks = evaluate_answer(
         {
             "query": question,
@@ -106,7 +140,8 @@ def ask(retriever, question: str, args) -> dict:
     )
     return {
         "query": question,
-        "reply": raw_reply,
+        "reply": reply,
+        "raw_reply": raw_reply,
         "citations": cited_ids,
         "retrieved_ids": doc_ids,
         "abstained": abstained,
