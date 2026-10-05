@@ -1,0 +1,12 @@
+{
+  "configuration": "production-lexical-v1",
+  "chunks": 4803,
+  "queries": 50,
+  "top_k": 5,
+  "metrics": {
+    "queries": 50.0,
+    "hit_rate_at_k": 0.98,
+    "recall_at_k": 0.9807692307692307,
+    "mrr_at_k": 0.7613333333333333
+  }
+}
