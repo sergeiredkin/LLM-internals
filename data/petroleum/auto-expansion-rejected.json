@@ -1,0 +1,16 @@
+[
+  {
+    "source_id": "usgs-sir-2020-5110",
+    "url": "https://pubs.usgs.gov/sir/2020/5110/sir20205110.pdf",
+    "title": "Geologic assessment of undiscovered oil and gas resources in the Cherokee Platform area of Kansas, Oklahoma, and Texas",
+    "reason": "benchmark regression gate failed: Hit@5 0.960 < 0.980; Recall@5 0.962 < 0.981",
+    "date": "2026-10-05"
+  },
+  {
+    "source_id": "usgs-pp-1824-pp1824r",
+    "url": "https://pubs.usgs.gov/pp/1824/r/pp1824r.pdf",
+    "title": "Geology and assessment of undiscovered oil and gas resources of the Yenisey-Khatanga Basin Province",
+    "reason": "benchmark regression gate failed: Hit@5 0.960 < 0.980; Recall@5 0.962 < 0.981",
+    "date": "2026-10-05"
+  }
+]
