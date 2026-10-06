@@ -214,3 +214,19 @@ read-only year-over-year calculations; see `reports/eia-week2-pilot.md`.
 2. **Done:** token-level TinyStories model with an 8K BPE vocabulary
 3. **Complete:** modern architecture, INT8, packed INT4, LoRA, and QLoRA. Next: petroleum RAG.
 4. Licensed petroleum corpus, domain evaluation, RAG, and optional QLoRA adaptation
+
+## Petroleum RAG v0.1
+
+The educational petroleum RAG release contains 50 checksum-tracked public USGS sources, page-aware
+chunks, table facts, a strict citation-oriented Ollama interface, and a local browser UI. See the
+full [Petroleum RAG quickstart](Project/petroleum-rag-quickstart.md).
+
+Quick start after installing the environment:
+
+```bash
+make rag-build RAG_PYTHON="conda run -n gpu-test python"
+make rag-check RAG_PYTHON="conda run -n gpu-test python"
+make rag-web RAG_PYTHON="conda run -n gpu-test python"
+```
+
+Open <http://localhost:7860> and ask questions about the reports.
