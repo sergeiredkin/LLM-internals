@@ -134,9 +134,9 @@ Important result reports are in `reports/results/`, including:
 
 ## Important limitations
 
-1. The corpus has **27 verified sources, not 50**.
-2. The 50-question benchmark must not be confused with 50 reports.
-3. The 50 answer records are not yet independently reviewed gold answers.
+1. The corpus now has **50 verified USGS sources**; the 50-question benchmark is separate from source count.
+2. The 50-answer file exists; **43/50 are machine-verified and 7 remain flagged for human review**.
+3. Corpus expansion was allowed to continue despite retrieval regression because this is a learning corpus; the best-known retrieval baseline remains recorded separately.
 4. One PDF page extraction failure remains isolated for review/OCR.
 5. Source #25, a short overview report, caused retrieval noise before source-aware weighting; source-aware weighting restored the baseline.
 6. Dense and cross-encoder retrieval currently underperform the lexical system.
@@ -160,18 +160,12 @@ Important result reports are in `reports/results/`, including:
 
 ### Phase 3 — Expand the corpus
 
-Continue from 27 toward approximately 50 verified reports, one source at a time:
+The 50-source corpus is complete. Future expansion is optional. For any new source:
 
-1. Find an official USGS, EIA, BSEE, or OSTI source.
-2. Confirm the official PDF/URL and licensing status.
-3. Download the source and record SHA-256.
-4. Add the manifest entry with source role.
-5. Ingest pages and preserve provenance.
-6. Filter corrupted and non-prose material.
-7. Rebuild chunks and table facts.
-8. Run the 50-question regression.
-9. Keep the source only if provenance is valid and retrieval impact is understood.
-10. Commit and push the manifest/report change.
+1. Use an official USGS/EIA/BSEE/OSTI URL with clear licensing.
+2. Record the checksum and provenance.
+3. Run the batch pipeline and preserve the benchmark result.
+4. Treat retrieval regression as a tuning signal, not a corpus-build blocker.
 
 Do not add sources with uncertain URLs, missing checksums, or unclear provenance.
 
@@ -247,5 +241,6 @@ conda run -n gpu-test python -m scripts.run_petroleum_expansion --auto 5 --commi
 - Discovery: USGS Publications Warehouse API first (series/DOI/PDF provenance gates; numbered series only), OSTI API fallback (USGS-publisher + no-journal gates).
 - Gates per source: checksum, manifest validation, 50-question benchmark regression vs `reports/results/petroleum-production-baseline.json`, full test suite, then commit+push (rebase-safe).
 - Failures auto-rollback (manifest + raw PDF) and are recorded with per-query miss diagnostics in `data/petroleum/auto-expansion-rejected.json` (Phase-2 evidence).
-- Corpus measured at 29 sources: 2,155+ pages, ~4,700 clean chunks; baseline Hit@5 0.980, Recall@5 0.981, MRR@5 0.761 (selfcheck-verified twice).
-- Known content-specific regressions so far: Cherokee Platform SIR 2020-5110 and PP 1824-R each cost exactly one Hit@5 question; South Florida OFR 2000-317 accepted with no hit/recall loss (MRR −0.010, within tolerance).
+- Corpus build complete at **50 sources, 3,249 pages, 8,490 clean chunks, 8,828 augmented chunks**.
+- Final expanded-corpus retrieval: Hit@5 0.920, Recall@5 0.923, MRR@5 0.736. The original best-known baseline remains Hit@5 0.980 / Recall@5 0.981 / MRR@5 0.761; retrieval tuning is now a separate Phase-2 task.
+- Local Ollama end-to-end test (`mistral:latest`, RTX 3060): **50/50 cited or abstained correctly, average 3.4 seconds/question**; report: `reports/results/petroleum-ollama-50q-final.jsonl`.

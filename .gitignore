@@ -21,6 +21,9 @@ data/petroleum/pages-expanded.jsonl
 data/petroleum/chunks-expanded.jsonl
 data/petroleum/chunks-expanded-clean.jsonl
 data/petroleum/chunks-expanded-rejected.jsonl
+data/petroleum/chunks-augmented.jsonl
+data/petroleum/chunks-bisect.jsonl
+reports/results/petroleum-benchmark-batch-*.json
 data/petroleum/table-candidates.jsonl
 data/petroleum/table-row-candidates.jsonl
 data/petroleum/table-fact-candidates.jsonl
