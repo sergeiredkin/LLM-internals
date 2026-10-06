@@ -207,26 +207,10 @@ QLoRA is optional; a strong retrieval and grounding pipeline is the priority.
 
 ## Recommended next action
 
-Continue automatic source expansion with the next official, checksum-verifiable USGS/OSTI report. After each source, run:
-
-```bash
-conda run -n gpu-test python -m scripts.validate_petroleum_manifest \
-  --manifest data/petroleum/manifest.jsonl \
-  --raw-dir data/petroleum/raw
-
-conda run -n gpu-test python -m unittest discover -s tests -q
-```
-
-Then rebuild the corpus and run:
-
-```bash
-conda run -n gpu-test python -m scripts.run_petroleum_production_benchmark \
-  --documents <augmented-chunks.jsonl> \
-  --queries data/petroleum/queries-50.jsonl \
-  --output <benchmark-result.json>
-```
-
-The current acceptance rule is: preserve provenance, pass tests, and do not regress the production benchmark without a documented reason and mitigation.
+Use the v0.1 release commands in `Project/petroleum-rag-quickstart.md` for corpus build,
+verification, retrieval benchmarking, local Ollama validation, and the browser UI. Future source
+expansion is optional and should preserve provenance, pass release verification, and avoid benchmark
+regressions without a documented reason and mitigation.
 
 ## Automation update (2026-10-05)
 

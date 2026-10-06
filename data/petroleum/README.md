@@ -1,41 +1,14 @@
 # Petroleum-domain corpus
 
-This directory is reserved for a documented petroleum-domain corpus. No source documents are
-committed yet.
+This directory contains the tracked release inputs for the educational petroleum RAG corpus:
 
-## Required manifest
+- `manifest.jsonl`: 50 public USGS source records with official URLs,
+  licenses/provenance, and SHA-256 checksums.
+- `queries-50.jsonl`: the frozen 50-question retrieval benchmark.
+- `gold-answers-50.jsonl`: provenance-linked answer records for local Ollama validation.
 
-Before adding data, record for every source:
-
-- title and publisher
-- URL or archive identifier
-- retrieval date
-- license and redistribution terms
-- checksum
-- document type and language
-- any processing or OCR steps
-
-Recommended normalized JSONL schema:
-
-```json
-{"document_id":"api-example-001","text":"...","source":"...","title":"...","metadata":{"license":"CC-BY-4.0","year":"2024","topic":"drilling"}}
-```
-
-Keep raw downloads and processed corpora out of Git. The pilot pipeline is:
-
-```bash
-python -m scripts.ingest_petroleum_pdfs \
-  --manifest data/petroleum/manifest.jsonl \
-  --output data/petroleum/pages.jsonl
-
-python -m scripts.prepare_petroleum_chunks \
-  --pages data/petroleum/pages.jsonl \
-  --chunks data/petroleum/chunks.jsonl \
-  --review data/petroleum/review-50.jsonl
-```
-
-The retrieval code accepts JSONL through `scripts/evaluate_retrieval.py` and preserves document/source
-metadata through chunking. Review `review-50.jsonl` before scaling beyond the pilot.
+Raw PDFs and generated page/chunk/table JSONL artifacts stay out of Git. Build and verification
+commands are documented in the [Petroleum RAG quickstart](../../Project/petroleum-rag-quickstart.md).
 
 Do not use proprietary manuals, standards, or paid reports unless redistribution and model-training
 rights are explicitly confirmed.

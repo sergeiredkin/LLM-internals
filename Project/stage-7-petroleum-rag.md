@@ -72,19 +72,17 @@ The optional augmented corpus can be built with:
 python -m scripts.build_petroleum_augmented \
   --base data/petroleum/chunks-expanded-clean.jsonl \
   --table-facts data/petroleum/table-fact-candidates.jsonl \
-  --output data/petroleum/chunks-expanded-with-table-facts.jsonl
+  --output data/petroleum/chunks-augmented.jsonl
 ```
 
-On the 18-question benchmark, the augmented corpus improved hit rate@5 from 0.889 to 0.944 and
-recall@5 from 0.850 to 0.900, while MRR moved from 0.592 to 0.578. An optional primary-evidence rerank is available:
+An optional primary-evidence rerank is available:
 
 ```bash
 python -m scripts.evaluate_retrieval ... --prefer-primary-evidence
 ```
 
-With the current conservative 0.90 downweight for derived facts, MRR returns to 0.592 and the
-benchmark remains at the original 0.889 hit rate / 0.850 recall. This gives us an explicit choice:
-use augmented retrieval for recall, or primary-evidence reranking for answer quality.
+This gives an explicit choice: use augmented retrieval for recall, or primary-evidence reranking for
+answer quality. Current release benchmark commands live in `Project/petroleum-rag-quickstart.md`.
 
 Answer-level evaluation is now available through `scripts/evaluate_answers.py`. Each JSONL record
 contains `query`, `answer`, `citations`, and `evidence` records with `document_id` and `text`.
@@ -98,7 +96,7 @@ The production retrieval configuration can now be enabled directly from the cont
 
 ```bash
 python -m scripts.retrieve_context \
-  --documents data/petroleum/chunks-expanded-with-table-facts.jsonl \
+  --documents data/petroleum/chunks-augmented.jsonl \
   --pre-chunked \
   --query "What was the purpose of the Indian National Gas Hydrate Program Expedition 01?" \
   --expand-petroleum-query --section-aware --summary-aware \
@@ -122,28 +120,15 @@ The evaluation CLI is:
 
 ```bash
 python -m scripts.evaluate_retrieval \
-  --documents data/petroleum/chunks-expanded-clean.jsonl \
+  --documents data/petroleum/chunks-augmented.jsonl \
   --pre-chunked \
-  --queries data/petroleum/queries.jsonl \
+  --queries data/petroleum/queries-50.jsonl \
   --output reports/results/petroleum-retrieval.json
 ```
 
-No petroleum documents are included yet. `data/petroleum/README.md` defines the license and source
-manifest requirements. The accelerated Week-1 pipeline now includes:
-
-```bash
-python -m scripts.ingest_petroleum_pdfs \
-  --manifest data/petroleum/manifest.jsonl \
-  --output data/petroleum/pages.jsonl
-
-python -m scripts.prepare_petroleum_chunks \
-  --pages data/petroleum/pages.jsonl \
-  --chunks data/petroleum/chunks.jsonl \
-  --review data/petroleum/review-50.jsonl
-```
-
-PDF pages retain page numbers and source checksums. The review file deliberately samples across the
-whole corpus so extraction defects are found before bulk ingestion.
+The v0.1 release manifest, benchmark files, build/check commands, and browser workflow are documented
+in `Project/petroleum-rag-quickstart.md`. Generated page/chunk/table artifacts and raw PDFs remain
+outside Git; `data/petroleum/README.md` lists the tracked release inputs.
 
 ## Evaluation protocol
 
@@ -172,22 +157,10 @@ that are not supported by the corpus.
 - Separate retrieval evaluation from language-model generation quality.
 - QLoRA training must use train/validation separation and a fixed held-out question set.
 
-## Current pilot result
+## Release status
 
-`reports/petroleum-pilot-week1.md` records 12 reports, 1,461 extracted/recovered pages, 3,304 chunks,
-and one recovered figure-only page. The first filter retains 2,859 chunks and rejects 445 obvious
-extraction failures. The 50-sample review labels 30 as acceptable for prose retrieval and 20 as
-rejected or reserved for table/figure processing. The extraction pipeline is working but the corpus
-is not yet production-ready.
-
-## Corpus expansion pilot
-
-`reports/petroleum-expansion-pilot.md` records the original expansion to 20 checksum-verified USGS
-reports. The current corpus also includes a separate 34-page Expedition Summary source for the
-Indian National Gas Hydrate Program: 21 manifest sources, 1,869 recovered pages, 4,818 chunks,
-4,275 clean chunks, and 543 rejected chunks. The fixed 18-question evaluation is now run with
-parent-page grouping and optional controlled query expansion: hit rate@5 0.833, recall@5 0.842,
-and MRR@5 0.536. Do not expand toward 50 reports until the remaining misses are resolved.
+The pilot reports remain historical evidence. The current user-facing release status and commands live
+in `Project/petroleum-rag-quickstart.md`.
 
 ## Week 2 EIA pilot
 
@@ -214,13 +187,13 @@ checksum. No ambiguous BSEE values are loaded.
 
 ## Next steps
 
-- [x] Select and document the 20-report USGS pilot corpus and record checksums.
+- [x] Select and document the public USGS corpus and record checksums.
 - [x] Add a checksum-verified Expedition Summary source for the Indian Gas Hydrate question.
 - [x] Add manifest, checksum, PDF extraction, chunking, and review-sample pipeline.
 - [x] Add conservative filtering for figure-only, short, bibliography, and corrupted chunks.
-- [x] Create and manually confirm an auditable label file for the 50 pilot review records.
+- [x] Create and manually confirm an auditable label file for the pilot review records.
 - [x] Recover the malformed PDF page as a provenance-preserving figure-only record.
-- [ ] Resolve remaining table and extraction defects; table candidates are now isolated for follow-up.
+- [x] Add isolated table candidates and generated table facts.
 - [x] Normalize the selected corpus to JSONL and create a deterministic fixed query set.
 - [ ] Create deterministic train/validation splits for future adaptation.
 - [x] Establish BM25 metrics on the fixed query set: hit rate@5 0.800, recall@5 0.818, MRR@5 0.683 on the expanded corpus.
